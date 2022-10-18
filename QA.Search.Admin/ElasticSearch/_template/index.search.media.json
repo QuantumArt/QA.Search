@@ -1,0 +1,56 @@
+{
+  "order": 1,
+  "version": 0,
+  "index_patterns": ["index.search.media.*"],
+  "mappings": {
+    "_doc": {
+      "dynamic_templates": [
+        {
+          "text": {
+            "match_mapping_type": "*",
+            "match_pattern": "regex",
+            "path_match": "ArticleAuthor|MetaDescription|Content|ContextText[0-9]|Copyright|Description|HeaderLead|HeaderTitle|MainTag.Title|MetaDescription|TagTitle|Tags.Title|TargetAudienceTag.Title|Text|Title|TitleH1|TitleOnPage",
+            "mapping": {
+              "type": "keyword",
+              "normalizer": "normalizer_keyword",
+              "copy_to": [
+                "_phrases",
+                "_prefixes",
+                "_shingles",
+                "_synonyms"
+              ],
+              "fields": {
+                "phrases": {
+                  "type": "text",
+                  "analyzer": "analyzer_phrases"
+                },
+                "prefixes": {
+                  "type": "text",
+                  "analyzer": "analyzer_prefixes",
+                  "search_analyzer": "analyzer_text"
+                },
+                "shingles": {
+                  "type": "text",
+                  "analyzer": "analyzer_shingles"
+                },
+                "synonyms": {
+                  "type": "text",
+                  "analyzer": "analyzer_synonyms_index",
+                  "search_analyzer": "analyzer_synonyms_search"
+                }
+              }
+            }
+          }
+        },
+        {
+          "nested": {
+            "match_mapping_type": "object",
+            "match_pattern": "regex",
+            "match": "Children",
+            "mapping": { "type": "nested" }
+          }
+        }
+      ]
+    }
+  }
+}

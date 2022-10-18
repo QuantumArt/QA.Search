@@ -1,0 +1,46 @@
+jobs:
+  - job: BuildProxyDockerImage
+    displayName: "Build docker image (Search.API)"
+    pool:
+      name: $(buildPool)
+      demands:
+        - agent.os -equals Linux
+        - docker
+    steps:
+      - checkout: self
+        clean: true
+      - task: Docker@2
+        inputs:
+          command: "build"
+          Dockerfile: "QA.Search.Api/Dockerfile"
+          buildContext: "$(System.DefaultWorkingDirectory)"
+  - job: BuildAdminDockerImage
+    displayName: "Build docker image (Search.Admin)"
+    pool:
+      name: $(buildPool)
+      demands:
+        - agent.os -equals Linux
+        - docker
+    steps:
+      - checkout: self
+        clean: true
+      - task: Docker@2
+        inputs:
+          command: "build"
+          Dockerfile: "QA.Search.Admin/Dockerfile"
+          buildContext: "$(System.DefaultWorkingDirectory)"
+  - job: BuildIntegrationDockerImage
+    displayName: "Build docker image (Search.Integration)"
+    pool:
+      name: $(buildPool)
+      demands:
+        - agent.os -equals Linux
+        - docker
+    steps:
+      - checkout: self
+        clean: true
+      - task: Docker@2
+        inputs:
+          command: "build"
+          Dockerfile: "QA.Search.Generic.Integration.API/Dockerfile"
+          buildContext: "$(System.DefaultWorkingDirectory)"

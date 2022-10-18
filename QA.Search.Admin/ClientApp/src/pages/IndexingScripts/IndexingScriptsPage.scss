@@ -1,0 +1,42 @@
+.indexing-scripts__container {
+  height: calc(100vh - 100px);
+  display: flex;
+}
+
+.indexing-scripts__sidebar {
+  flex: none;
+  width: 240px;
+  padding: 15px;
+  font-size: 18px;
+  font-family: monospace;
+
+  .bp3-button {
+    display: block;
+    width: 100%;
+  }
+}
+
+.indexing-scripts__content {
+  position: relative;
+  flex: auto;
+  background-color: #1e1e1e;
+}
+
+.indexing-scripts__panel {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  float: left;
+  height: 50px;
+  padding: 0 15px;
+  font-size: 16px;
+  box-sizing: border-box;
+
+  &--left {
+    width: calc(50% - 15px);
+  }
+
+  &--right {
+    width: calc(50% + 15px);
+  }
+}

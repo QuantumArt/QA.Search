@@ -1,0 +1,22 @@
+body {
+  min-width: 100vh;
+  min-height: 100vh;
+  background-color: #f5f8fa;
+}
+
+.bp3-navbar-heading {
+  font-size: 20px;
+  height: 20px;
+}
+
+.bp3-navbar-group.bp3-align-left .bp3-button {
+  margin-left: 6px;
+}
+
+.bp3-navbar-group .bp3-tab {
+  padding: 0 10px;
+}
+
+.bp3-navbar-group .bp3-tab-indicator {
+  height: 4px;
+}

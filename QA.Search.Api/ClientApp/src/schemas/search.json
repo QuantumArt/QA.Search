@@ -1,0 +1,308 @@
+﻿{
+  "$schema": "http://json-schema.org/draft-06/schema",
+  "type": "object",
+  "properties": {
+    "$select": { "$ref": "#/definitions/fields" },
+    "$snippets": { "$ref": "#/definitions/snippets" },
+    "$from": { "$ref": "#/definitions/indexes" },
+    "$query": { "type": "string" },
+    "$requiredWordsCount": { "$ref": "#/definitions/requiredWordsCount" },
+    "$weights": { "$ref": "#/definitions/weights" },
+    "$correct": { "$ref": "#/definitions/correct" },
+    "$where": { "$ref": "#/definitions/where" },
+    "$context": { "$ref": "#/definitions/filter" },
+    "$orderBy": { "$ref": "#/definitions/orderBy" },
+    "$facets": { "$ref": "#/definitions/facets" },
+    "$limit": { "type": "integer", "minimum": 0, "maximum": 200 },
+    "$offset": { "type": "integer", "minimum": 0 },
+    "$roles": { "type": "array"}
+  },
+  "required": ["$from"],
+  "dependencies": {
+    "$snippets": ["$query"],
+    "$weights": ["$query"]
+  },
+  "additionalProperties": false,
+  "definitions": {
+    "field": { "type": "string" },
+    "index": { "type": "string" },
+    "nestedPath": { "type": "string" },
+    "fields": {
+      "type": "array",
+      "items": { "type": "string" },
+      "uniqueItems": true,
+      "minItems": 1
+    },
+    "indexes": {
+      "anyOf": [
+        { "$ref": "#/definitions/index" },
+        {
+          "type": "array",
+          "items": { "$ref": "#/definitions/index" },
+          "uniqueItems": true,
+          "minItems": 1
+        }
+      ]
+    },
+    "values": {
+      "type": "array",
+      "anyOf": [
+        { "items": { "type": "string" } },
+        { "items": { "type": "number" } }
+      ],
+      "maxItems": 1000
+    },
+    "condition": {
+      "type": "object",
+      "properties": {
+        "$eq": { "type": ["string", "number", "boolean", "null"] },
+        "$ne": { "type": ["string", "number", "boolean", "null"] },
+        "$in": { "$ref": "#/definitions/values" },
+        "$any": { "$ref": "#/definitions/values" },
+        "$all": { "$ref": "#/definitions/values" },
+        "$none": { "$ref": "#/definitions/values" },
+        "$lt": { "type": ["number", "string"] },
+        "$gt": { "type": ["number", "string"] },
+        "$lte": { "type": ["number", "string"] },
+        "$gte": { "type": ["number", "string"] }
+      },
+      "additionalProperties": false,
+      "minProperties": 1,
+      "dependencies": {
+        "$lt": { "not": { "required": ["$lte"] } },
+        "$gt": { "not": { "required": ["$gte"] } }
+      }
+    },
+    "conditions": {
+      "anyOf": [
+        { "type": ["string", "number", "boolean", "null"] },
+        { "$ref": "#/definitions/values" },
+        { "$ref": "#/definitions/condition" },
+        {
+          "type": "array",
+          "items": {
+            "anyOf": [
+              { "type": ["string", "number", "boolean", "null"] },
+              { "$ref": "#/definitions/condition" }
+            ]
+           },
+           "maxItems": 50
+        }
+      ]
+    },
+    "filter": {
+      "type": "object",
+      "properties": {},
+      "patternProperties": {
+        "^[^$]": {
+          "anyOf": [
+            { "$ref": "#/definitions/conditions" },
+            { "$ref": "#/definitions/filter" }
+          ]
+        }
+      },
+      "additionalProperties": false,
+      "minProperties": 1
+    },
+    "where": {
+      "type": "object",
+      "properties": {
+        "$some": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/where" },
+          "maxItems": 50
+        },
+        "$every": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/where" },
+          "maxItems": 50
+        },
+        "$not": { "$ref": "#/definitions/where" },
+        "$exists": { "$ref": "#/definitions/nestedPath" },
+        "$where": { "$ref": "#/definitions/where" }
+      },
+      "patternProperties": {
+        "^[^$]": {
+          "anyOf": [
+            { "$ref": "#/definitions/conditions" },
+            { "$ref": "#/definitions/filter" }
+          ]
+        }
+      },
+      "additionalProperties": false,
+      "minProperties": 1,
+      "dependencies": {
+        "$where": ["$exists"]
+      }
+    },
+    "requiredWordsCount": {
+      "anyOf": [
+        { "type": "integer" },
+        {
+          "type": "string",
+          "pattern": "^-?\\d+%?$|^\\d+<-?\\d+%?(?:\\s+\\d+<-?\\d+%?)*$"
+        }
+      ]
+    },
+    "weights": {
+      "type": "object",
+      "properties": {},
+      "patternProperties": {
+        "^[^$]": {
+          "anyOf": [
+            { "type": "number", "exclusiveMinimum": 0 },
+            { "$ref": "#/definitions/weights" }
+          ]
+        }
+      },
+      "additionalProperties": false,
+      "minProperties": 1
+    },
+    "snippets": {
+      "anyOf": [
+        { "$ref": "#/definitions/snippet" },
+        {
+          "type": "object",
+          "properties": {},
+          "patternProperties": {
+            "^[^$]": { "$ref": "#/definitions/snippets" }
+          },
+          "additionalProperties": false,
+          "minProperties": 1
+        }
+      ]
+    },
+    "snippet": {
+      "anyOf": [
+        { "type": "integer", "minimum": 0, "maximum": 20 },
+        {
+          "type": "object",
+          "properties": {
+            "$count": { "type": "integer", "minimum": 0, "maximum": 20 },
+            "$length": { "type": "integer", "minimum": 20, "maximum": 1000 }
+          },
+          "additionalProperties": false,
+          "minProperties": 1
+        }
+      ]
+    },
+    "orderBy": {
+      "anyOf": [
+        { "$ref": "#/definitions/field" },
+        { "$ref": "#/definitions/orderExpr" },
+        {
+          "type": "array",
+          "items": {
+            "anyOf": [
+              { "$ref": "#/definitions/field" },
+              { "$ref": "#/definitions/orderExpr" }
+            ]
+          },
+          "minItems": 1,
+          "maxItems": 20
+        }
+      ]
+    },
+    "orderExpr": {
+      "type": "object",
+      "properties": {},
+      "patternProperties": {
+        "^[^$]": { "enum": ["asc", "desc"] }
+      },
+      "additionalProperties": false,
+      "minProperties": 1,
+      "maxProperties": 1
+    },
+    "correct": {
+      "type": "object",
+      "properties": {
+        "$query": { "$ref": "#/definitions/correctExpr" },
+        "$results": { "$ref": "#/definitions/correctExpr" }
+      },
+      "additionalProperties": false,
+      "minProperties": 1
+    },
+    "correctExpr": {
+      "type": "object",
+      "properties": {
+        "$ifFoundLte": { "type": "integer", "minimum": 0 }
+      },
+      "additionalProperties": false,
+      "required": ["$ifFoundLte"]
+    },
+    "facets": {
+      "type": "object",
+      "properties": {
+        "_index": {
+          "anyOf": [
+            { "enum": ["$samples"] },
+            { "$ref": "#/definitions/samplesFacet" }
+          ]
+        }
+      },
+      "patternProperties": {
+        "^[^$]": {
+          "anyOf": [
+            { "$ref": "#/definitions/facet" },
+            { "$ref": "#/definitions/facets" }
+          ]
+        }
+      },
+      "additionalProperties": false,
+      "minProperties": 1
+    },
+    "facet": {
+      "anyOf": [
+        { "enum": ["$interval", "$samples"] },
+        { "$ref": "#/definitions/samplesFacet" },
+        { "$ref": "#/definitions/rangesFacet" },
+        { "$ref": "#/definitions/percentilesFacet" }
+      ]
+    },
+    "samplesFacet": {
+      "type": "object",
+      "properties": {
+        "$samples": { "type": "integer", "minimum": 1, "maximum": 100 }
+      },
+      "required": ["$samples"],
+      "additionalProperties": false
+    },
+    "rangesFacet": {
+      "type": "object",
+      "properties": {
+        "$ranges": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "$name": { "type": "string" },
+              "$from": { "type": ["number", "string"] },
+              "$to": { "type": ["number", "string"] }
+            },
+            "required": ["$name"],
+            "additionalProperties": false,
+            "minProperties": 2
+          },
+          "minItems": 1,
+          "maxItems": 50
+        }
+      },
+      "required": ["$ranges"],
+      "additionalProperties": false
+    },
+    "percentilesFacet": {
+      "type": "object",
+      "properties": {
+        "$percentiles": {
+          "type": "array",
+          "items": { "type": "integer", "minimum": 0, "maximum": 100 },
+          "minItems": 1,
+          "maxItems": 100,
+          "uniqueItems": true
+        }
+      },
+      "required": ["$percentiles"],
+      "additionalProperties": false
+    }
+  }
+}

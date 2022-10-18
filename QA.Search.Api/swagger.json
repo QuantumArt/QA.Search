@@ -1,0 +1,954 @@
+{
+  "x-generator": "NSwag v13.16.1.0 (NJsonSchema v10.7.2.0 (Newtonsoft.Json v13.0.0.0))",
+  "swagger": "2.0",
+  "info": {
+    "title": "Search API",
+    "version": "v1"
+  },
+  "consumes": [
+    "application/json-patch+json",
+    "application/json",
+    "application/*+json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/api/v1/completion": {
+      "post": {
+        "tags": [
+          "Completion"
+        ],
+        "summary": "Дополнение строки поискового ввода",
+        "operationId": "Completion_Completion",
+        "parameters": [
+          {
+            "name": "query",
+            "in": "body",
+            "required": true,
+            "schema": {},
+            "x-nullable": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "x-nullable": false,
+            "description": "Предложения поисковых фраз",
+            "schema": {
+              "$ref": "#/definitions/CompletionResponse"
+            }
+          },
+          "400": {
+            "x-nullable": false,
+            "description": "Невалидный запрос",
+            "schema": {
+              "$ref": "#/definitions/ValidationProblemDetails"
+            }
+          },
+          "404": {
+            "x-nullable": false,
+            "description": "Индекс не найден",
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
+          },
+          "408": {
+            "x-nullable": false,
+            "description": "Таймаут при ожидании ответа от Elastic",
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
+          },
+          "502": {
+            "x-nullable": false,
+            "description": "ElasticSearch не доступен",
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/completion/query": {
+      "post": {
+        "tags": [
+          "Completion"
+        ],
+        "summary": "Поиск предположений по префиксам слов в текстовых полях",
+        "operationId": "Completion_QuerySuggestions",
+        "parameters": [
+          {
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/QuerySuggestionRequest"
+            },
+            "x-nullable": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "x-nullable": false,
+            "description": "Набор найденных документов",
+            "schema": {
+              "$ref": "#/definitions/SuggestResponse"
+            }
+          },
+          "400": {
+            "x-nullable": false,
+            "description": "Невалидный запрос",
+            "schema": {
+              "$ref": "#/definitions/ValidationProblemDetails"
+            }
+          },
+          "404": {
+            "x-nullable": false,
+            "description": "Индекс не найден",
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
+          },
+          "408": {
+            "x-nullable": false,
+            "description": "Таймаут при ожидании ответа от Elastic",
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
+          },
+          "502": {
+            "x-nullable": false,
+            "description": "ElasticSearch не доступен",
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/completion/query_register": {
+      "post": {
+        "tags": [
+          "Completion"
+        ],
+        "summary": "Регистрация запроса для вывода часто используемых запросов",
+        "operationId": "Completion_RegisterQueryCompletion",
+        "parameters": [
+          {
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/SuggestRegisterRequest"
+            },
+            "x-nullable": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "x-nullable": false,
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/SearchResponse"
+            }
+          },
+          "408": {
+            "x-nullable": false,
+            "description": "Таймаут при ожидании ответа от Elastic",
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
+          },
+          "502": {
+            "x-nullable": false,
+            "description": "ElasticSearch не доступен",
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/multi_completion": {
+      "post": {
+        "tags": [
+          "MultiCompletion"
+        ],
+        "summary": "Дополнение строки поискового ввода: мультиплексирование запросов",
+        "operationId": "MultiCompletion_MultiCompletion",
+        "parameters": [
+          {
+            "name": "queries",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "array",
+              "maxItems": 50,
+              "items": {}
+            },
+            "x-nullable": false
+          }
+        ],
+        "responses": {
+          "207": {
+            "x-nullable": false,
+            "description": "Предложения поисковых фраз",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/MultiCompletionResponse"
+              }
+            }
+          },
+          "400": {
+            "x-nullable": false,
+            "description": "Невалидный запрос",
+            "schema": {
+              "$ref": "#/definitions/ValidationProblemDetails"
+            }
+          },
+          "408": {
+            "x-nullable": false,
+            "description": "Таймаут при ожидании ответа от Elastic",
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
+          },
+          "502": {
+            "x-nullable": false,
+            "description": "ElasticSearch не доступен",
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/multi_search": {
+      "post": {
+        "tags": [
+          "MultiSearch"
+        ],
+        "summary": "Полнотекстовый поиск документов с синонимами и морфологией, фасетный поиск: мультиплексирование запросов",
+        "operationId": "MultiSearch_MultiSearch",
+        "parameters": [
+          {
+            "name": "queries",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "array",
+              "maxItems": 50,
+              "items": {}
+            },
+            "x-nullable": false
+          }
+        ],
+        "responses": {
+          "207": {
+            "x-nullable": false,
+            "description": "Наборы найденных документов",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/MultiSearchResponse"
+              }
+            }
+          },
+          "400": {
+            "x-nullable": false,
+            "description": "Невалидный запрос",
+            "schema": {
+              "$ref": "#/definitions/ValidationProblemDetails"
+            }
+          },
+          "408": {
+            "x-nullable": false,
+            "description": "Таймаут при ожидании ответа от Elastic",
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
+          },
+          "502": {
+            "x-nullable": false,
+            "description": "ElasticSearch не доступен",
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/multi_suggest": {
+      "post": {
+        "tags": [
+          "MultiSuggest"
+        ],
+        "summary": "Поиск документов по префиксам слов в текстовых полях: мультиплексирование запросов",
+        "operationId": "MultiSuggest_MultiSuggest",
+        "parameters": [
+          {
+            "name": "queries",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "array",
+              "maxItems": 50,
+              "items": {}
+            },
+            "x-nullable": false
+          }
+        ],
+        "responses": {
+          "207": {
+            "x-nullable": false,
+            "description": "Наборы найденных документов",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/MultiSuggestResponse"
+              }
+            }
+          },
+          "400": {
+            "x-nullable": false,
+            "description": "Невалидный запрос",
+            "schema": {
+              "$ref": "#/definitions/ValidationProblemDetails"
+            }
+          },
+          "408": {
+            "x-nullable": false,
+            "description": "Таймаут при ожидании ответа от Elastic",
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
+          },
+          "502": {
+            "x-nullable": false,
+            "description": "ElasticSearch не доступен",
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/search/obsolete": {
+      "post": {
+        "tags": [
+          "Search"
+        ],
+        "summary": "Полнотекстовый поиск документов с синонимами и морфологией, фасетный поиск",
+        "operationId": "Search_SearchObsolete",
+        "parameters": [
+          {
+            "name": "query",
+            "in": "body",
+            "required": true,
+            "schema": {},
+            "x-nullable": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "x-nullable": false,
+            "description": "Набор найденных документов",
+            "schema": {
+              "$ref": "#/definitions/SearchResponse"
+            }
+          },
+          "400": {
+            "x-nullable": false,
+            "description": "Невалидный запрос",
+            "schema": {
+              "$ref": "#/definitions/ValidationProblemDetails"
+            }
+          },
+          "404": {
+            "x-nullable": false,
+            "description": "Индекс не найден",
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
+          },
+          "408": {
+            "x-nullable": false,
+            "description": "Таймаут при ожидании ответа от Elastic",
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
+          },
+          "502": {
+            "x-nullable": false,
+            "description": "ElasticSearch не доступен",
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/search": {
+      "post": {
+        "tags": [
+          "Search"
+        ],
+        "summary": "Полнотекстовый поиск документов с пресетами, с синонимами и морфологией, фасетный поиск",
+        "operationId": "Search_Search",
+        "parameters": [
+          {
+            "name": "query",
+            "in": "body",
+            "required": true,
+            "schema": {},
+            "x-nullable": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "x-nullable": false,
+            "description": "Набор найденных документов",
+            "schema": {
+              "$ref": "#/definitions/SearchResponse"
+            }
+          },
+          "400": {
+            "x-nullable": false,
+            "description": "Невалидный запрос",
+            "schema": {
+              "$ref": "#/definitions/ValidationProblemDetails"
+            }
+          },
+          "404": {
+            "x-nullable": false,
+            "description": "Индекс не найден",
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
+          },
+          "408": {
+            "x-nullable": false,
+            "description": "Таймаут при ожидании ответа от Elastic",
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
+          },
+          "502": {
+            "x-nullable": false,
+            "description": "ElasticSearch не доступен",
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/suggest": {
+      "post": {
+        "tags": [
+          "Suggest"
+        ],
+        "summary": "Поиск документов по префиксам слов в текстовых полях",
+        "operationId": "Suggest_Suggest",
+        "parameters": [
+          {
+            "name": "query",
+            "in": "body",
+            "required": true,
+            "schema": {},
+            "x-nullable": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "x-nullable": false,
+            "description": "Набор найденных документов",
+            "schema": {
+              "$ref": "#/definitions/SuggestResponse"
+            }
+          },
+          "400": {
+            "x-nullable": false,
+            "description": "Невалидный запрос",
+            "schema": {
+              "$ref": "#/definitions/ValidationProblemDetails"
+            }
+          },
+          "404": {
+            "x-nullable": false,
+            "description": "Индекс не найден",
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
+          },
+          "408": {
+            "x-nullable": false,
+            "description": "Таймаут при ожидании ответа от Elastic",
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
+          },
+          "502": {
+            "x-nullable": false,
+            "description": "ElasticSearch не доступен",
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "CompletionResponse": {
+      "type": "object",
+      "description": "Результат дополнения строки поискового ввода",
+      "required": [
+        "status",
+        "phrases"
+      ],
+      "properties": {
+        "status": {
+          "type": "integer",
+          "description": "Копия HTTP статус-кода в теле ответа",
+          "format": "int32"
+        },
+        "phrases": {
+          "type": "array",
+          "description": "Предлагаемые поисковые фразы",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "ValidationProblemDetails": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/HttpValidationProblemDetails"
+        },
+        {
+          "type": "object",
+          "additionalProperties": {},
+          "required": [
+            "errors"
+          ],
+          "properties": {
+            "errors": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "HttpValidationProblemDetails": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/ProblemDetails"
+        },
+        {
+          "type": "object",
+          "additionalProperties": {},
+          "required": [
+            "errors"
+          ],
+          "properties": {
+            "errors": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "ProblemDetails": {
+      "type": "object",
+      "additionalProperties": {},
+      "required": [
+        "extensions"
+      ],
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "status": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "detail": {
+          "type": "string"
+        },
+        "instance": {
+          "type": "string"
+        },
+        "extensions": {
+          "type": "object",
+          "additionalProperties": {}
+        }
+      }
+    },
+    "SuggestResponse": {
+      "type": "object",
+      "description": "Результат поиска документов по префиксам слов в текстах",
+      "required": [
+        "status",
+        "documents"
+      ],
+      "properties": {
+        "status": {
+          "type": "integer",
+          "description": "Копия HTTP статус-кода в теле ответа",
+          "format": "int32"
+        },
+        "documents": {
+          "type": "array",
+          "description": "Найденные документы",
+          "items": {
+            "$ref": "#/definitions/ElasticDocument"
+          }
+        }
+      }
+    },
+    "ElasticDocument": {
+      "type": "object",
+      "description": "Документ Elastic, найденный с помощью полнотекстового поиска",
+      "additionalProperties": {},
+      "required": [
+        "_id",
+        "_index",
+        "_score"
+      ],
+      "properties": {
+        "_id": {
+          "type": "string",
+          "description": "Строковый идентификатор документа в Elastic",
+          "minLength": 1
+        },
+        "_index": {
+          "type": "string",
+          "description": "Сокращенное имя индекса, которому принадлежит документ",
+          "minLength": 1
+        },
+        "_score": {
+          "type": "number",
+          "description": "Мера релевантности документа в рамках запроса",
+          "format": "float"
+        },
+        "_snippets": {
+          "type": "object",
+          "description": "Словарь подсвеченных фрагментов текста, сгруппированных по имени поля",
+          "example": {
+            "Title": [
+              "В Москве открыли"
+            ],
+            "Regions.Title": [
+              "Москва и область"
+            ]
+          },
+          "additionalProperties": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "QuerySuggestionRequest": {
+      "type": "object",
+      "description": "Запрос для поиска документов по префиксам слов",
+      "properties": {
+        "$query": {
+          "type": "string",
+          "description": "Строка поискового запроса"
+        },
+        "$region": {
+          "type": "string",
+          "description": "Регион"
+        },
+        "$limit": {
+          "type": "integer",
+          "description": "Максимальное кол-во результатов в выдаче",
+          "format": "int32"
+        }
+      }
+    },
+    "SearchResponse": {
+      "type": "object",
+      "description": "Результат полнотекстового поиска документов\nс синонимами и морфологией, а также фасетного поиска",
+      "required": [
+        "status",
+        "totalCount",
+        "documents"
+      ],
+      "properties": {
+        "status": {
+          "type": "integer",
+          "description": "Копия HTTP статус-кода в теле ответа",
+          "format": "int32"
+        },
+        "totalCount": {
+          "type": "integer",
+          "description": "Общее количество найденных документов",
+          "format": "int32"
+        },
+        "queryCorrection": {
+          "description": "Результат исправления поисковой строки пользователя",
+          "allOf": [
+            {
+              "$ref": "#/definitions/QueryCorrection"
+            }
+          ]
+        },
+        "documents": {
+          "type": "array",
+          "description": "Найденные документы",
+          "items": {
+            "$ref": "#/definitions/ElasticDocument"
+          }
+        },
+        "facets": {
+          "type": "object",
+          "description": "Словарь значений фасетов, сгруппированных по имени поля",
+          "additionalProperties": {
+            "$ref": "#/definitions/FacetItem"
+          }
+        }
+      }
+    },
+    "QueryCorrection": {
+      "type": "object",
+      "description": "Результат исправления поисковой строки пользователя",
+      "required": [
+        "text",
+        "snippet",
+        "resultsAreCorrected"
+      ],
+      "properties": {
+        "text": {
+          "type": "string",
+          "description": "Исправленная поисковая строка в текстовом виде",
+          "minLength": 1
+        },
+        "snippet": {
+          "type": "string",
+          "description": "Исправленная поисковая строка с HTML-выделением исправленных фраз",
+          "minLength": 1
+        },
+        "resultsAreCorrected": {
+          "type": "boolean",
+          "description": "Было ли применено исправление при поиске результатов"
+        }
+      }
+    },
+    "FacetItem": {
+      "type": "object",
+      "description": "Фасет по одному полю",
+      "properties": {
+        "interval": {
+          "description": "Границы значения поля в выборке",
+          "allOf": [
+            {
+              "$ref": "#/definitions/IntervalFacet"
+            }
+          ]
+        },
+        "samples": {
+          "type": "array",
+          "description": "Часто встречающиеся значения поля в выборке",
+          "items": {
+            "$ref": "#/definitions/SampleFacet"
+          }
+        },
+        "percentiles": {
+          "type": "array",
+          "description": "Статистическое распределение значений поля",
+          "items": {
+            "$ref": "#/definitions/PercentileFacet"
+          }
+        },
+        "ranges": {
+          "type": "array",
+          "description": "Распределение количества документов по каждому указанному интервалу",
+          "items": {
+            "$ref": "#/definitions/RangeFacet"
+          }
+        }
+      }
+    },
+    "IntervalFacet": {
+      "type": "object",
+      "description": "Границы значения поля в выборке",
+      "required": [
+        "from",
+        "to"
+      ],
+      "properties": {
+        "from": {
+          "description": "Минимальное значение"
+        },
+        "to": {
+          "description": "Максимальное значение"
+        }
+      }
+    },
+    "SampleFacet": {
+      "type": "object",
+      "description": "Часто встречающееся значение поля в выборке",
+      "required": [
+        "value",
+        "count"
+      ],
+      "properties": {
+        "value": {
+          "description": "Значение поля"
+        },
+        "count": {
+          "type": "integer",
+          "description": "Количество документов",
+          "format": "int32"
+        }
+      }
+    },
+    "PercentileFacet": {
+      "type": "object",
+      "description": "Значение указанной квантили",
+      "required": [
+        "percent",
+        "value"
+      ],
+      "properties": {
+        "percent": {
+          "type": "number",
+          "description": "Квантиль в процентах",
+          "format": "float"
+        },
+        "value": {
+          "description": "Значение поля"
+        }
+      }
+    },
+    "RangeFacet": {
+      "type": "object",
+      "description": "Количество документов в указаной группе",
+      "required": [
+        "name",
+        "count"
+      ],
+      "properties": {
+        "name": {
+          "description": "Название группы документов"
+        },
+        "from": {
+          "description": "Минимальное значение"
+        },
+        "to": {
+          "description": "Максимальное значение"
+        },
+        "count": {
+          "type": "integer",
+          "description": "Количество документов",
+          "format": "int32"
+        }
+      }
+    },
+    "SuggestRegisterRequest": {
+      "type": "object",
+      "description": "Запрос для поиска документов по префиксам слов",
+      "required": [
+        "$query",
+        "$region"
+      ],
+      "properties": {
+        "$query": {
+          "type": "string",
+          "description": "Строка поискового запроса",
+          "minLength": 1
+        },
+        "$region": {
+          "type": "string",
+          "description": "Регион",
+          "minLength": 1
+        }
+      }
+    },
+    "MultiCompletionResponse": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/CompletionResponse"
+        },
+        {
+          "type": "object",
+          "description": "Documentation-only Union of CompletionResponse and ProblemDetails",
+          "properties": {
+            "type": {
+              "type": "string",
+              "description": "A URI reference[RFC3986] that identifies the problem type.T\nencourages that, when dereferenced, it provide human-readab\nthe problem type (e.g., using HTML [W3C.REC-html5-20141028]\nis not present, its value is assumed to be \"about:blank\"."
+            },
+            "detail": {
+              "type": "string",
+              "description": "A human-readable explanation specific to this occurrence of the problem."
+            }
+          }
+        }
+      ]
+    },
+    "MultiSearchResponse": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/SearchResponse"
+        },
+        {
+          "type": "object",
+          "description": "Documentation-only Union of SearchResponse and ProblemDetails",
+          "properties": {
+            "type": {
+              "type": "string",
+              "description": "A URI reference[RFC3986] that identifies the problem type.T\nencourages that, when dereferenced, it provide human-readab\nthe problem type (e.g., using HTML [W3C.REC-html5-20141028]\nis not present, its value is assumed to be \"about:blank\"."
+            },
+            "detail": {
+              "type": "string",
+              "description": "A human-readable explanation specific to this occurrence of the problem."
+            }
+          }
+        }
+      ]
+    },
+    "MultiSuggestResponse": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/SuggestResponse"
+        },
+        {
+          "type": "object",
+          "description": "Documentation-only Union of SuggestResponse and ProblemDetails",
+          "properties": {
+            "type": {
+              "type": "string",
+              "description": "A URI reference[RFC3986] that identifies the problem type.T\nencourages that, when dereferenced, it provide human-readab\nthe problem type (e.g., using HTML [W3C.REC-html5-20141028]\nis not present, its value is assumed to be \"about:blank\"."
+            },
+            "detail": {
+              "type": "string",
+              "description": "A human-readable explanation specific to this occurrence of the problem."
+            }
+          }
+        }
+      ]
+    }
+  }
+}

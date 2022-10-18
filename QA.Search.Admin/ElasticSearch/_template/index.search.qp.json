@@ -1,0 +1,56 @@
+{
+  "order": 1,
+  "version": 0,
+  "index_patterns": ["index.search.qp.*"],
+  "mappings": {
+    "_doc": {
+      "dynamic_templates": [
+        {
+          "text": {
+            "match_mapping_type": "*",
+            "match_pattern": "regex",
+            "path_match": "Anounce|Description|Keywords|MetaDescription|MetaKeywords|MetaTitle|MobileText|Tags|Text|Title|TitleForDetails|SeoTitleText|ShortDescription",
+            "mapping": {
+              "type": "keyword",
+              "normalizer": "normalizer_keyword",
+              "copy_to": [
+                "_phrases",
+                "_prefixes",
+                "_shingles",
+                "_synonyms"
+              ],
+              "fields": {
+                "phrases": {
+                  "type": "text",
+                  "analyzer": "analyzer_phrases"
+                },
+                "prefixes": {
+                  "type": "text",
+                  "analyzer": "analyzer_prefixes",
+                  "search_analyzer": "analyzer_text"
+                },
+                "shingles": {
+                  "type": "text",
+                  "analyzer": "analyzer_shingles"
+                },
+                "synonyms": {
+                  "type": "text",
+                  "analyzer": "analyzer_synonyms_index",
+                  "search_analyzer": "analyzer_synonyms_search"
+                }
+              }
+            }
+          }
+        },
+        {
+          "nested": {
+            "match_mapping_type": "object",
+            "match_pattern": "regex",
+            "match": "Children",
+            "mapping": { "type": "nested" }
+          }
+        }
+      ]
+    }
+  }
+}

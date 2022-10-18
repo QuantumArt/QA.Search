@@ -1,0 +1,13 @@
+.navigation__panel {
+  padding-right: 40px;
+
+  .bp3-button:not(.bp3-minimal) {
+    margin-right: 6px;
+  }
+
+  .bp3-navbar-group.bp3-align-left {
+    .bp3-button {
+      margin-left: 6px;
+    }
+  }
+}

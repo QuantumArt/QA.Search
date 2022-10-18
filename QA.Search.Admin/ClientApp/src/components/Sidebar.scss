@@ -1,0 +1,56 @@
+.sidebar {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  justify-content: space-between;
+  height: calc(100vh - 50px);
+  width: 200px;
+  background-color: #ffffff;
+  overflow-y: hidden;
+  box-shadow: 0 0 0 1px rgba(16, 22, 26, 0.1), 0 0 0 rgba(16, 22, 26, 0),
+    1px 0px 1px rgba(16, 22, 26, 0.2);
+
+  &--collapsed {
+    width: 44px;
+
+    .sidebar__link-text {
+      display: none;
+    }
+  }
+}
+
+.sidebar__main {
+  flex: auto;
+}
+
+.sidebar__footer {
+  flex: none;
+}
+
+.sidebar__divider {
+  margin: 10px;
+  border-bottom: 1px solid rgba(16, 22, 26, 0.15);
+}
+
+.sidebar__link {
+  display: flex;
+  width: 100%;
+  padding: 10px;
+  cursor: pointer;
+  box-sizing: border-box;
+  user-select: none;
+
+  &--active {
+    background-color: rgba(115, 134, 148, 0.3);
+  }
+
+  .bp3-icon {
+    color: #5c7080;
+  }
+}
+
+.sidebar__link-text {
+  margin: auto;
+  margin-left: 12px;
+  color: #182026;
+}

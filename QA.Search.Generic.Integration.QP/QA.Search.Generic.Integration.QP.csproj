@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <NoWarn>NU1605</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Dapper" Version="2.0.123" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.8.3" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <ProjectReference Include="..\QA.Search.Generic.DAL\QA.Search.Generic.DAL.csproj" />
+    <ProjectReference Include="..\QA.Search.Generic.Integration.Core\QA.Search.Generic.Integration.Core.csproj" />
+  </ItemGroup>
+
+</Project>

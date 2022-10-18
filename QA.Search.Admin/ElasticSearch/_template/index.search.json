@@ -1,0 +1,254 @@
+{
+  "order": 0,
+  "version": 0,
+  "index_patterns": ["index.search.*"],
+  "settings": {
+    "index": {
+      "mapping": {
+        "total_fields": {
+          "limit": "100000"
+        }
+      },
+      "number_of_shards": "1",
+      "number_of_replicas": "2",
+      "analysis": {
+        "char_filter": {
+          "collapse_white_space": {
+            "type": "pattern_replace",
+            "pattern": "[\\p{Z}\\r\\n]+",
+            "replacement": " "
+          },
+          "truncate_keyword": {
+            "type": "pattern_replace",
+            "pattern": "^\\p{Z}*(.{2045}).*$",
+            "replacement": "$1..."
+          }
+        },
+        "tokenizer": {
+          "unicode_words": {
+            "type": "pattern",
+            "group": 0,
+            "pattern": "\\d+[\\.,]\\d+|[\\p{L}\\d_+*#]+"
+          }
+        },
+        "normalizer": {
+          "normalizer_keyword": {
+            "type": "custom",
+            "char_filter": [ "collapse_white_space", "truncate_keyword" ]
+          }
+        },
+        "filter": {
+          "synonyms_index": {
+            "type": "synonym_graph",
+            "synonyms": []
+          },
+          "synonyms_search": {
+            "type": "synonym_graph",
+            "synonyms": []
+          },
+          "shingles": {
+            "max_shingle_size": 3,
+            "min_shingle_size": 2,
+            "type": "shingle"
+          },
+          "big_shingles": {
+            "max_shingle_size": 5,
+            "min_shingle_size": 2,
+            "type": "shingle"
+          },
+          "edge_ngram": {
+            "type": "edge_ngram",
+            "min_gram": 2,
+            "max_gram": 20
+          },
+          "stemmer_english": {
+            "type": "stemmer",
+            "language": "english"
+          },
+          "stemmer_russian": {
+            "type": "stemmer",
+            "language": "russian"
+          },
+          "stopwords_english": {
+            "type": "stop",
+            "stopwords": "_english_"
+          },
+          "stopwords_russian": {
+            "type": "stop",
+            "stopwords": "_russian_"
+          },
+          "stopwords_armenian": {
+            "type": "stop",
+            "stopwords": "_armenian_"
+          },
+          "hunspell_english": {
+            "locale": "en_GB",
+            "type": "hunspell",
+            "dedup": "true"
+          },
+          "hunspell_russian": {
+            "locale": "ru_RU",
+            "type": "hunspell",
+            "dedup": "true"
+          },
+          "hunspell_belorussian": {
+            "locale": "be_BY",
+            "type": "hunspell",
+            "dedup": "true"
+          },
+          "hunspell_ukrainian": {
+            "locale": "uk_UA",
+            "type": "hunspell",
+            "dedup": "true"
+          },
+          "hunspell_armenian": {
+            "locale": "hy_AM",
+            "type": "hunspell",
+            "dedup": "true"
+          }
+        },
+        "analyzer": {
+          "analyzer_regex": {
+            "type": "custom",
+            "tokenizer": "unicode_words",
+            "filter": [
+              "lowercase",
+              "stopwords_english",
+              "stopwords_russian",
+              "stemmer_english",
+              "stemmer_russian"
+            ]
+          },
+          "analyzer_text": {
+            "type": "custom",
+            "tokenizer": "unicode_words",
+            "filter": [
+              "lowercase",
+              "stopwords_russian",
+              "stopwords_english",
+              "hunspell_russian",
+              "hunspell_english"
+            ]
+          },
+          "analyzer_prefixes": {
+            "type": "custom",
+            "char_filter": [ "html_strip" ],
+            "tokenizer": "unicode_words",
+            "filter": [
+              "lowercase",
+              "stopwords_russian",
+              "stopwords_english",
+              "hunspell_russian",
+              "hunspell_english",
+              "edge_ngram"
+            ]
+          },
+          "analyzer_phrases": {
+            "type": "custom",
+            "char_filter": [ "html_strip" ],
+            "tokenizer": "unicode_words",
+            "filter": [
+              "lowercase",
+              "big_shingles"
+            ]
+          },
+          "analyzer_shingles": {
+            "type": "custom",
+            "char_filter": [ "html_strip" ],
+            "tokenizer": "unicode_words",
+            "filter": [
+              "lowercase",
+              "stopwords_russian",
+              "stopwords_english",
+              "hunspell_russian",
+              "hunspell_english",
+              "shingles"
+            ]
+          },
+          "analyzer_synonyms_index": {
+            "type": "custom",
+            "char_filter": [ "html_strip" ],
+            "tokenizer": "unicode_words",
+            "filter": [
+              "lowercase",
+              "stopwords_russian",
+              "stopwords_english",
+              "hunspell_russian",
+              "hunspell_english",
+              "synonyms_index"
+            ]
+          },
+          "analyzer_synonyms_search": {
+            "type": "custom",
+            "tokenizer": "unicode_words",
+            "filter": [
+              "lowercase",
+              "stopwords_russian",
+              "stopwords_english",
+              "hunspell_russian",
+              "hunspell_english",
+              "synonyms_search"
+            ]
+          }
+        }
+      }
+    }
+  },
+  "mappings": {
+    "_doc": {
+      "dynamic_date_formats": [
+        "MM/dd/yyyy",
+        "MM/dd/yyyy HH:mm",
+        "MM/dd/yyyy HH:mm:ss",
+        "dd.MM.yyyy",
+        "dd.MM.yyyy HH:mm",
+        "dd.MM.yyyy HH:mm:ss",
+        "yyyy-MM-dd",
+        "yyyy-MM-dd'T'HH:mm",
+        "yyyy-MM-dd'T'HH:mm:ss",
+        "yyyy-MM-dd'T'HH:mm:ssZ",
+        "yyyy-MM-dd'T'HH:mm:ss.SSS",
+        "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
+      ],
+      "dynamic_templates": [
+        {
+          "number": {
+            "match_mapping_type": "long",
+            "mapping": { "type": "double" }
+          }
+        },
+        {
+          "string": {
+            "match_mapping_type": "string",
+            "mapping": {
+              "type": "keyword",
+              "normalizer": "normalizer_keyword"
+            }
+          }
+        }
+      ],
+      "properties": {
+        "_phrases": {
+          "type": "text",
+          "analyzer": "analyzer_phrases"
+        },
+        "_prefixes": {
+          "type": "text",
+          "analyzer": "analyzer_prefixes",
+          "search_analyzer": "analyzer_text",
+          "store": true
+        },
+        "_shingles": {
+          "type": "text",
+          "analyzer": "analyzer_shingles",
+          "store": true
+        },
+        "_synonyms": {
+          "type": "text",
+          "analyzer": "analyzer_synonyms_index",
+          "search_analyzer": "analyzer_synonyms_search"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,7 @@
+﻿{
+  "buildId": "__Build.BuildId__",
+  "buildNumber": "__Build.BuildNumber__",
+  "buildUrl": "__Build.BuildUri__",
+  "srcBranch": "__Build.SourceBranch__",
+  "srcVersion": "__Build.SourceVersion__"
+}

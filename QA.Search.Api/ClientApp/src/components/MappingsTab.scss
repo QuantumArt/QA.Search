@@ -1,0 +1,84 @@
+$font-family: Consolas, "Courier New", monospace;
+
+.mappings-tab {
+  font-family: $font-family;
+
+  .bp3-popover-wrapper,
+  .bp3-popover-target {
+    display: block;
+  }
+
+  .bp3-transition-container {
+    margin-top: 4px;
+  }
+
+  .bp3-multi-select-popover .bp3-menu {
+    max-height: 70vh;
+    overflow-y: auto;
+    font-size: 16px;
+    font-family: $font-family;
+  }
+
+  .bp3-tag-input {
+    font-family: $font-family;
+  }
+
+  .bp3-button {
+    margin-top: 10px;
+    color: #081575;
+    font-size: 20px;
+    font-family: $font-family;
+  }
+
+  .bp3-code-block {
+    background-position-y: 14px;
+    background-size: 88px 88px;
+    background-image: linear-gradient(
+      0deg,
+      #ffffff 25%,
+      #f8f8f8 25%,
+      #f8f8f8 50%,
+      #ffffff 50%,
+      #ffffff 75%,
+      #f8f8f8 75%,
+      #f8f8f8 100%
+    );
+  }
+
+  .bp3-code {
+    font-size: 16px;
+    font-family: $font-family;
+  }
+}
+
+.mappings-tab__block {
+  border-left: 1px solid #eee;
+  padding-left: 17.6px;
+}
+
+.mappings-tab__collapse {
+  cursor: pointer;
+
+  .bp3-icon {
+    color: #5c7080;
+    margin-left: -17.6px;
+    margin-right: 1.6px;
+  }
+}
+
+.mappings-tab__field-path {
+  float: right;
+  cursor: pointer;
+}
+
+.mappings-tab__complex-field {
+  color: #081575;
+}
+
+.mappings-tab__scalar-field {
+  color: #081575;
+}
+
+.mappings-tab__type {
+  color: #2a768f;
+}
