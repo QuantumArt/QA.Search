@@ -25,14 +25,18 @@ function IndexesFilter() {
 
   return (
     <Card>
-      <InputGroup
-        large={true}
-        leftIcon="search"
-        placeholder="название индекса для поиска или алиас"
-        rightElement={lockButton}
-        value={state.indexesFilter || ""}
-        onChange={event => applyFilter(event.target.value)}
-      />
+      <Tooltip
+        content="Имя индекса может содержать латинские буквы, цифры, символы минуса и нижнего подчёркивания."
+        className="tooltip-inherit-size">
+        <InputGroup
+          large={true}
+          leftIcon="search"
+          placeholder="название индекса для поиска или алиас"
+          rightElement={lockButton}
+          value={state.indexesFilter || ""}
+          onChange={event => applyFilter(event.target.value.toString().toLowerCase().replace(/[^A-Za-z0-9-_]/ig, ''))}
+        />
+      </Tooltip>
     </Card>
   );
 }

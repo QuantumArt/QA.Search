@@ -1,7 +1,7 @@
 ﻿using Elasticsearch.Net;
 using Microsoft.AspNetCore.Mvc;
 
-namespace QA.Search.Generic.Integration.DPC.Controllers
+namespace QA.Search.Generic.Integration.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
@@ -26,7 +26,7 @@ namespace QA.Search.Generic.Integration.DPC.Controllers
             else
             {
                 return "Error: " + response.DebugInformation;
-            }          
+            }
         }
     }
 }

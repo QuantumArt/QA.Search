@@ -1,12 +1,12 @@
 ﻿using Elasticsearch.Net;
 using Elasticsearch.Net.Specification.CatApi;
-using Elasticsearch.Net.Specification.IndicesApi;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using NCrontab;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using QA.Search.Common.Interfaces;
 using QA.Search.Generic.DAL.Services.Configuration;
 using QA.Search.Generic.Integration.Core.Extensions;
 using QA.Search.Generic.Integration.Core.Models;
@@ -33,8 +33,10 @@ namespace QA.Search.Generic.Integration.Core.Services
         protected readonly ILogger _logger;
         protected readonly IElasticLowLevelClient _elastic;
         protected readonly DocumentMiddleware<TMarker> _documentMiddleware;
+        private readonly IElasticSettingsProvider _elasticSettingsProvider;
 
         private readonly CrontabSchedule _crontabSchedule;
+
         private CancellationTokenSource _linkedTokenSource;
 
         private readonly ContextConfiguration _contextConfiguration;
@@ -45,6 +47,7 @@ namespace QA.Search.Generic.Integration.Core.Services
             ILogger<TMarker> logger,
             IElasticLowLevelClient elasticClient,
             DocumentMiddleware<TMarker> documentMiddleware,
+            IElasticSettingsProvider elasticSettingsProvider,
             IOptions<ContextConfiguration> contextConfigurationOption)
         {
             _settings = settingsOptions.Value;
@@ -58,6 +61,7 @@ namespace QA.Search.Generic.Integration.Core.Services
             _linkedTokenSource = null;
             _elastic = elasticClient;
             _documentMiddleware = documentMiddleware;
+            _elasticSettingsProvider = elasticSettingsProvider;
 
             if (!string.IsNullOrWhiteSpace(_settings.CronSchedule))
             {
@@ -284,8 +288,8 @@ namespace QA.Search.Generic.Integration.Core.Services
         protected async Task UpdateAliases()
         {
             string version = _context.GetDateSuffix();
-            string maskToRemove = $"{_settings.IndexMask},-{_settings.IndexMask}.{version}";
-            string maskForAlias = $"{_settings.IndexMask}.{version}";
+            string maskToRemove = $"{_elasticSettingsProvider.GetIndexMask()},-{_elasticSettingsProvider.GetIndexMask()}.{version}";
+            string maskForAlias = $"{_elasticSettingsProvider.GetIndexMask()}.{version}";
             var query = new { actions = new List<object>() };
 
             var indicesToRemove = await GetIndices(maskToRemove);
@@ -302,7 +306,7 @@ namespace QA.Search.Generic.Integration.Core.Services
                 add = new
                 {
                     index,
-                    alias = _settings.GetAliasName(_settings.GetDocumentType(index, _context))
+                    alias = GetAliasName(GetDocumentType(index, _context))
                 }
             }));
 
@@ -334,6 +338,35 @@ namespace QA.Search.Generic.Integration.Core.Services
             }
 
             return Array.Empty<string>();
+        }
+
+        /// <summary>
+        /// Get lowercase DPC document type or QP table name, etc. in lowercase by Elastic index name
+        /// and indexing context
+        /// </summary>
+        protected string GetDocumentType(string fullIndexName, IndexingContext<TMarker> context)
+        {
+            int prefixLength = _elasticSettingsProvider.GetIndexPrefix().Length;
+            int suffixLength = $".{context.GetDateSuffix()}".Length;
+
+            return fullIndexName.Substring(prefixLength, fullIndexName.Length - prefixLength - suffixLength);
+        }
+
+        /// <summary>
+        /// Get full Elastic index name by <paramref name="documentType"/> and indexing start date
+        /// that stored in <paramref name="context"/>
+        /// </summary>
+        protected string GetIndexName(string documentType, IndexingContext<TMarker> context)
+        {
+            return $"{_elasticSettingsProvider.GetIndexPrefix()}{documentType}.{context.GetDateSuffix()}".ToLower();
+        }
+
+        /// <summary>
+        /// Get full Elastic Alias name by <paramref name="documentType"/>
+        /// </summary>
+        protected string GetAliasName(string documentType)
+        {
+            return $"{_elasticSettingsProvider.GetAliasPrefix()}{documentType}".ToLower();
         }
     }
 }

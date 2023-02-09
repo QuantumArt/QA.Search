@@ -60,11 +60,13 @@ export abstract class CrawlingManager {
     }
 
     const repository = getRepository(Link);
-    const link = await repository.findOne({ hash: Link.getHash(href), url: href });
+    const hash = Link.getHash(href);
+    const link = await repository.findOne({ hash: hash, url: href });
 
     if (!link) {
       await repository.save(
         new Link({
+          hash: hash,
           url: href,
           nextIndexingUtc: new Date(),
           isActive: true

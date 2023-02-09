@@ -2,7 +2,7 @@ import pathToRegexp, { Token } from "path-to-regexp";
 import { Entity, PrimaryGeneratedColumn, ManyToOne, Column } from "typeorm";
 import { DomainGroup } from "./DomainGroup";
 
-@Entity("crawler.Routes")
+@Entity("routes")
 export class Route {
   @PrimaryGeneratedColumn()
   id: number;

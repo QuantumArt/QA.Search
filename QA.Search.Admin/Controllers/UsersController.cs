@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using QA.Search.Admin.Models;
 using QA.Search.Admin.Services;
-using QA.Search.Data.Models;
+using System.Threading.Tasks;
 
 namespace QA.Search.Admin.Controllers
 {
@@ -15,6 +11,7 @@ namespace QA.Search.Admin.Controllers
     [Route("api/[controller]")]
     [Consumes("application/json")]
     [Produces("application/json")]
+    [IgnoreAntiforgeryToken]
     public class UsersController : Controller
     {
         private readonly UsersService _usersService;

@@ -12,7 +12,6 @@ const ResetPasswordPage = lazy(() => import("./pages/ResetPassword"));
 
 const UsersPage = lazy(() => import("./pages/Users"));
 const QpIndexingPage = lazy(() => import("./pages/QpIndexing"));
-const MediaIndexingPage = lazy(() => import("./pages/MediaIndexing"));
 const ElasticManagementPage = lazy(() => import("./pages/ElasticManagement"));
 const MappingTemplatesPage = lazy(() => import("./pages/MappingTemplates"));
 const IndexingScriptsPage = lazy(() => import("./pages/IndexingScripts"));
@@ -74,9 +73,7 @@ const Layout = ({ history }: RouteComponentProps) => {
               <Route exact path="/users" component={UsersPage} />
               <Route exact path="/elastic" component={ElasticManagementPage} />
               <Route exact path="/templates" component={MappingTemplatesPage} />
-              <Route exact path="/scripts" component={IndexingScriptsPage} />             
               <Route exact path="/qp-indexing" component={QpIndexingPage} />
-              <Route exact path="/media-indexing" component={MediaIndexingPage} />
               <Route render={() => <Redirect to="/elastic" />} />
             </Switch>
           </Suspense>

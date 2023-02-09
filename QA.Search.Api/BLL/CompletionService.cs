@@ -4,6 +4,7 @@ using Microsoft.Extensions.Options;
 using QA.Search.Api.Builders;
 using QA.Search.Api.Models;
 using QA.Search.Api.Models.ElasticSearch;
+using QA.Search.Common.Interfaces;
 using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
@@ -14,16 +15,19 @@ namespace QA.Search.Api.BLL
     {
         private readonly Settings _settings;
         private readonly IElasticLowLevelClient _elastic;
+        private readonly IElasticSettingsProvider _elasticSettingsProvider;
         private readonly ILogger _logger;
 
         public CompletionService(
             IOptions<Settings> settingsOptions,
             ILogger<CompletionService> logger,
-            IElasticLowLevelClient elastic)
+            IElasticLowLevelClient elastic,
+            IElasticSettingsProvider elasticSettingsProvider)
         {
             _settings = settingsOptions.Value;
             _logger = logger;
             _elastic = elastic;
+            _elasticSettingsProvider = elasticSettingsProvider;
         }
 
         /// <summary>
@@ -99,7 +103,7 @@ namespace QA.Search.Api.BLL
 
         private string SetIndexPrefix(string name)
         {
-            return string.Concat(_settings.IndexPrefix, name);
+            return string.Concat(_elasticSettingsProvider.GetIndexPrefix(), name);
         }
     }
 }

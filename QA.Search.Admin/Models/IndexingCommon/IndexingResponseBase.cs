@@ -1,15 +1,13 @@
 ﻿using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace QA.Search.Admin.Models.IndexingCommon
 {
     public class IndexingResponseBase
     {
         protected const string DateTimeFormat = "dd.MM.yy HH:mm:ss";
-        
+
         public IndexingState State { get; protected set; }
 
         public int Progress { get; protected set; }

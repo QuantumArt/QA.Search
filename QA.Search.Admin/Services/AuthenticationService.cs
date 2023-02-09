@@ -1,25 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Security.Claims;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authentication;
+﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
-using QA.Search.Data.Utils;
 using Microsoft.EntityFrameworkCore;
 using QA.Search.Admin.Errors;
 using QA.Search.Data;
 using QA.Search.Data.Models;
+using System;
+using System.Collections.Generic;
+using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace QA.Search.Admin.Services
 {
     public class AuthenticationService
     {
-        private readonly SearchDbContext _dbContext;
+        private readonly AdminSearchDbContext _dbContext;
 
         public const string Scheme = "SearchAdminAuthenticationScheme";
         public const int CookieLifetimeDays = 1;
 
-        public AuthenticationService(SearchDbContext dbContext)
+        public AuthenticationService(AdminSearchDbContext dbContext)
         {
             _dbContext = dbContext;
         }

@@ -2,8 +2,10 @@
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json.Linq;
+using QA.Search.Common.Interfaces;
 using QA.Search.Generic.DAL.Services;
 using QA.Search.Generic.DAL.Services.Configuration;
+using QA.Search.Generic.Integration.Core.Helpers;
 using QA.Search.Generic.Integration.Core.Models;
 using QA.Search.Generic.Integration.Core.Models.DTO;
 using QA.Search.Generic.Integration.Core.Processors;
@@ -21,7 +23,7 @@ using System.Threading.Tasks;
 
 namespace QA.Search.Generic.Integration.QP.Services
 {
-    
+
 
     /// <summary>
     /// Сервис частичной индексации контентов БД. Обновляет (без пересоздания индекса) только те документы,
@@ -32,6 +34,7 @@ namespace QA.Search.Generic.Integration.QP.Services
         private readonly ElasticView<GenericDataContext>[] _views;
         private readonly ViewOptions _viewOptions;
         private readonly ContextConfiguration _contextConfiguration;
+        private readonly ScheduledServiceSynchronization _synchronization;
 
         public ScheduledServiceQPUpdate(
             IOptions<Settings<QpUpdateMarker>> settingsOptions,
@@ -41,8 +44,10 @@ namespace QA.Search.Generic.Integration.QP.Services
             DocumentMiddleware<QpUpdateMarker> documentMiddleware,
             IEnumerable<ElasticView<GenericDataContext>> views,
             IOptions<ViewOptions> viewOptions,
-            IOptions<ContextConfiguration> contextConfigurationOption)
-           : base(settingsOptions, context, logger, elasticClient, documentMiddleware, contextConfigurationOption)
+            IOptions<ContextConfiguration> contextConfigurationOption,
+            IElasticSettingsProvider elasticSettingsProvider,
+            ScheduledServiceSynchronization synchronization)
+           : base(settingsOptions, context, logger, elasticClient, documentMiddleware, elasticSettingsProvider, contextConfigurationOption)
         {
             _views = views.ToArray();
             _viewOptions = viewOptions.Value;
@@ -64,70 +69,91 @@ namespace QA.Search.Generic.Integration.QP.Services
 
                 _context.Reports.Add(new IndexingReport(_views[viewIndex].IndexName, batchSize));
             }
+            _synchronization = synchronization;
         }
 
         protected override async Task ExecuteStepAsync(CancellationToken stoppingToken)
         {
-            _context.Reports.ForEach(report => report.Clean());
-            _context.Message = "Обновление QP";
+            bool isSemaphoreAcquired = false;
 
-            // обновляем в Elastic только документы, корневая статья которых была изменена за прошедшие 2 дня
-            DateTime fromDate = DateTime.Today.AddDays(-1);
-
-            for (int i = 0; i < _views.Length; i++)
+            try
             {
-                _context.Reports[i].IdsLoaded = await _views[i].CountAsync(fromDate, stoppingToken);
-            }
+                isSemaphoreAcquired = await _synchronization.Semaphore.WaitAsync(_synchronization.SemaphoreAwaitTime, stoppingToken);
 
-            int totalCount = _context.Reports.Sum(report => report.IdsLoaded);
-            int handledCount = 0;
-
-            for (int i = 0; i < _views.Length; i++)
-            {
-                int fromId = 0;
-                JObject[] documents;
-                var view = _views[i];
-                var report = _context.Reports[i];
-                var loadWatch = new Stopwatch();
-                var processWatch = new Stopwatch();
-                var indexWatch = new Stopwatch();
-
-                _context.Message = $"Подготовка QP: {view.IndexName}";
-
-                await view.InitAsync(fromDate, stoppingToken);
-
-                _context.Message = $"Обновление QP: {view.IndexName}";
-
-                while (true)
+                if (!isSemaphoreAcquired)
                 {
-                    loadWatch.Start();
-                    LoadParameters loadParameters = new LoadParameters()
+                    _context.Message = _synchronization.SemaphoreBusyMessage;
+                    return;
+                }
+
+                _context.Reports.ForEach(report => report.Clean());
+                _context.Message = "Обновление QP";
+
+                // обновляем в Elastic только документы, корневая статья которых была изменена за прошедшие 2 дня
+                DateTime fromDate = DateTime.Today.AddDays(-1);
+
+                for (int i = 0; i < _views.Length; i++)
+                {
+                    _context.Reports[i].IdsLoaded = await _views[i].CountAsync(fromDate, stoppingToken);
+                }
+
+                int totalCount = _context.Reports.Sum(report => report.IdsLoaded);
+                int handledCount = 0;
+
+                for (int i = 0; i < _views.Length; i++)
+                {
+                    int fromId = 0;
+                    JObject[] documents;
+                    var view = _views[i];
+                    var report = _context.Reports[i];
+                    var loadWatch = new Stopwatch();
+                    var processWatch = new Stopwatch();
+                    var indexWatch = new Stopwatch();
+
+                    _context.Message = $"Подготовка QP: {view.IndexName}";
+
+                    await view.InitAsync(fromDate, stoppingToken);
+
+                    _context.Message = $"Обновление QP: {view.IndexName}";
+
+                    while (true)
                     {
-                        FromID = fromId,
-                        FromDate = fromDate,
-                        ViewParameters = _viewOptions.ViewParameters[view.ViewName]
-                    };
+                        loadWatch.Start();
+                        LoadParameters loadParameters = new LoadParameters()
+                        {
+                            FromID = fromId,
+                            FromDate = fromDate,
+                            ViewParameters = _viewOptions.ViewParameters[view.ViewName]
+                        };
 
-                    documents = await view.LoadAsync(loadParameters, stoppingToken);
-                    loadWatch.Stop();
+                        documents = await view.LoadAsync(loadParameters, stoppingToken);
+                        loadWatch.Stop();
 
-                    if (documents.Length == 0) break;
+                        if (documents.Length == 0) break;
 
-                    // получаем Id последней загруженной статьи,
-                    // чтобы начать следущую партию JSON-документов с него
-                    fromId = documents.Last().GetArticleId(_contextConfiguration);
-                    report.DocumentsLoadTime = loadWatch.Elapsed;
+                        // получаем Id последней загруженной статьи,
+                        // чтобы начать следующую партию JSON-документов с него
+                        fromId = documents.Last().GetArticleId(_contextConfiguration);
+                        report.DocumentsLoadTime = loadWatch.Elapsed;
 
-                    _logger.LogDebug($"Load documents QPUpdate elapsed: {loadWatch.Elapsed}");
+                        _logger.LogDebug($"Load documents QPUpdate elapsed: {loadWatch.Elapsed}");
 
-                    await UpdateDocuments(view, report, documents, processWatch, indexWatch, stoppingToken);
+                        await UpdateDocuments(view, report, documents, processWatch, indexWatch, stoppingToken);
 
-                    handledCount += documents.Length;
-                    _context.Progress = handledCount * 100 / totalCount;
+                        handledCount += documents.Length;
+                        _context.Progress = handledCount * 100 / totalCount;
+                    }
+                }
+
+                _context.Message = "Обновление QP завершено";
+            }
+            finally
+            {
+                if (isSemaphoreAcquired)
+                {
+                    _synchronization.Semaphore.Release();
                 }
             }
-
-            _context.Message = "Обновление QP завершено";
         }
 
         private async Task UpdateDocuments(
@@ -142,7 +168,7 @@ namespace QA.Search.Generic.Integration.QP.Services
 
             if (documents.Length == 0) return;
 
-            string alias = _settings.GetAliasName(view.IndexName);
+            string alias = GetAliasName(view.IndexName);
 
             var aliasExistsResponse = await _elastic.Indices.AliasExistsForAllAsync<StringResponse>(alias, ctx: stoppingToken);
 

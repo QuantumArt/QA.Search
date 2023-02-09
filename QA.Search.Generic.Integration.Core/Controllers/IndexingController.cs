@@ -9,7 +9,7 @@ namespace QA.Search.Generic.Integration.Core.Controllers
     /// Generic controller for manage single ScheduledService
     /// </summary>
     [ApiController]
-    public class IndexingController<TContext, TMarker> : ControllerBase        
+    public class IndexingController<TContext, TMarker> : ControllerBase
         where TContext : IndexingContext<TMarker>
         where TMarker : IServiceMarker
     {

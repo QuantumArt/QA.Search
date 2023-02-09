@@ -8,8 +8,8 @@ const fileName = `debug/spb.domain.ru_${new Date()
   .replace(/[:T]/g, "-")}.txt`;
 
 DeepCrawler.launch({
-  links: ["https://media.domain.ru"],
-  outgoingHosts: ["https://domain.ru"],
+  links: ["http://demositerus.dev.qsupport.ru"],
+  outgoingHosts: ["http://demositerus.dev.qsupport.ru"],
   concurrencyLevel: 2,
   blockedResources: ["stylesheet"],
   async handlePage(page) {

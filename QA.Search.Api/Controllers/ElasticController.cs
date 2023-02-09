@@ -5,7 +5,6 @@ using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using QA.Search.Api.Models;
-using QA.Search.Api.Services;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -27,18 +26,15 @@ namespace QA.Search.Api.Controllers
         protected readonly Settings _settings;
         protected readonly ILogger _logger;
         protected readonly IElasticLowLevelClient _elastic;
-        protected readonly IndexTranspiler _indexTranspiler;
 
         protected ElasticController(
             IOptions<Settings> options,
             ILogger logger,
-            IElasticLowLevelClient elastic,
-            IndexTranspiler indexTranspiler)
+            IElasticLowLevelClient elastic)
         {
             _settings = options.Value;
             _logger = logger;
             _elastic = elastic;
-            _indexTranspiler = indexTranspiler;
         }
 
         protected ObjectResult ElasticError(StringResponse response)
@@ -132,23 +128,20 @@ namespace QA.Search.Api.Controllers
         /// </summary>
         protected string SerializeElasticRequest(string indexName, JObject elasticRequest)
         {
-            using (var sw = new StringWriter())
-            using (var jw = new JsonTextWriter(sw))
-            {
-                jw.WriteStartObject();
-                jw.WritePropertyName("index");
-                jw.WriteValue(indexName);
-                jw.WritePropertyName("type");
-                jw.WriteValue("_doc");
-                jw.WriteEndObject();
+            using var sw = new StringWriter();
+            using var jw = new JsonTextWriter(sw);
 
-                sw.Write('\n');
+            jw.WriteStartObject();
+            jw.WritePropertyName("index");
+            jw.WriteValue(indexName);
+            jw.WriteEndObject();
 
-                elasticRequest.WriteTo(jw);
-                // we shoudn't write '\n' to the end of string
-                // because PostData.MultiJson() already do this
-                return sw.ToString();
-            }
+            sw.Write('\n');
+
+            elasticRequest.WriteTo(jw);
+            // we shoudn't write '\n' to the end of string
+            // because PostData.MultiJson() already do this
+            return sw.ToString();
         }
 
         /// <summary>

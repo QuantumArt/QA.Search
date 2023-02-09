@@ -85,7 +85,10 @@ const InviteUserDialog = ({ isOpen, onClose, onSuccess }: Props) => {
               large={true}
               options={[
                 { label: "Выберите роль", value: "" },
-                ...Object.keys(UserRole).map(key => {
+                ...Object.keys(UserRole)
+                  .filter(key => isNaN(Number(key)))
+                  .filter(key => typeof UserRole[key] === "number" || typeof UserRole[key] === "string")
+                  .map(key => {
                   return {
                     label: key,
                     value: UserRole[key]

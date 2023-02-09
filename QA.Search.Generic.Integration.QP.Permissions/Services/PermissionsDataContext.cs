@@ -8,9 +8,9 @@ namespace QA.Search.Generic.Integration.QP.Permissions.Services
 {
     public class PermissionsDataContext : GenericDataContext
     {
-        public DbSet<UserRole> Roles { get; set; }
-        public DbSet<ContentToContent> ContentMapping { get; set; }
-        public DbSet<ItemToItem> ItemMapping { get; set; }
+        public DbSet<UserRole> Roles { get; set; } = null!;
+        public DbSet<ContentToContent> ContentMapping { get; set; } = null!;
+        public DbSet<ItemToItem> ItemMapping { get; set; } = null!;
 
         public PermissionsDataContext(ServiceDataContext serviceDataContext, IOptions<ContextConfiguration> contextConfigurationOption)
             : base(serviceDataContext, contextConfigurationOption) { }

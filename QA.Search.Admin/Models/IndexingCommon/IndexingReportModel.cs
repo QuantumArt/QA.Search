@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using QA.Search.Generic.Integration.Core.Models;
+﻿using QA.Search.Generic.Integration.Core.Models;
+using System;
 
 namespace QA.Search.Admin.Models.IndexingCommon
 {

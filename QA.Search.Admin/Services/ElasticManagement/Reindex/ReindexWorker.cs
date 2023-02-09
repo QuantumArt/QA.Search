@@ -1,14 +1,11 @@
-﻿using QA.Search.Admin.Services.ElasticManagement.Reindex.Interfaces;
+﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using QA.Search.Admin.Services.ElasticManagement.Reindex.Interfaces;
 using QA.Search.Admin.Services.ElasticManagement.Reindex.TasksManagement;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Threading;
-using QA.Search.Data.Models;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Options;
+using System.Threading.Tasks;
 
 namespace QA.Search.Admin.Services.ElasticManagement.Reindex
 {
@@ -30,7 +27,7 @@ namespace QA.Search.Admin.Services.ElasticManagement.Reindex
 
         private ReindexState CurrentState { get; }
 
-        public ReindexWorker(Func<ReindexWorkerIterationProcessor>  iterationProcessorFactory,
+        public ReindexWorker(Func<ReindexWorkerIterationProcessor> iterationProcessorFactory,
             ReindexTaskManager reindexTaskManager, ILogger logger, IOptions<ReindexWorkerSettings> options,
             ElasticConnector elasticConnector)
         {
@@ -62,7 +59,7 @@ namespace QA.Search.Admin.Services.ElasticManagement.Reindex
 
             var targetStateContainer = CurrentState
                 .GetAllContainers()
-                .Where(c=>c.HasSourceIndex(sourceFullIndexName) || c.WrongIndexesContains(sourceFullIndexName))
+                .Where(c => c.HasSourceIndex(sourceFullIndexName) || c.WrongIndexesContains(sourceFullIndexName))
                 .FirstOrDefault();
 
             if (targetStateContainer == null)
@@ -81,7 +78,7 @@ namespace QA.Search.Admin.Services.ElasticManagement.Reindex
 
             var sourceIndex = targetStateContainer.SourceIndex;
 
-            var creationDate = DateTime.Now;
+            var creationDate = DateTime.UtcNow;
             IElasticIndex destinationIndex = ElasticConnector.CreateDestinationIndexLocally(sourceIndex, creationDate);
             var res = ReindexTaskManager.CreateReindexTask(sourceIndex, destinationIndex, creationDate, out IReindexTask newTask);
             if (res != ReindexTaskOperationStatus.Ok)
@@ -90,7 +87,7 @@ namespace QA.Search.Admin.Services.ElasticManagement.Reindex
             }
             // Созданная задача должна попасть в State, чтобы была возможность отобразить ее
             // Иными словами: запихнуть вновь созданную задачу в существующий контейнер
-            CurrentState.UpdateContainer( 
+            CurrentState.UpdateContainer(
                 targetStateContainer,
                 sourceIndex,
                 destinationIndex,
@@ -116,7 +113,7 @@ namespace QA.Search.Admin.Services.ElasticManagement.Reindex
             if (!CurrentState.Loaded || CurrentState.CommonError)
             {
                 throw new InvalidOperationException();
-                
+
             }
 
             IElasticIndex newIndex = await ElasticConnector.CreateNewIndex(indexName);

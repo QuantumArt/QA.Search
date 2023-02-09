@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using QA.Search.Generic.Integration.Core.Extensions;
 using QA.Search.Generic.Integration.Core.Models;
 using QA.Search.Generic.Integration.QP.Permissions.Configuration;
+using QA.Search.Generic.Integration.QP.Permissions.Interfaces;
 using QA.Search.Generic.Integration.QP.Permissions.Markers;
 using QA.Search.Generic.Integration.QP.Permissions.Models;
 using QA.Search.Generic.Integration.QP.Permissions.Services;
@@ -17,6 +18,7 @@ namespace QA.Search.Generic.Integration.QP.Permissions.Extensions
             services.Configure<PermissionsConfiguration>(config.GetSection(nameof(PermissionsConfiguration)));
             services.AddDbContext<PermissionsDataContext>(ServiceLifetime.Transient);
             services.AddSingleton<PermissionsLoader>();
+            services.AddSingleton<IPermissionService, PermissionService>();
             services.AddScheduledService<ScheduledServiceQPPermissions, Settings<QpPermissionsMarker>, IndexingQpPermissionsContext, QpPermissionsMarker>();
         }
     }

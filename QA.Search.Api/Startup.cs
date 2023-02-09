@@ -2,8 +2,6 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.AspNetCore.Hosting.Server.Features;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -47,18 +45,12 @@ namespace QA.Search.Api
             services
                 .AddMvc()
                 .AddNewtonsoftJson()
-                .AddMetrics()
                 .AddJsonOptions(options =>
                 {
                     options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
                     options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
                 });
 
-            // In production, the React files will be served from this directory
-            services.AddSpaStaticFiles(configuration =>
-            {
-                configuration.RootPath = "ClientApp/build";
-            });
 
             // Register the Swagger services
             services.AddSwaggerDocument(config =>
@@ -70,9 +62,8 @@ namespace QA.Search.Api
                 };
             });
 
-            services.AddElasticSearch(settings.ElasticSearchUrl);
+            services.AddElasticSearch();
 
-            services.AddTransient<IndexTranspiler>();
             services.AddTransient<FilterTranspiler>();
             services.AddTransient<QueryTranspiler>();
             services.AddTransient<SnippetsTranspiler>();
@@ -90,6 +81,8 @@ namespace QA.Search.Api
             services.AddTransient<CompletionMapper>();
             services.AddTransient<ContextualFieldsMapper>();
             services.AddTransient<CompletionService>();
+
+            services.AddElasticConfiguration(Configuration);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -118,23 +111,12 @@ namespace QA.Search.Api
             app.UseReDoc(options => options.Path = "/redoc");
 
             app.UseStaticFiles();
-            app.UseSpaStaticFiles();
 
             app.UseRouting();
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
-            });
-
-            app.UseSpa(spa =>
-            {
-                spa.Options.SourcePath = "ClientApp";
-
-                if (env.IsDevelopment())
-                {
-                    spa.UseReactDevelopmentServer(npmScript: "start");
-                }
             });
 
             var addresses = server.Features?.Get<IServerAddressesFeature>()?.Addresses;

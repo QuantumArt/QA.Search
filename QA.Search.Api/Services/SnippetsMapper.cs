@@ -17,7 +17,7 @@ namespace QA.Search.Api.Services
         /// найденных с использованием префиксов
         /// </summary>
         public Dictionary<string, string[]> MapSuggestSnippets(JToken highlight) => MapSnippets(highlight, "prefixes");
-        
+
         /// <example>
         /// {
         ///   "Title": ["В <b>Москве</b> открыли"],

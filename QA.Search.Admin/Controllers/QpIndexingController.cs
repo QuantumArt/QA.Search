@@ -1,15 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using QA.Search.Admin.Errors;
-using QA.Search.Admin.Models;
+﻿using Microsoft.AspNetCore.Mvc;
 using QA.Search.Admin.Models.QpIndexingPage;
-using QA.Search.Admin.Services;
 using QA.Search.Admin.Services.IndexingApi;
+using System.Threading.Tasks;
 
 namespace QA.Search.Admin.Controllers
 {
@@ -17,6 +9,7 @@ namespace QA.Search.Admin.Controllers
     [Route("api/[controller]")]
     [Consumes("application/json")]
     [Produces("application/json")]
+    [IgnoreAntiforgeryToken]
     public class QpIndexingController : Controller
     {
         private QpIndexingApiService IndexingApiService { get; }

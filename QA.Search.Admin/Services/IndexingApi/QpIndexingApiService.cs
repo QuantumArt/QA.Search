@@ -1,10 +1,10 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using System.Net.Http;
+﻿using Microsoft.Extensions.Logging;
 using QA.Search.Admin.Errors;
-using Microsoft.Extensions.Logging;
 using QA.Search.Admin.Models.QpIndexingPage;
 using QA.Search.Generic.Integration.QP.Models;
+using System.Collections.Generic;
+using System.Net.Http;
+using System.Threading.Tasks;
 
 namespace QA.Search.Admin.Services.IndexingApi
 {
@@ -25,9 +25,7 @@ namespace QA.Search.Admin.Services.IndexingApi
             ApiPaths = new Dictionary<TargetQP, string>
             {
                 { TargetQP.IndexingQP, "qp/indexing"},
-                { TargetQP.IndexingQPUpdate, "qp/indexing/update"},
-                { TargetQP.IndexingMedia, "media/indexing"},
-                { TargetQP.IndexingMediaUpdate, "media/indexing/update"}
+                { TargetQP.IndexingQPUpdate, "qp/indexing/update"}
             };
         }
 
@@ -53,6 +51,7 @@ namespace QA.Search.Admin.Services.IndexingApi
             var apiResult = await ExecuteRequest(request);
             if (!apiResult.IsSucceeded || !apiResult.RequestCompleted)
             {
+                Logger.LogError("Service start error {@APIRequestError}", apiResult.Error);
                 throw new BusinessError(IntergationErrorMessage);
             }
         }
@@ -65,6 +64,7 @@ namespace QA.Search.Admin.Services.IndexingApi
             var apiResult = await ExecuteRequest(request);
             if (!apiResult.IsSucceeded || !apiResult.RequestCompleted)
             {
+                Logger.LogError("Service stop error {@APIRequestError}", apiResult.Error);
                 throw new BusinessError(IntergationErrorMessage);
             }
         }

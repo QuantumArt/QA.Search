@@ -4,7 +4,7 @@ import { asc } from "../../utils/array";
 import { ElasticManagementPageController, IndexesCardViewModel } from "../../backend.generated";
 import { ElasticManagementPageModel, PageState } from "./ElasticManagementPageModel";
 
-function createContext() {
+function CreateContext() {
   const defaultState: ElasticManagementPageModel = {
     pageState: PageState.None,
     data: null,
@@ -232,4 +232,4 @@ export function getCardDisplayName(card: IndexesCardViewModel) {
   );
 }
 
-export default createContainer(createContext);
+export default createContainer(CreateContext);

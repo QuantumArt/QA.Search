@@ -1,8 +1,4 @@
 ﻿using QA.Search.Api.Models.ElasticSearch.RequestSections;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace QA.Search.Api.Builders
 {
@@ -35,7 +31,7 @@ namespace QA.Search.Api.Builders
         public AggsSection Build()
         {
             var result = new AggsSection();
-            if(!string.IsNullOrEmpty(aggrName))
+            if (!string.IsNullOrEmpty(aggrName))
             {
                 var aggrValue = new AggsSectionValue
                 {

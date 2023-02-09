@@ -1,10 +1,10 @@
 ﻿using Microsoft.Extensions.Options;
 using Newtonsoft.Json.Linq;
 using QA.Search.Admin.Services.ElasticManagement.Reindex.Interfaces;
+using QA.Search.Common.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 
 namespace QA.Search.Admin.Services.ElasticManagement.IndexesInfoParsing
@@ -25,21 +25,21 @@ namespace QA.Search.Admin.Services.ElasticManagement.IndexesInfoParsing
             public bool Readonly { get; set; }
         }
 
-        string IndexPrefix { get; } 
-        string AliasPrefix { get; } 
-        string IndexParseRegexTemplate { get; } 
+        string IndexPrefix { get; }
+        string AliasPrefix { get; }
+        string IndexParseRegexTemplate { get; }
         string DateTimeParsingFormat { get; }
         string[] ReadonlyPrefixes { get; }
 
         Regex IndexNameParseRegex { get; }
 
-        public IndexesInfoParser(IOptions<IndexesInfoParserSettings> indexesInfoParserSettings, IOptions<Settings> commonSettings)
+        public IndexesInfoParser(IElasticSettingsProvider elasticSettingsProvider, IOptions<IndexesInfoParserSettings> indexesInfoParserSettings, IOptions<Settings> commonSettings)
         {
             IndexParseRegexTemplate = indexesInfoParserSettings.Value.IndexParseRegexTemplate;
             DateTimeParsingFormat = indexesInfoParserSettings.Value.DateTimeParsingFormat;
-            IndexPrefix = commonSettings.Value.IndexPrefix;
-            AliasPrefix = commonSettings.Value.AliasPrefix;
-            ReadonlyPrefixes = commonSettings.Value.ReadonlyPrefixes ?? new string[0];
+            IndexPrefix = elasticSettingsProvider.GetIndexPrefix();
+            AliasPrefix = elasticSettingsProvider.GetAliasPrefix();
+            ReadonlyPrefixes = commonSettings.Value.ReadonlyPrefixes ?? Array.Empty<string>();
             IndexNameParseRegex = CreateIndexNameParseRegex();
         }
 
@@ -96,7 +96,7 @@ namespace QA.Search.Admin.Services.ElasticManagement.IndexesInfoParsing
         {
             if (aliasFullName.StartsWith(AliasPrefix))
             {
-                aliasFullName = aliasFullName.Substring(AliasPrefix.Length);
+                aliasFullName = aliasFullName[AliasPrefix.Length..];
             }
             return aliasFullName;
         }
@@ -116,6 +116,7 @@ namespace QA.Search.Admin.Services.ElasticManagement.IndexesInfoParsing
         internal IndexInfo CreateNewIndexInfo(string indexName)
         {
             var creationDateTime = DateTime.Now;
+            indexName = indexName.ToLower();
             return new IndexInfo
             {
                 UIName = indexName,

@@ -1,11 +1,5 @@
-﻿using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Logging;
 using QA.Integration.JsonApiServices.Core;
-using System;
-using System.Linq;
-using System.Diagnostics;
-using QA.Integration.JsonApiServices.Core.RequestParams;
-using System.Text;
-using Microsoft.Extensions.Logging;
 
 namespace QA.Search.Admin.Services.IndexingApi
 {
@@ -19,7 +13,7 @@ namespace QA.Search.Admin.Services.IndexingApi
 
         protected ILogger Logger { get; }
 
-        public IndexingApiServiceBase(IndexingApiServiceConfigurationSource configurationSource, 
+        public IndexingApiServiceBase(IndexingApiServiceConfigurationSource configurationSource,
             ILogger<IndexingApiServiceBase> logger)
             : base(configurationSource)
         {

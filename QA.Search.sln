@@ -28,6 +28,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "pipelines", "pipelines", "{
 		yaml\pipelines\docker-image-builder-pipeline.yaml = yaml\pipelines\docker-image-builder-pipeline.yaml
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QA.Search.Integration.Demosite", "QA.Search.Integration.Demosite\QA.Search.Integration.Demosite.csproj", "{0C72A4B2-94FF-486A-8D47-264AD36C2FC1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -70,6 +72,10 @@ Global
 		{5196C2F8-DA4C-4F7F-9D26-4587F635D745}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5196C2F8-DA4C-4F7F-9D26-4587F635D745}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5196C2F8-DA4C-4F7F-9D26-4587F635D745}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0C72A4B2-94FF-486A-8D47-264AD36C2FC1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0C72A4B2-94FF-486A-8D47-264AD36C2FC1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0C72A4B2-94FF-486A-8D47-264AD36C2FC1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0C72A4B2-94FF-486A-8D47-264AD36C2FC1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

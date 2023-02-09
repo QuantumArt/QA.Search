@@ -9,6 +9,7 @@ using NJsonSchema;
 using QA.Search.Api.Infrastructure;
 using QA.Search.Api.Models;
 using QA.Search.Api.Services;
+using QA.Search.Common.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -30,24 +31,26 @@ namespace QA.Search.Api.Controllers
         private readonly CorrectionTranspiler _correctionTranspiler;
         private readonly CorrectionMapper _correctionMapper;
         private readonly IndexMapper _indexMapper;
+        private readonly IElasticSettingsProvider _elasticSettingsProvider;
 
         public MultiSearchController(
             IOptions<Settings> options,
             ILogger<MultiSearchController> logger,
             IElasticLowLevelClient elastic,
-            IndexTranspiler indexTranspiler,
             SearchTranspiler searchTranspiler,
             SearchMapper searchMapper,
             CorrectionTranspiler correctionTranspiler,
             CorrectionMapper correctionMapper,
-            IndexMapper indexMapper)
-            : base(options, logger, elastic, indexTranspiler)
+            IndexMapper indexMapper,
+            IElasticSettingsProvider elasticSettingsProvider)
+            : base(options, logger, elastic)
         {
             _searchTranspiler = searchTranspiler;
             _searchMapper = searchMapper;
             _correctionTranspiler = correctionTranspiler;
             _correctionMapper = correctionMapper;
             _indexMapper = indexMapper;
+            _elasticSettingsProvider = elasticSettingsProvider;
         }
 
         /// <summary>
@@ -231,7 +234,7 @@ namespace QA.Search.Api.Controllers
         /// </remarks>
         private async Task<string[]> GetIndexNames(SearchRequest searchRequest)
         {
-            string indexesWildcard = _indexTranspiler.IndexesWildcard(searchRequest.From);
+            string indexesWildcard = _elasticSettingsProvider.GetIndexesWildcard(searchRequest.From);
 
             string[] indexNames = indexesWildcard.Split(',');
 
@@ -302,7 +305,7 @@ namespace QA.Search.Api.Controllers
 
         private string TranspileSearchRequest(SearchRequest searchRequest)
         {
-            string indexesWildcard = _indexTranspiler.IndexesWildcard(searchRequest.From);
+            string indexesWildcard = _elasticSettingsProvider.GetIndexesWildcard(searchRequest.From);
 
             JObject elasticRequest = _searchTranspiler.Transpile(searchRequest);
 

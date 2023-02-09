@@ -10,7 +10,7 @@ using QA.Search.Api.BLL;
 using QA.Search.Api.Infrastructure;
 using QA.Search.Api.Models;
 using QA.Search.Api.Services;
-using System.Net;
+using QA.Search.Common.Interfaces;
 using System.Threading.Tasks;
 
 namespace QA.Search.Api.Controllers
@@ -27,24 +27,26 @@ namespace QA.Search.Api.Controllers
         private readonly IndexMapper _indexMapper;
         private readonly CompletionService _elasticSearchService;
         private readonly SuggestMapper _suggestMapper;
+        private readonly IElasticSettingsProvider _elasticSettingsProvider;
 
         public CompletionController(
             IOptions<Settings> options,
             ILogger<CompletionController> logger,
             IElasticLowLevelClient elastic,
-            IndexTranspiler indexTranspiler,
             CompletionTranspiler completionTranspiler,
             CompletionMapper completionMapper,
             IndexMapper indexMapper,
             CompletionService elasticSearchService,
-            SuggestMapper suggestsMapper)
-            : base(options, logger, elastic, indexTranspiler)
+            SuggestMapper suggestsMapper,
+            IElasticSettingsProvider elasticSettingsProvider)
+            : base(options, logger, elastic)
         {
             _completionTranspiler = completionTranspiler;
             _completionMapper = completionMapper;
             _indexMapper = indexMapper;
             _elasticSearchService = elasticSearchService;
             _suggestMapper = suggestsMapper;
+            _elasticSettingsProvider = elasticSettingsProvider;
         }
 
         /// <summary>
@@ -73,6 +75,7 @@ namespace QA.Search.Api.Controllers
             _logger.LogInformation("@{@ApiRequest}", query.ToString(Formatting.None));
 
             CompletionRequest completionRequest = CompletionRequest.FromJson(query);
+            await completionRequest.SetPresetsAsync();
 
             if (_settings.UsePermissions)
             {
@@ -88,12 +91,12 @@ namespace QA.Search.Api.Controllers
 
             // для /{index}/_analyze нужен какой-то валидный индекс Elastic,
             // в котором зарегистрирован "analyzer_regex"
-            string analyzeIndexName = _indexTranspiler.IndexNameForAnalyze(completionRequest.From);
+            string analyzeIndexName = _elasticSettingsProvider.GetIndexNameForAnalyze(completionRequest.From);
 
             if (analyzeIndexName == null)
             {
                 var aliasesResponse = await _elastic.Cat.AliasesAsync<StringResponse>(
-                    _settings.AliasMask, new CatAliasesRequestParameters
+                    _elasticSettingsProvider.GetAliasMask(), new CatAliasesRequestParameters
                     {
                         Headers = new[] { "alias" },
                         Format = "json",
@@ -123,7 +126,7 @@ namespace QA.Search.Api.Controllers
 
             completionRequest.SetTokens(tokens);
 
-            string indexesWildcard = _indexTranspiler.IndexesWildcard(completionRequest.From);
+            string indexesWildcard = _elasticSettingsProvider.GetIndexesWildcard(completionRequest.From);
 
             string elasticRequest = _completionTranspiler
                 .TranspileCompletion(completionRequest)

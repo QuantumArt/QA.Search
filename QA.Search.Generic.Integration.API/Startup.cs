@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using QA.Search.Common.Extensions;
 using QA.Search.Generic.DAL.Services;
 using QA.Search.Generic.DAL.Services.Configuration;
 using QA.Search.Generic.Integration.Core.Extensions;
@@ -19,7 +20,7 @@ using QA.Search.Generic.Integration.QP.Permissions.Extensions;
 using QA.Search.Generic.Integration.QP.Services;
 using System.Text.Json.Serialization;
 
-namespace QA.Search.Generic.Integration.DPC
+namespace QA.Search.Generic.Integration.API
 {
     public class Startup
     {
@@ -35,6 +36,7 @@ namespace QA.Search.Generic.Integration.DPC
         {
             services.Configure<CommonSettings>(Configuration.GetSection(nameof(CommonSettings)));
             services.Configure<Settings<QpMarker>>(Configuration.GetSection("Settings.QP"));
+            services.Configure<Settings<QpUpdateMarker>>(Configuration.GetSection("Settings.QP.Update"));
             services.Configure<ViewOptions>(Configuration.GetSection(nameof(ViewOptions)));
             services.Configure<ContextConfiguration>(Configuration.GetSection(nameof(ContextConfiguration)));
             services.Configure<GenericIndexSettings>(Configuration.GetSection(nameof(GenericIndexSettings)));
@@ -48,7 +50,9 @@ namespace QA.Search.Generic.Integration.DPC
             services.AddDocumentProcessor<HtmlStripProcessor<QpMarker>, QpMarker>();
             services.AddDocumentProcessor<HtmlStripProcessor<QpUpdateMarker>, QpUpdateMarker>();
 
-            services.AddElasticSearch(Configuration);
+            services.AddElasticConfiguration(Configuration);
+
+            services.AddElasticSearch();
             services.AddMvc()
             .AddJsonOptions(options =>
             {
@@ -61,8 +65,8 @@ namespace QA.Search.Generic.Integration.DPC
                 c.SwaggerDoc("v1", new OpenApiInfo
                 {
                     Version = "v1",
-                    Title = "Search.Integration.DPC",
-                    Description = "Index DPC products"
+                    Title = "Search.Integration.API",
+                    Description = "Index QP products"
                 });
             });
 
@@ -105,7 +109,7 @@ namespace QA.Search.Generic.Integration.DPC
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("../swagger/v1/swagger.json", "Search.Integration.DPC");
+                c.SwaggerEndpoint("../swagger/v1/swagger.json", "Search.Integration.API");
             });
 
             app.UseRouting();

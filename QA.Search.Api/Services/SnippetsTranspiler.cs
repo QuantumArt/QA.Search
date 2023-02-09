@@ -16,7 +16,7 @@ namespace QA.Search.Api.Services
         /// по общему полю "_prefixes" или по указанным полям "*.prefixes"
         /// </summary>
         public JObject BuildSuggestSnippets(SnippetsExpression snippets) => BuildSnippets(snippets, "prefixes");
-        
+
         private JObject BuildSnippets(SnippetsExpression snippets, string fieldSuffix)
         {
             var highlight = new JObject

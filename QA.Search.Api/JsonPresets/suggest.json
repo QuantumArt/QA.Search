@@ -1,11 +1,9 @@
 {
   "$limit": 20,
   "$select": [
-    "MarketingProduct.Title",
-    "Title",
-    "Name",
-    "TitleForSite",
-    "ForSite",
-    "Question"
+    "category",
+    "title",
+    "description",
+    "SearchUrl"
   ]
 }

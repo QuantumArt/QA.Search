@@ -1,5 +1,4 @@
-﻿using App.Metrics.AspNetCore;
-using Microsoft.AspNetCore;
+﻿using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -16,7 +15,6 @@ namespace QA.Search.Api
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
-                .UseMetrics()
                 .UseStartup<Startup>()
                 .SuppressStatusMessages(true)
                 .ConfigureLogging((hostingContext, logging) =>

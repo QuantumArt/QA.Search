@@ -5,7 +5,7 @@ using QA.Search.Generic.Integration.Core.Services;
 using QA.Search.Generic.Integration.QP.Markers;
 using QA.Search.Generic.Integration.QP.Models;
 
-namespace QA.Search.Generic.Integration.DPC.Controllers
+namespace QA.Search.Generic.Integration.API.Controllers
 {
     [Route("api/qp/indexing")]
     public class IndexingQPController : IndexingController<IndexingQpContext, QpMarker>

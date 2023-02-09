@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <BaseOutputPath>..\QA.Search.Generic.Integration.API\bin\</BaseOutputPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\QA.Search.Generic.DAL\QA.Search.Generic.DAL.csproj" />
+    <ProjectReference Include="..\QA.Search.Generic.Integration.QP.Permissions\QA.Search.Generic.Integration.QP.Permissions.csproj" />
+    <ProjectReference Include="..\QA.Search.Generic.Integration.QP\QA.Search.Generic.Integration.QP.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="demosite.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>

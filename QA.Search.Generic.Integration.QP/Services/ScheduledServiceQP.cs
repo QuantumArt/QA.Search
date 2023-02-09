@@ -2,8 +2,10 @@
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json.Linq;
+using QA.Search.Common.Interfaces;
 using QA.Search.Generic.DAL.Services;
 using QA.Search.Generic.DAL.Services.Configuration;
+using QA.Search.Generic.Integration.Core.Helpers;
 using QA.Search.Generic.Integration.Core.Models;
 using QA.Search.Generic.Integration.Core.Models.DTO;
 using QA.Search.Generic.Integration.Core.Processors;
@@ -29,6 +31,7 @@ namespace QA.Search.Generic.Integration.QP.Services
         private readonly ElasticView<GenericDataContext>[] _views;
         private readonly ViewOptions _viewOptions;
         private readonly ContextConfiguration _contextConfiguration;
+        private readonly ScheduledServiceSynchronization _synchronization;
 
         public ScheduledServiceQP(
             IOptions<Settings<QpMarker>> settingsOptions,
@@ -38,8 +41,10 @@ namespace QA.Search.Generic.Integration.QP.Services
             DocumentMiddleware<QpMarker> documentMiddleware,
             IEnumerable<ElasticView<GenericDataContext>> views,
             IOptions<ViewOptions> viewOptions,
-            IOptions<ContextConfiguration> contextConfigurationOption)
-           : base(settingsOptions, context, logger, elasticClient, documentMiddleware, contextConfigurationOption)
+            IOptions<ContextConfiguration> contextConfigurationOption,
+            IElasticSettingsProvider elasticSettingsProvider,
+            ScheduledServiceSynchronization synchronization)
+           : base(settingsOptions, context, logger, elasticClient, documentMiddleware, elasticSettingsProvider, contextConfigurationOption)
         {
             _views = views.ToArray();
             _viewOptions = viewOptions.Value;
@@ -61,70 +66,80 @@ namespace QA.Search.Generic.Integration.QP.Services
 
                 _context.Reports.Add(new IndexingReport(_views[viewIndex].IndexName, batchSize));
             }
+            _synchronization = synchronization;
         }
 
         protected override async Task ExecuteStepAsync(CancellationToken stoppingToken)
         {
-            _context.Reports.ForEach(report => report.Clean());
-            _context.Message = "Индексация QP";
-            
-            for (int i = 0; i < _views.Length; i++)
+            try
             {
-                _context.Reports[i].IdsLoaded = await _views[i].CountAsync(SqlDateTime.MinValue.Value, stoppingToken);
-            }
+                await _synchronization.Semaphore.WaitAsync(stoppingToken);
 
-            int totalCount = _context.Reports.Sum(report => report.IdsLoaded);
-            int handledCount = 0;
+                _context.Reports.ForEach(report => report.Clean());
+                _context.Message = "Индексация QP";
 
-            for (int i = 0; i < _views.Length; i++)
-            {
-                int fromId = 0;
-                JObject[] documents;
-                var view = _views[i];
-                var report = _context.Reports[i];
-                var loadWatch = new Stopwatch();
-                var processWatch = new Stopwatch();
-                var indexWatch = new Stopwatch();
-
-                _context.Message = $"Подготовка QP: {view.IndexName}";
-
-                await view.InitAsync(SqlDateTime.MinValue.Value, stoppingToken);
-
-                _context.Message = $"Индексация QP: {view.IndexName}";
-
-                while (true)
+                for (int i = 0; i < _views.Length; i++)
                 {
-                    loadWatch.Start();
-                    LoadParameters loadParameters = new LoadParameters()
-                    {
-                        FromID = fromId,
-                        FromDate = SqlDateTime.MinValue.Value,
-                        ViewParameters = _viewOptions.ViewParameters[view.ViewName]
-                    };
-
-                    documents = await view.LoadAsync(loadParameters, stoppingToken);
-                    loadWatch.Stop();
-
-                    if (documents.Length == 0) break;
-
-                    // получаем Id последней загруженной статьи,
-                    // чтобы начать следущую партию JSON-документов с него
-                    fromId = documents.Last().GetArticleId(_contextConfiguration);
-                    report.DocumentsLoadTime = loadWatch.Elapsed;
-
-                    _logger.LogDebug($"Load documents QP elapsed: {loadWatch.Elapsed}");
-
-                    await IndexDocuments(view, report, documents, processWatch, indexWatch, stoppingToken);
-
-                    handledCount += documents.Length;
-                    _context.Progress = handledCount * 100 / totalCount;
+                    _context.Reports[i].IdsLoaded = await _views[i].CountAsync(SqlDateTime.MinValue.Value, stoppingToken);
                 }
+
+                int totalCount = _context.Reports.Sum(report => report.IdsLoaded);
+                int handledCount = 0;
+
+                for (int i = 0; i < _views.Length; i++)
+                {
+                    int fromId = 0;
+                    JObject[] documents;
+                    var view = _views[i];
+                    var report = _context.Reports[i];
+                    var loadWatch = new Stopwatch();
+                    var processWatch = new Stopwatch();
+                    var indexWatch = new Stopwatch();
+
+                    _context.Message = $"Подготовка QP: {view.IndexName}";
+
+                    await view.InitAsync(SqlDateTime.MinValue.Value, stoppingToken);
+
+                    _context.Message = $"Индексация QP: {view.IndexName}";
+
+                    while (true)
+                    {
+                        loadWatch.Start();
+                        LoadParameters loadParameters = new LoadParameters()
+                        {
+                            FromID = fromId,
+                            FromDate = SqlDateTime.MinValue.Value,
+                            ViewParameters = _viewOptions.ViewParameters[view.ViewName]
+                        };
+
+                        documents = await view.LoadAsync(loadParameters, stoppingToken);
+                        loadWatch.Stop();
+
+                        if (documents.Length == 0) break;
+
+                        // получаем Id последней загруженной статьи,
+                        // чтобы начать следующую партию JSON-документов с него
+                        fromId = documents.Last().GetArticleId(_contextConfiguration);
+                        report.DocumentsLoadTime = loadWatch.Elapsed;
+
+                        _logger.LogDebug($"Load documents QP elapsed: {loadWatch.Elapsed}");
+
+                        await IndexDocuments(view, report, documents, processWatch, indexWatch, stoppingToken);
+
+                        handledCount += documents.Length;
+                        _context.Progress = handledCount * 100 / totalCount;
+                    }
+                }
+
+                _context.Message = "Переключение на новую версию индексов";
+                await UpdateAliases();
+
+                _context.Message = "Индексация QP завершена";
             }
-
-            _context.Message = "Переключение на новую версию индексов";
-            await UpdateAliases();
-
-            _context.Message = "Индексация QP завершена";
+            finally
+            {
+                _synchronization.Semaphore.Release();
+            }
         }
 
         private async Task IndexDocuments(
@@ -139,7 +154,7 @@ namespace QA.Search.Generic.Integration.QP.Services
 
             if (documents.Length == 0) return;
 
-            string index = _settings.GetIndexName(view.IndexName, _context);
+            string index = GetIndexName(view.IndexName, _context);
 
             processWatch.Start();
             PostData body = PostData.MultiJson(await SerializeDocuments(documents, stoppingToken));

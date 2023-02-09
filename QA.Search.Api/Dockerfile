@@ -1,19 +1,5 @@
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build-env
 
-RUN apt-get install -y \
-    && curl -sL https://deb.nodesource.com/setup_12.x | bash \
-    && apt-get install -y nodejs
-
-WORKDIR /src
-COPY QA.Search.Api/ClientApp/package.json QA.Search.Api/ClientApp/package-lock.json QA.Search.Api/ClientApp/
-WORKDIR QA.Search.Api/ClientApp/
-RUN npm ci
-
-WORKDIR /src
-COPY QA.Search.Api/ClientApp QA.Search.Api/ClientApp/
-WORKDIR QA.Search.Api/ClientApp/
-RUN npm run build
-
 WORKDIR /src
 COPY nuget.config ./
 COPY QA.Search.Api/QA.Search.Api.csproj                 QA.Search.Api/

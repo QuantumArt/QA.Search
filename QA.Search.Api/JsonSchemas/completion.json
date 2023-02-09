@@ -1,0 +1,145 @@
+﻿{
+  "$schema": "http://json-schema.org/draft-06/schema",
+  "type": "object",
+  "properties": {
+    "$from": { "$ref": "#/definitions/indexes" },
+    "$query": { "type": "string" },
+    "$weights": { "$ref": "#/definitions/weights" },
+    "$where": { "$ref": "#/definitions/where" },
+    "$limit": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 10
+    },
+    "$roles": { "type": "array" }
+  },
+  "required": ["$from", "$query"],
+  "additionalProperties": false,
+  "definitions": {
+    "field": { "type": "string" },
+    "index": { "type": "string" },
+    "nestedPath": { "type": "string" },
+    "fields": {
+      "type": "array",
+      "items": { "type": "string" },
+      "uniqueItems": true,
+      "minItems": 1
+    },
+    "indexes": {
+      "anyOf": [
+        { "$ref": "#/definitions/index" },
+        {
+          "type": "array",
+          "items": { "$ref": "#/definitions/index" },
+          "uniqueItems": true,
+          "minItems": 1
+        }
+      ]
+    },
+    "values": {
+      "type": "array",
+      "anyOf": [
+        { "items": { "type": "string" } },
+        { "items": { "type": "number" } }
+      ],
+      "maxItems": 1000
+    },
+    "condition": {
+      "type": "object",
+      "properties": {
+        "$eq": { "type": ["string", "number", "boolean", "null"] },
+        "$ne": { "type": ["string", "number", "boolean", "null"] },
+        "$in": { "$ref": "#/definitions/values" },
+        "$any": { "$ref": "#/definitions/values" },
+        "$all": { "$ref": "#/definitions/values" },
+        "$none": { "$ref": "#/definitions/values" },
+        "$lt": { "type": ["number", "string"] },
+        "$gt": { "type": ["number", "string"] },
+        "$lte": { "type": ["number", "string"] },
+        "$gte": { "type": ["number", "string"] }
+      },
+      "additionalProperties": false,
+      "minProperties": 1,
+      "dependencies": {
+        "$lt": { "not": { "required": ["$lte"] } },
+        "$gt": { "not": { "required": ["$gte"] } }
+      }
+    },
+    "conditions": {
+      "anyOf": [
+        { "type": ["string", "number", "boolean", "null"] },
+        { "$ref": "#/definitions/values" },
+        { "$ref": "#/definitions/condition" },
+        {
+          "type": "array",
+          "items": {
+            "anyOf": [
+              { "type": [ "string", "number", "boolean", "null" ] },
+              { "$ref": "#/definitions/condition" }
+            ]
+           },
+           "maxItems": 50
+        }
+      ]
+    },
+    "filter": {
+      "type": "object",
+      "properties": {},
+      "patternProperties": {
+        "^[^$]": {
+          "anyOf": [
+            { "$ref": "#/definitions/conditions" },
+            { "$ref": "#/definitions/filter" }
+          ]
+        }
+      },
+      "additionalProperties": false,
+      "minProperties": 1
+    },
+    "where": {
+      "type": "object",
+      "properties": {
+        "$some": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/where" },
+          "maxItems": 50
+        },
+        "$every": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/where" },
+          "maxItems": 50
+        },
+        "$not": { "$ref": "#/definitions/where" },
+        "$exists": { "$ref": "#/definitions/nestedPath" },
+        "$where": { "$ref": "#/definitions/where" }
+      },
+      "patternProperties": {
+        "^[^$]": {
+          "anyOf": [
+            { "$ref": "#/definitions/conditions" },
+            { "$ref": "#/definitions/filter" }
+          ]
+        }
+      },
+      "additionalProperties": false,
+      "minProperties": 1,
+      "dependencies": {
+        "$where": ["$exists"]
+      }
+    },
+    "weights": {
+      "type": "object",
+      "properties": {},
+      "patternProperties": {
+        "^[^$]": {
+          "anyOf": [
+            { "type": "number", "exclusiveMinimum": 0 },
+            { "$ref": "#/definitions/weights" }
+          ]
+        }
+      },
+      "additionalProperties": false,
+      "minProperties": 1
+    }
+  }
+}

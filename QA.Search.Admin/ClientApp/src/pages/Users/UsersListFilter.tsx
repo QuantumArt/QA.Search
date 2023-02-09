@@ -48,7 +48,10 @@ const UsersListFilter = () => {
               placeholder="Выберите роль"
               options={[
                 { label: "Любая роль", value: "" },
-                ...Object.keys(UserRole).map(key => {
+                ...Object.keys(UserRole)
+                .filter(key => isNaN(Number(key)))
+                .filter(key => typeof UserRole[key] === "number" || typeof UserRole[key] === "string")
+                .map(key => {
                   return {
                     label: key,
                     value: UserRole[key]

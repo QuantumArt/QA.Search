@@ -20,12 +20,9 @@ import domainGroups from "./data";
 
 async function truncate(Entity) {
   const repository = getRepository(Entity);
-  const { tableName } = repository.metadata;
+  const { tablePath } = repository.metadata;
 
-  await repository.query(`
-  DELETE FROM ${tableName};
-  IF (OBJECTPROPERTY(OBJECT_ID('${tableName}'), 'TableHasIdentity') = 1)
-     DBCC CHECKIDENT ('${tableName}', RESEED, 0);`);
+  await repository.query(`TRUNCATE TABLE ${tablePath} RESTART IDENTITY CASCADE;`)
 }
 
 async function populate() {

@@ -1,8 +1,5 @@
 ﻿using QA.Search.Data.Models;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace QA.Search.Admin.Services.ElasticManagement.Reindex.Interfaces
 {
@@ -14,13 +11,13 @@ namespace QA.Search.Admin.Services.ElasticManagement.Reindex.Interfaces
 
         ReindexTaskStatus Status { get; }
 
-        DateTime Created { get; }
-        
+        DateTimeOffset Created { get; }
+
         /// <summary>
         /// Дата и время последнего обновления
         /// </summary>
-        DateTime LastUpdated { get; }
-        DateTime? Finished { get; }
+        DateTimeOffset LastUpdated { get; }
+        DateTimeOffset? Finished { get; }
 
 
         TimeSpan TotalTime { get; }

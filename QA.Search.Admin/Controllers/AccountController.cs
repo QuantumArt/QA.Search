@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using QA.Search.Admin.Errors;
 using QA.Search.Admin.Models;
 using QA.Search.Admin.Services;
+using System;
+using System.Threading.Tasks;
 
 namespace QA.Search.Admin.Controllers
 {
@@ -31,8 +27,7 @@ namespace QA.Search.Admin.Controllers
         [ProducesResponseType(typeof(ValidationProblemDetails), 400)]
         public async Task<IActionResult> Login([FromBody] LoginRequest data)
         {
-            await _authenticationService.Login(HttpContext,
-                data.Email, data.Password);
+            await _authenticationService.Login(HttpContext, data.Email, data.Password);
 
             return Ok();
         }

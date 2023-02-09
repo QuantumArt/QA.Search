@@ -1,18 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using QA.Search.Admin.Errors;
-using QA.Search.Admin.Models;
-using QA.Search.Admin.Models.ElasticManagementPage;
-using QA.Search.Admin.Services.ElasticManagement;
+﻿using Microsoft.AspNetCore.Mvc;
 using QA.Search.Admin.Services.ElasticManagement.Reindex;
 using QA.Search.Admin.Services.ElasticManagement.Reindex.Interfaces;
 using QA.Search.Admin.Services.ElasticManagement.Reindex.TasksManagement;
+using System.Collections.Generic;
 
 namespace QA.Search.Admin.Controllers
 {
@@ -38,7 +28,7 @@ namespace QA.Search.Admin.Controllers
         public IActionResult GetFinishedTasks()
         {
             var data = TaskManager.GetFinishedTasks();
-           return Ok(data);
+            return Ok(data);
         }
     }
 }

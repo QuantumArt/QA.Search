@@ -1,7 +1,6 @@
-﻿using System;
+﻿using QA.Search.Data.Models;
 using System.Collections.Generic;
 using System.Linq;
-using QA.Search.Data.Models;
 
 namespace QA.Search.Admin.Models.ElasticManagementPage
 {

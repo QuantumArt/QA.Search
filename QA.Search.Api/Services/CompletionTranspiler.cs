@@ -99,7 +99,7 @@ namespace QA.Search.Api.Services
             {
                 ["min_doc_count"] = 1,
             };
-            
+
             if (request.Limit != null)
             {
                 result["size"] = request.Limit;

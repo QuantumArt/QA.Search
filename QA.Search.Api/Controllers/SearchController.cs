@@ -10,10 +10,10 @@ using NJsonSchema;
 using QA.Search.Api.Infrastructure;
 using QA.Search.Api.Models;
 using QA.Search.Api.Services;
+using QA.Search.Common.Interfaces;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Net;
 using System.Threading.Tasks;
 
 namespace QA.Search.Api.Controllers
@@ -30,24 +30,26 @@ namespace QA.Search.Api.Controllers
         private readonly CorrectionTranspiler _correctionTranspiler;
         private readonly CorrectionMapper _correctionMapper;
         private readonly IndexMapper _indexMapper;
+        private readonly IElasticSettingsProvider _elasticSettingsProvider;
 
         public SearchController(
             IOptions<Settings> options,
             ILogger<SearchController> logger,
             IElasticLowLevelClient elastic,
-            IndexTranspiler indexTranspiler,
             SearchTranspiler searchTranspiler,
             SearchMapper searchMapper,
             CorrectionTranspiler correctionTranspiler,
             CorrectionMapper correctionMapper,
-            IndexMapper indexMapper)
-            : base(options, logger, elastic, indexTranspiler)
+            IndexMapper indexMapper,
+            IElasticSettingsProvider elasticSettingsProvider)
+            : base(options, logger, elastic)
         {
             _searchTranspiler = searchTranspiler;
             _searchMapper = searchMapper;
             _correctionTranspiler = correctionTranspiler;
             _correctionMapper = correctionMapper;
             _indexMapper = indexMapper;
+            _elasticSettingsProvider = elasticSettingsProvider;
         }
 
         /// <summary>
@@ -136,7 +138,7 @@ namespace QA.Search.Api.Controllers
                 searchRequest.SetFrom(from);
             }
 
-            string indexesWildcard = _indexTranspiler.IndexesWildcard(searchRequest.From);
+            string indexesWildcard = _elasticSettingsProvider.GetIndexesWildcard(searchRequest.From);
 
             string elasticRequest = _searchTranspiler.Transpile(searchRequest).ToString(Formatting.None);
 
@@ -170,7 +172,7 @@ namespace QA.Search.Api.Controllers
         /// </remarks>
         private async Task<IActionResult> CorrectQuery(SearchRequest searchRequest, SearchResponse searchResponse)
         {
-            string indexesWildcard = _indexTranspiler.IndexesWildcard(searchRequest.From);
+            string indexesWildcard = _elasticSettingsProvider.GetIndexesWildcard(searchRequest.From);
 
             List<string> indexNames = indexesWildcard.Split(',').ToList();
 
@@ -223,18 +225,18 @@ namespace QA.Search.Api.Controllers
                 return Ok(searchResponse);
             }
 
-            return await CorrectResults(searchRequest, searchResponse, queryCorrection);
+            return await CorrectResults(searchRequest, queryCorrection);
         }
 
         /// <remarks>
         /// Повторяем поиск по скорректированному запросу
         /// </remarks>
         private async Task<IActionResult> CorrectResults(
-            SearchRequest searchRequest, SearchResponse searchResponse, QueryCorrection queryCorrection)
+            SearchRequest searchRequest, QueryCorrection queryCorrection)
         {
             searchRequest.SetQuery(queryCorrection.Text);
 
-            string indexesWildcard = _indexTranspiler.IndexesWildcard(searchRequest.From);
+            string indexesWildcard = _elasticSettingsProvider.GetIndexesWildcard(searchRequest.From);
 
             var elasticRequest = _searchTranspiler.Transpile(searchRequest).ToString(Formatting.None);
 
@@ -252,7 +254,7 @@ namespace QA.Search.Api.Controllers
                 return ElasticError(elasticResponse);
             }
 
-            searchResponse = _searchMapper
+            SearchResponse searchResponse = _searchMapper
                 .MapSearchResponse(JObject.Parse(elasticResponse.Body), searchRequest);
 
             searchResponse.QueryCorrection = queryCorrection;

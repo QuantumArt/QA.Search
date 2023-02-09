@@ -1,10 +1,9 @@
-﻿using QA.Search.Api.Models;
+﻿using Newtonsoft.Json;
+using QA.Search.Api.Models;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
 
 namespace QA.Search.Api.Infrastructure
 {
@@ -15,9 +14,11 @@ namespace QA.Search.Api.Infrastructure
     {
         private static readonly SemaphoreSlim AsyncSearchLock = new SemaphoreSlim(1);
         private static readonly SemaphoreSlim AsyncSuggestLock = new SemaphoreSlim(1);
+        private static readonly SemaphoreSlim AsyncCompleteLock = new SemaphoreSlim(1);
 
         private static SearchRequest SearchPreset;
         private static SuggestRequest SuggestPreset;
+        private static CompletionRequest CompletePreset;
 
         public static async ValueTask<SearchRequest> GetSearchPresetAsync()
         {
@@ -39,6 +40,28 @@ namespace QA.Search.Api.Infrastructure
                 }
             }
             return SearchPreset;
+        }
+
+        public static async ValueTask<CompletionRequest> GetCompletePresetAsync()
+        {
+            if (CompletePreset == null)
+            {
+                try
+                {
+                    await AsyncCompleteLock.WaitAsync();
+                    if (CompletePreset == null)
+                    {
+                        var path = Path.Combine(AppContext.BaseDirectory, "JsonPresets/completion.json");
+                        string json = await File.ReadAllTextAsync(path);
+                        CompletePreset = JsonConvert.DeserializeObject<CompletionRequest>(json);
+                    }
+                }
+                finally
+                {
+                    AsyncCompleteLock.Release();
+                }
+            }
+            return CompletePreset;
         }
 
         public static async ValueTask<SuggestRequest> GetSuggestPresetAsync()

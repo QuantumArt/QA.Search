@@ -1,10 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json.Linq;
 using Npgsql;
-using QA.Search.Generic.DAL.Exceptions;
 using QA.Search.Generic.DAL.Models;
 using QA.Search.Generic.DAL.Services;
 using QA.Search.Generic.DAL.Services.Configuration;

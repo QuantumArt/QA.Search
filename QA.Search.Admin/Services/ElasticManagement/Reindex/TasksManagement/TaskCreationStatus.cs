@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace QA.Search.Admin.Services.ElasticManagement.Reindex.TasksManagement
+﻿namespace QA.Search.Admin.Services.ElasticManagement.Reindex.TasksManagement
 {
     public enum ReindexTaskOperationStatus
     {
@@ -23,7 +18,7 @@ namespace QA.Search.Admin.Services.ElasticManagement.Reindex.TasksManagement
         /// Операция не может быть выполнена
         /// </summary>
         DataIsNotLoaded,
-        
+
         /// <summary>
         /// Невозможно создать новую задачу по причине общего сбоя
         /// </summary>

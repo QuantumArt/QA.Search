@@ -1,16 +1,13 @@
-﻿using QA.Search.Admin.Services.ElasticManagement.Reindex.Interfaces;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using QA.Search.Admin.Services.ElasticManagement.Reindex.Interfaces;
+using QA.Search.Data;
+using QA.Search.Data.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using ReindexTaskEntity = QA.Search.Data.Models.ReindexTask;
-using Microsoft.Extensions.DependencyInjection;
-using System.Threading;
-using Microsoft.Extensions.Logging;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
-using QA.Search.Data;
-using QA.Search.Data.Models;
 
 namespace QA.Search.Admin.Services.ElasticManagement.Reindex.TasksManagement
 {
@@ -60,14 +57,14 @@ namespace QA.Search.Admin.Services.ElasticManagement.Reindex.TasksManagement
             /// <summary>
             /// Дата и вемя создания задачи
             /// </summary>
-            public DateTime Created { get; set; }
+            public DateTimeOffset Created { get; set; }
 
             /// <summary>
             /// Дата и вемя завершения задачи
             /// </summary>
-            public DateTime? Finished { get; set; }
+            public DateTimeOffset? Finished { get; set; }
 
-            public DateTime LastUpdated { get; set; }
+            public DateTimeOffset LastUpdated { get; set; }
 
             private CheckTaskStatusResult CheckTaskStatusResult { get; set; }
 
@@ -122,20 +119,20 @@ namespace QA.Search.Admin.Services.ElasticManagement.Reindex.TasksManagement
             ServiceScopeFactory = serviceScopeFactory;
         }
 
-        private TRes ExecuteWithContext<TRes>(Func<SearchDbContext, TRes> func)
+        private TRes ExecuteWithContext<TRes>(Func<AdminSearchDbContext, TRes> func)
         {
             using (var scope = ServiceScopeFactory.CreateScope())
             {
-                var dbContext = scope.ServiceProvider.GetRequiredService<SearchDbContext>();
+                var dbContext = scope.ServiceProvider.GetRequiredService<AdminSearchDbContext>();
                 return func(dbContext);
             }
         }
 
-        private void ExecuteWithContext(Action<SearchDbContext> action)
+        private void ExecuteWithContext(Action<AdminSearchDbContext> action)
         {
             using (var scope = ServiceScopeFactory.CreateScope())
             {
-                var dbContext = scope.ServiceProvider.GetRequiredService<SearchDbContext>();
+                var dbContext = scope.ServiceProvider.GetRequiredService<AdminSearchDbContext>();
                 action(dbContext);
             }
         }
@@ -147,12 +144,12 @@ namespace QA.Search.Admin.Services.ElasticManagement.Reindex.TasksManagement
         {
             using (var scope = ServiceScopeFactory.CreateScope())
             {
-                var dbContext = scope.ServiceProvider.GetRequiredService<SearchDbContext>();
+                var dbContext = scope.ServiceProvider.GetRequiredService<AdminSearchDbContext>();
                 return CreateReindexTaskInternal(dbContext, sourceIndex, destinationIndex, creationDate, out newTask);
             }
         }
 
-        private ReindexTaskOperationStatus CreateReindexTaskInternal(SearchDbContext dbContext, IElasticIndex sourceIndex,
+        private ReindexTaskOperationStatus CreateReindexTaskInternal(AdminSearchDbContext dbContext, IElasticIndex sourceIndex,
             IElasticIndex destinationIndex, DateTime creationDate, out IReindexTask newTask)
         {
             var thereIsExitedActiveTaskForSourceIndex = dbContext
@@ -227,33 +224,24 @@ namespace QA.Search.Admin.Services.ElasticManagement.Reindex.TasksManagement
         {
             return ExecuteWithContext((dbContext) =>
             {
-                // Получить для каждого индекса, известного базе последнюю завершенную задачу 
-                string unactive = string.Join(",", UnactiveTaskStatuses.Select(s => (int)s));
+                var getNotActiveTasksQuery = dbContext.ReindexTasks
+                .Join(
+                    dbContext.ReindexTasks
+                        .Where(rt => UnactiveTaskStatuses.Contains(rt.Status))
+                        .GroupBy(rt => rt.ShortIndexName)
+                        .Select(rt => new
+                        {
+                            ShortIndexName = rt.Key,
+                            Timestamp = rt.Max(grt => grt.Timestamp)
+                        }),
+                ou => new { ou.ShortIndexName, ou.Timestamp },
+                inn => new { inn.ShortIndexName, inn.Timestamp },
+                (ou, inn) => ou);
 
-                string queryText = $@"
-                SELECT l.*
-                FROM [admin].[ReindexTasks] AS l
-                INNER JOIN (
-                  SELECT
-                    [ShortIndexName],
-                    MAX([Timestamp]) AS [Timestamp]
-                  FROM [qa_search].[admin].[ReindexTasks] AS x
-                  WHERE [Status] IN ({unactive})
-                  GROUP BY [ShortIndexName]
-                ) AS r ON l.[ShortIndexName] = r.[ShortIndexName]
-                  AND l.[Timestamp] = r.[Timestamp]";
 
-#pragma warning disable EF1000 // Possible SQL injection vulnerability.
-                var notActiveTasksQuery = dbContext.ReindexTasks.FromSqlRaw(queryText);
-#pragma warning restore EF1000 // Possible SQL injection vulnerability.
-
-                var notActiveTasks = notActiveTasksQuery.ToList();
-
-                var res = notActiveTasks
+                return getNotActiveTasksQuery.ToList()
                     .Select(e => new ReindexTask(e))
                     .ToList();
-
-                return res;
             });
         }
 
@@ -274,7 +262,7 @@ namespace QA.Search.Admin.Services.ElasticManagement.Reindex.TasksManagement
                 {
                     var tsk = (ReindexTask)task;
                     update(dbTaskEntity, tsk);
-                    var now = DateTime.Now;
+                    var now = DateTime.UtcNow;
                     tsk.LastUpdated = now;
                     dbTaskEntity.LastUpdated = now;
 
@@ -318,7 +306,7 @@ namespace QA.Search.Admin.Services.ElasticManagement.Reindex.TasksManagement
                     taskObject.Status = newStatus;
                     if (newStatus == ReindexTaskStatus.Completed)
                     {
-                        var now = DateTime.Now;
+                        var now = DateTime.UtcNow;
                         dbEntity.Finished = now;
                         taskObject.Finished = now;
                     }

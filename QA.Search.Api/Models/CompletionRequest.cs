@@ -1,5 +1,8 @@
-﻿using Newtonsoft.Json;
+﻿using System.Linq;
+using System.Threading.Tasks;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using QA.Search.Api.Infrastructure;
 
 namespace QA.Search.Api.Models
 {
@@ -98,6 +101,26 @@ namespace QA.Search.Api.Models
                 {
                     json["$from"] = from;
                 }
+            }
+        }
+
+        public async Task SetPresetsAsync()
+        {
+            var preset = await PresetsRegistry.GetSearchPresetAsync();
+
+            Limit ??= preset.Limit;
+
+            if (Weights == null || !Weights.Any())
+            {
+                Weights = preset.Weights;
+            }
+            else
+            {
+                var toAdd = preset.Weights
+                    .Where(v => !Weights
+                        .Any(x => x.Key == v.Key)
+                    );
+                Weights.AddRange(toAdd);
             }
         }
     }

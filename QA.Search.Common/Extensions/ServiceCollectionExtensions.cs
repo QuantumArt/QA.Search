@@ -1,5 +1,9 @@
 ﻿using Elasticsearch.Net;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
+using QA.Search.Common.Interfaces;
+using QA.Search.Common.Models;
 using System;
 using System.Linq;
 
@@ -13,13 +17,20 @@ namespace QA.Search.Common.Extensions
         /// <example>
         /// http://localhost:9200;http://localhost:9201
         /// </example>
-        public static void AddElasticSearch(this IServiceCollection services, string url)
+        public static void AddElasticSearch(this IServiceCollection services)
         {
-            var urls = ParseUrls(url);
-            var pool = new StaticConnectionPool(urls);
-            var config = new ConnectionConfiguration(pool);
-            var client = new ElasticLowLevelClient(config);
-            services.AddSingleton<IElasticLowLevelClient>(client);
+            services.AddSingleton<IElasticLowLevelClient>(sp =>
+            {
+                ElasticSettings elasticSettings = sp.GetRequiredService<IOptions<ElasticSettings>>().Value;
+
+                var nodes = ParseUrls(elasticSettings.Address);
+
+                StaticConnectionPool pool = new(nodes);
+                ConnectionConfiguration config = new ConnectionConfiguration(pool).RequestTimeout(elasticSettings.RequestTimeout);
+                ElasticLowLevelClient client = new(config);
+
+                return client;
+            });
         }
 
         private static Uri[] ParseUrls(string url)
@@ -35,6 +46,12 @@ namespace QA.Search.Common.Extensions
             {
                 return new[] { new Uri("http://localhost:9200") };
             }
+        }
+
+        public static void AddElasticConfiguration(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.Configure<ElasticSettings>(configuration.GetSection(nameof(ElasticSettings)));
+            services.AddSingleton<IElasticSettingsProvider, ElasticSettingsProvider>();
         }
     }
 }

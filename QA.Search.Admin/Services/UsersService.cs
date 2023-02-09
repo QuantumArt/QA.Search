@@ -1,13 +1,13 @@
-﻿using System;
-using QA.Search.Admin.Models;
-using Microsoft.EntityFrameworkCore;
-using System.Threading.Tasks;
-using System.Linq;
-using QA.Search.Admin.Errors;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using QA.Search.Admin.Errors;
+using QA.Search.Admin.Models;
 using QA.Search.Common.Extensions;
 using QA.Search.Data;
 using QA.Search.Data.Models;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace QA.Search.Admin.Services
 {
@@ -15,12 +15,12 @@ namespace QA.Search.Admin.Services
     {
         const int RESET_PASSWORD_REQUEST_VALID_DAYS = 5;
 
-        readonly SearchDbContext _dbContext;
+        readonly AdminSearchDbContext _dbContext;
         readonly SmtpService _smtpService;
         readonly Settings _settings;
 
         public UsersService(
-            SearchDbContext dbContext,
+            AdminSearchDbContext dbContext,
             SmtpService smtpService,
             IOptions<Settings> settings)
         {
@@ -159,7 +159,7 @@ namespace QA.Search.Admin.Services
             await _dbContext.SaveChangesAsync();
         }
 
-        async Task<QA.Search.Data.Models.ResetPasswordRequest> GetValidResetPasswordRequest(Guid requestId)
+        async Task<Data.Models.ResetPasswordRequest> GetValidResetPasswordRequest(Guid requestId)
         {
             var request = await _dbContext.ResetPasswordRequests
                 .Include(e => e.User)

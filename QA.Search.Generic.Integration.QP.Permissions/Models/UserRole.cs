@@ -12,11 +12,11 @@ namespace QA.Search.Generic.Integration.QP.Permissions.Models
         /// Человеческое наименование роли (может быть на русском)
         /// </summary>
         [Column("title")]
-        public string Title { get; set; }
+        public string Title { get; set; } = string.Empty;
         /// <summary>
         /// Программистское наименование
         /// </summary>
         [Column("alias")]
-        public string Alias { get; set; }
+        public string Alias { get; set; } = string.Empty;
     }
 }

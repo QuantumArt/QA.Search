@@ -1,3 +1,6 @@
+# top-most EditorConfig file
+root = true
+
 [*.{js,jsx}]
 indent_size = 2
 indent_style = space
@@ -7,3 +10,57 @@ max_line_length = 80
 indent_size = 2
 indent_style = space
 max_line_length = 100
+
+###############################
+# .NET Coding Conventions     #
+###############################
+[*.{cs,vb}]
+
+# Organize usings
+dotnet_sort_system_directives_first = false:warning
+
+###############################
+# Naming Conventions          #
+###############################
+
+# Style Definitions
+dotnet_naming_style.all_upper_style_with_separator.capitalization           = all_upper
+dotnet_naming_style.all_upper_style_with_separator.word_separator           = _
+
+dotnet_naming_style.camel_case_style_with_prefix.capitalization             = camel_case
+dotnet_naming_style.camel_case_style_with_prefix.required_prefix            = _
+
+dotnet_naming_style.camel_case_static_field_style.capitalization            = camel_case
+
+# Constants
+dotnet_naming_rule.constant_fields_should_be_all_upper.severity             = warning
+dotnet_naming_rule.constant_fields_should_be_all_upper.symbols              = constant_fields
+dotnet_naming_rule.constant_fields_should_be_all_upper.style                = all_upper_style_with_separator
+dotnet_naming_symbols.constant_fields.applicable_kinds                      = field
+dotnet_naming_symbols.constant_fields.applicable_accessibilities            = *
+dotnet_naming_symbols.constant_fields.required_modifiers                    = const
+
+# PrivateStaticFields
+dotnet_naming_rule.private_static_fields_should_be_camel_case.severity      = warning
+dotnet_naming_rule.private_static_fields_should_be_camel_case.symbols       = private_static_fields
+dotnet_naming_rule.private_static_fields_should_be_camel_case.style         = camel_case_static_field_style
+dotnet_naming_symbols.private_static_fields.applicable_kinds                = field
+dotnet_naming_symbols.private_static_fields.applicable_accessibilities      = private
+dotnet_naming_symbols.private_static_fields.required_modifiers              = static
+
+# PrivateInstanceFields
+dotnet_naming_rule.private_instance_fields_should_be_camel_case.severity    = warning
+dotnet_naming_rule.private_instance_fields_should_be_camel_case.symbols     = private_instance_fields
+dotnet_naming_rule.private_instance_fields_should_be_camel_case.style       = camel_case_style_with_prefix
+dotnet_naming_symbols.private_instance_fields.applicable_kinds              = field
+dotnet_naming_symbols.private_instance_fields.applicable_accessibilities    = private
+
+###############################
+# C# Coding Conventions       #
+###############################
+
+# Wrapping preferences
+csharp_preserve_single_line_blocks = true
+
+# This style rule concerns the use of curly braces { } to surround code blocks
+csharp_prefer_braces = false

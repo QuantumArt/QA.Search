@@ -1,7 +1,7 @@
 import React, { useState, useContext } from "react";
 import { Card, Button, Intent, ButtonGroup, Tooltip, Tag, Position } from "@blueprintjs/core";
 import { Row, Col } from "react-flexbox-grid";
-import { UserResponse } from "../../backend.generated";
+import { UserResponse, UserRole } from "../../backend.generated";
 
 import "./UsersList.css";
 import UsersContainer from "./UsersContainer";
@@ -83,7 +83,7 @@ const UsersList = () => {
                 <tr key={user.id}>
                   <td className="users-table__cell">{user.email}</td>
                   <td className="users-table__cell users-table__cell-center-content">
-                    <Tag intent={Intent.NONE}>{user.role}</Tag>
+                    <Tag intent={Intent.NONE}>{UserRole[user.role]}</Tag>
                   </td>
                   <td className="users-table__cell users-table__cell-center-content">
                     <ButtonGroup>

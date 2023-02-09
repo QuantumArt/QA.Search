@@ -44,35 +44,20 @@ const Sidebar = withRouter(({ location, user }: Props) => {
             <div className="sidebar__link-text">Индексы Elastic</div>
           </Link>
         )}
-        {process.env.NODE_ENV === "development" && (
-          <>
-            {user.role === UserRole.Admin && (
-              <Link
-                to="/templates"
-                className={cn("sidebar__link", {
-                  "sidebar__link--active": location.pathname == "/templates"
-                })}
-              >
-                <Icon icon="list-columns" iconSize={24} htmlTitle="Шаблоны Elastic" />
-                <div className="sidebar__link-text">Шаблоны Elastic</div>
-              </Link>
-            )}
-            {(user.role === UserRole.Admin || user.role === UserRole.User) && (
-              <Link
-                to="/scripts"
-                className={cn("sidebar__link", {
-                  "sidebar__link--active": location.pathname == "/scripts"
-                })}
-              >
-                <Icon icon="console" iconSize={24} htmlTitle="Скрипты Индексации" />
-                <div className="sidebar__link-text">Скрипты Индексации</div>
-              </Link>
-            )}
-          </>
+        {user.role === UserRole.Admin && (
+          <Link
+            to="/templates"
+            className={cn("sidebar__link", {
+              "sidebar__link--active": location.pathname == "/templates"
+            })}
+          >
+            <Icon icon="list-columns" iconSize={24} htmlTitle="Шаблоны Elastic" />
+            <div className="sidebar__link-text">Шаблоны Elastic</div>
+          </Link>
         )}
         {(user.role === UserRole.Admin || user.role === UserRole.User) && (
           <>
-            <div className="sidebar__divider" />            
+            <div className="sidebar__divider" />
             <Link
               to="/qp-indexing"
               className={cn("sidebar__link", {
@@ -81,15 +66,6 @@ const Sidebar = withRouter(({ location, user }: Props) => {
             >
               <Icon icon="automatic-updates" iconSize={24} htmlTitle="Индексация QP" />
               <div className="sidebar__link-text">Индексация QP</div>
-            </Link>
-            <Link
-              to="/media-indexing"
-              className={cn("sidebar__link", {
-                "sidebar__link--active": location.pathname == "/media-indexing"
-              })}
-            >
-              <Icon icon="automatic-updates" iconSize={24} htmlTitle="Индексация Media" />
-              <div className="sidebar__link-text">Индексация Media</div>
             </Link>
           </>
         )}

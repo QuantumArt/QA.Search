@@ -54,6 +54,17 @@ namespace QA.Search.Admin
                         options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
                     }
                 })
+                .ConfigureApiBehaviorOptions(options =>
+                {
+                    options.InvalidModelStateResponseFactory = context =>
+                    {
+                        ILogger logger = context.HttpContext.RequestServices.GetRequiredService<ILogger>();
+
+                        logger.LogWarning("Request \"{@RouteData}\" not valid {@ModelState}.", context.RouteData, context.ModelState);
+
+                        return new BadRequestObjectResult(context.ModelState);
+                    };
+                })
                 .AddNewtonsoftJson()
                 .AddJsonOptions(options =>
                 {
@@ -85,7 +96,8 @@ namespace QA.Search.Admin
                 };
             });
 
-            services.AddElasticSearch(settings.ElasticSearchUrl);
+            services.AddElasticConfiguration(Configuration);
+            services.AddElasticSearch();
             services
                 .AddAuthentication(options =>
                 {
@@ -101,8 +113,13 @@ namespace QA.Search.Admin
                     };
                 });
 
-            services.AddDbContext<SearchDbContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            services.AddDbContext<AdminSearchDbContext>(options =>
+                options.UseNpgsql(Configuration.GetConnectionString("AdminSearchDbContextConnection"))
+                .UseSnakeCaseNamingConvention());
+
+            services.AddDbContext<CrawlerSearchDbContext>(options =>
+                options.UseNpgsql(Configuration.GetConnectionString("CrawlerSearchDbContextConnection"))
+                .UseSnakeCaseNamingConvention());
 
             // Контекст для операций, которые выполняются вне Web запроса (Фоновый обработчик)
 
@@ -216,7 +233,7 @@ namespace QA.Search.Admin
             });
         }
 
-        void SetAntiForgeryCookie(HttpContext context, IAntiforgery antiForgery)
+        static void SetAntiForgeryCookie(HttpContext context, IAntiforgery antiForgery)
         {
             var tokens = antiForgery.GetAndStoreTokens(context);
 

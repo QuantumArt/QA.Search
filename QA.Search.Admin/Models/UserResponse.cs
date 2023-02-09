@@ -1,5 +1,4 @@
-﻿using System;
-using QA.Search.Data.Models;
+﻿using QA.Search.Data.Models;
 
 namespace QA.Search.Admin.Models
 {

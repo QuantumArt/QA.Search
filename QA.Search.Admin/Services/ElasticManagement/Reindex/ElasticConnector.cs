@@ -1,11 +1,11 @@
 ﻿using Elasticsearch.Net;
 using Elasticsearch.Net.Specification.CatApi;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using QA.Search.Admin.Services.ElasticManagement.IndexesInfoParsing;
 using QA.Search.Admin.Services.ElasticManagement.Reindex.Interfaces;
+using QA.Search.Common.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,22 +17,20 @@ namespace QA.Search.Admin.Services.ElasticManagement.Reindex
     public partial class ElasticConnector
     {
         #region injected
-
-        private Settings Settings { get; set; }
-
         private IElasticLowLevelClient Elastic { get; }
 
         private IndexesInfoParser IndexesParser { get; }
 
         private ILogger Logger { get; }
 
+        private readonly IElasticSettingsProvider _elasticSettingsProvider;
         #endregion
 
-        public ElasticConnector(IOptions<Settings> options, IElasticLowLevelClient elastic, IndexesInfoParser indexesParser, ILogger logger)
+        public ElasticConnector(IElasticLowLevelClient elastic, IndexesInfoParser indexesParser, IElasticSettingsProvider elasticSettingsProvider, ILogger logger)
         {
-            Settings = options.Value;
             Elastic = elastic;
             IndexesParser = indexesParser;
+            _elasticSettingsProvider = elasticSettingsProvider;
             Logger = logger;
         }
 
@@ -45,10 +43,10 @@ namespace QA.Search.Admin.Services.ElasticManagement.Reindex
             CatIndicesRequestParameters irp = new CatIndicesRequestParameters
             {
                 QueryString = new Dictionary<string, object> {
-                    { "index", Settings.IndexMask }
+                    { "index", _elasticSettingsProvider.GetIndexMask() }
                 }
             };
-            var elasticResponse = await Elastic.Indices.GetAliasAsync<StringResponse>(Settings.IndexMask);
+            var elasticResponse = await Elastic.Indices.GetAliasAsync<StringResponse>(_elasticSettingsProvider.GetIndexMask());
             if (!elasticResponse.Success)
             {
                 Logger.LogWarning(elasticResponse.OriginalException, $"GetAllIndexes - not success response {elasticResponse}");
@@ -76,7 +74,7 @@ namespace QA.Search.Admin.Services.ElasticManagement.Reindex
             if (!String.IsNullOrWhiteSpace(task?.ElasticTaskId))
             {
                 var response = await Elastic.Tasks.CancelAsync<VoidResponse>(task.ElasticTaskId);
-                
+
                 if (!response.Success)
                 {
                     Logger.LogWarning(response.OriginalException, "Ошибка при удалении задачи Elastic {ElasticTaskId}", task.ElasticTaskId);
@@ -257,14 +255,12 @@ namespace QA.Search.Admin.Services.ElasticManagement.Reindex
                 {"conflicts", "proceed"},
                 {"source", new JObject()
                     {
-                        {"index", task.SourceIndex},
-                        { "type", "_doc" }
+                        {"index", task.SourceIndex}
                     }
                 },
                 {"dest", new JObject()
                     {
                         {"index", task.DestinationIndex},
-                        { "type", "_doc" },
                         {"version_type", "external" }
                     }
                 }

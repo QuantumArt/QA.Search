@@ -53,22 +53,21 @@ namespace QA.Search.Data.Models
         /// <summary>
         /// Дата и вемя создания задачи
         /// </summary>
-        public DateTime Created { get; set; }
+        public DateTimeOffset Created { get; set; }
 
         /// <summary>
         /// Дата и время последнего обновления
         /// </summary>
-        public DateTime LastUpdated { get; set; }
+        public DateTimeOffset LastUpdated { get; set; }
 
         /// <summary>
         /// Дата и вемя завершения задачи
         /// </summary>
-        public DateTime? Finished { get; set; }
+        public DateTimeOffset? Finished { get; set; }
 
         /// <summary>
         /// Row version
         /// </summary>
-        [Timestamp]
-        public byte[] Timestamp { get; set; }
+        public uint Timestamp { get; set; }
     }
 }

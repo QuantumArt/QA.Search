@@ -86,6 +86,14 @@ const MappingTemplatesPage = () => {
     <>
       <div className="mapping-templates__container">
         <div className="mapping-templates__content">
+          <div>
+            <span className="editor-header">
+              Шаблон ElasticSearch
+            </span>
+            <span className="editor-header editor-header-right">
+              Сохранённый шаблон
+            </span>
+          </div>
           <MonacoDiffEditor
             width="calc(100vw - 440px)"
             height="calc(100vh - 100px)"
@@ -101,34 +109,11 @@ const MappingTemplatesPage = () => {
               scrollbar: { verticalScrollbarSize: 17 }
             }}
           />
-          <div>
-            <div className="mapping-templates__panel mapping-templates__panel--left">
-              <strong>ElasticSearch</strong>
-              <Button
-                minimal
-                rightIcon="trash"
-                intent={Intent.DANGER}
-                disabled={!oldCode}
-                onClick={deleteTemplate}
-              >
-                Delete Template
-              </Button>
-            </div>
-            <div className="mapping-templates__panel mapping-templates__panel--right">
-              <Button
-                minimal
-                rightIcon="floppy-disk"
-                intent={Intent.PRIMARY}
-                disabled={oldCode === newCode}
-                onClick={applyTemplate}
-              >
-                Apply Template
-              </Button>
-              <strong>AdminApp</strong>
-            </div>
-          </div>
         </div>
         <div className="mapping-templates__sidebar">
+          <span className="template-list-header">
+            Шаблоны:
+          </span>
           {templates.map((template, i) => (
             <Button
               key={template.name || ""}

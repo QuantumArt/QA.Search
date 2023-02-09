@@ -1,5 +1,4 @@
-﻿using System;
-namespace QA.Search.Admin.Services
+﻿namespace QA.Search.Admin.Services
 {
     public class SmtpServiceSettings
     {

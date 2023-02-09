@@ -1,8 +1,8 @@
 using Elasticsearch.Net;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using QA.Search.Common.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -15,15 +15,16 @@ namespace QA.Search.Admin.Controllers
     [Route("api/[controller]")]
     [Consumes("application/json")]
     [Produces("application/json")]
+    [IgnoreAntiforgeryToken]
     public class TemplateController : Controller
     {
-        private readonly Settings _settings;
         private readonly IElasticLowLevelClient _elastic;
+        private readonly IElasticSettingsProvider _elasticSettingsProvider;
 
-        public TemplateController(IOptions<Settings> options, IElasticLowLevelClient elastic)
+        public TemplateController(IElasticLowLevelClient elastic, IElasticSettingsProvider elasticSettingsProvider)
         {
-            _settings = options.Value;
             _elastic = elastic;
+            _elasticSettingsProvider = elasticSettingsProvider;
         }
 
         [HttpGet("[action]")]
@@ -32,20 +33,18 @@ namespace QA.Search.Admin.Controllers
         public async Task<IActionResult> GetTemplates()
         {
             IDictionary<string, JRaw> newTemplatesByName = await ReadTemplatesAsync();
-            
-            var response = await _elastic.Indices.GetTemplateV2ForAllAsync<StringResponse>(_settings.TemplateMask);
+
+            var response = await _elastic.Indices.GetTemplateV2ForAllAsync<StringResponse>(_elasticSettingsProvider.GetTemplateMask());
 
             if (!response.Success)
             {
+                if (response.HttpStatusCode == 404)
+                    return Ok(Array.Empty<TemplateFile>());
+
                 return StatusCode(500, response.OriginalException.Message);
             }
 
             IDictionary<string, JToken> oldTempaltesByName = JObject.Parse(response.Body);
-
-            foreach (var pair in oldTempaltesByName)
-            {
-                ((JObject)pair.Value).Remove("aliases");
-            }
 
             TemplateFile[] templates = newTemplatesByName
                 .Select(newPair => new TemplateFile
@@ -76,6 +75,8 @@ namespace QA.Search.Admin.Controllers
         [ProducesResponseType(typeof(string), 500)]
         public async Task<IActionResult> ApplyTemplate(string templateName)
         {
+            templateName = _elasticSettingsProvider.GetAlias(templateName);
+
             IDictionary<string, JRaw> newTemplatesByName = await ReadTemplatesAsync();
 
             JRaw templateContent = newTemplatesByName[templateName];
@@ -101,6 +102,8 @@ namespace QA.Search.Admin.Controllers
         [ProducesResponseType(typeof(string), 500)]
         public async Task<IActionResult> DeleteTemplate(string templateName)
         {
+            templateName = _elasticSettingsProvider.GetAlias(templateName);
+
             var response = await _elastic.Indices.DeleteTemplateV2ForAllAsync<VoidResponse>(templateName);
 
             if (!response.Success)

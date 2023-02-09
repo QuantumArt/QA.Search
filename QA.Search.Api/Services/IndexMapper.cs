@@ -1,17 +1,18 @@
-﻿using Microsoft.Extensions.Options;
-using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json.Linq;
+using QA.Search.Common.Interfaces;
 using System.Linq;
 
 namespace QA.Search.Api.Services
 {
     public class IndexMapper
     {
-        private readonly Settings _settings;
         private readonly int _suffixLength = ".yyyy-MM-ddThh-mm-ss".Length;
 
-        public IndexMapper(IOptions<Settings> options)
+        private readonly IElasticSettingsProvider _elasticSettingsProvider;
+
+        public IndexMapper(IElasticSettingsProvider elasticSettingsProvider)
         {
-            _settings = options.Value;
+            _elasticSettingsProvider = elasticSettingsProvider;
         }
 
         /// <summary>
@@ -20,7 +21,7 @@ namespace QA.Search.Api.Services
         /// </summary>
         public string ShortIndexName(string fullIndexName)
         {
-            int prefixLength = _settings.IndexPrefix.Length;
+            int prefixLength = _elasticSettingsProvider.GetIndexPrefix().Length;
 
             fullIndexName = fullIndexName[prefixLength..];
 

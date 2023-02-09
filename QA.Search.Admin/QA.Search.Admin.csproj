@@ -14,17 +14,10 @@
     <DocumentationFile>bin\Debug\net6.0\QA.Search.Admin.xml</DocumentationFile>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <NoWarn>1701;1702;1591</NoWarn>
-    <DocumentationFile>bin\Release\netcoreapp3.1\QA.Search.Admin.xml</DocumentationFile>
-  </PropertyGroup>
-
   <ItemGroup>
-    <PackageReference Include="Elasticsearch.Net" Version="7.17.4" />
     <PackageReference Include="Microsoft.AspNetCore.SpaServices" Version="3.1.27" />
     <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="6.0.7" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.7" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.7" />
     <PackageReference Include="NLog" Version="5.0.1" />
     <PackageReference Include="NLog.Extensions.Logging" Version="5.0.1" />
     <PackageReference Include="NLog.Web.AspNetCore" Version="5.0.0" />
@@ -34,9 +27,12 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="QA.Integration.JsonApiServices" Version="1.1.1" />
-    <PackageReference Include="System.Data.SqlClient" Version="4.8.3" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="6.0.7" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.7" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="6.0.7" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.11">
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="EFCore.NamingConventions" Version="6.0.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -65,6 +61,12 @@
     </Content>
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="Scripts\create-dbs.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
   <Target Name="PublishRunWebpack" AfterTargets="ComputeFilesToPublish">
     <!-- Include the newly-built files in the publish output -->
     <ItemGroup>
@@ -77,8 +79,8 @@
   </Target>
 
   <Target Name="NSwag" AfterTargets="Build" Condition=" '$(Configuration)' == 'Debug' ">
-    <Exec Command="$(NSwagExe_Core31) aspnetcore2swagger /project:QA.Search.Admin.csproj /noBuild:true /output:swagger.json" />
-    <Exec Command="$(NSwagExe_Core31) run nswag.json /input:swagger.json " />
+    <Exec Command="$(NSwagExe_Net60) aspnetcore2swagger /project:QA.Search.Admin.csproj /noBuild:true /output:swagger.json" />
+    <Exec Command="$(NSwagExe_Net60) run nswag.json /input:swagger.json" />
     <Exec WorkingDirectory="$(SpaRoot)" Command="npx prettier --write src\backend.generated.ts" />
   </Target>
 

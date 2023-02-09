@@ -1,6 +1,6 @@
-﻿using System;
+﻿using QA.Search.Data.Utils;
+using System;
 using System.Linq;
-using QA.Search.Data.Utils;
 
 namespace QA.Search.Data.Models
 {
@@ -27,8 +27,10 @@ namespace QA.Search.Data.Models
         protected User() { }
 
 
-        public User(string email, string password, UserRole role)
+        public User(string email, string password, UserRole role) : this(0, email, password, role) { }
+        public User(int id, string email, string password, UserRole role)
         {
+            Id = id;
             Email = email.ToLower();
             Salt = SecurityHelper.GenerateSalt();
             PasswordHash = SecurityHelper.GetPasswordHash(password, Salt);

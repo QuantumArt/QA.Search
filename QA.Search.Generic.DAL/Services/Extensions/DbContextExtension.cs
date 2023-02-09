@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
-using QA.Search.Generic.DAL.Services.Configuration;
 using QA.Search.Generic.DAL.Extensions;
+using QA.Search.Generic.DAL.Services.Configuration;
 using System;
 using System.Linq;
 
@@ -21,14 +21,14 @@ namespace QA.Search.Generic.DAL.Services.Extensions
         }
 
         public static string GetFormatedTableName(this DbContext dbContext, Type type, ContextConfiguration contextConfiguration)
-        {       
+        {
             IEntityType entityType = dbContext.Model.FindEntityType(type);
             string tableName = entityType.GetTableName();
 
             //if (tableName.EndsWith("_new"))
             //    tableName = tableName.Substring(0, tableName.Length - 4);
 
-            return string.Format(contextConfiguration.FormatTableName, entityType.GetSchema() ?? contextConfiguration.DefaultSchemeName, tableName);            
+            return string.Format(contextConfiguration.FormatTableName, entityType.GetSchema() ?? contextConfiguration.DefaultSchemeName, tableName);
         }
     }
 }

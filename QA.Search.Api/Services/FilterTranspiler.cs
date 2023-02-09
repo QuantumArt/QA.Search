@@ -1,6 +1,6 @@
-﻿using Microsoft.Extensions.Options;
-using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json.Linq;
 using QA.Search.Api.Models;
+using QA.Search.Common.Interfaces;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -9,11 +9,13 @@ namespace QA.Search.Api.Services
     // TODO: intercept field conditions from top-level $where or $context
     public class FilterTranspiler
     {
-        private readonly Settings _settings;
+        private static readonly List<JToken> EmptyList = new(0);
 
-        public FilterTranspiler(IOptions<Settings> options)
+        private readonly IElasticSettingsProvider _elasticSettingsProvider;
+
+        public FilterTranspiler(IElasticSettingsProvider elasticSettingsProvider)
         {
-            _settings = options.Value;
+            _elasticSettingsProvider = elasticSettingsProvider;
         }
 
         /// <summary>
@@ -259,7 +261,7 @@ namespace QA.Search.Api.Services
             {
                 if (value.Value is string name)
                 {
-                    name = _settings.IndexPrefix + name;
+                    name = _elasticSettingsProvider.GetIndexPrefix() + name;
 
                     if (!name.Contains('*'))
                     {
@@ -286,7 +288,7 @@ namespace QA.Search.Api.Services
                 {
                     if (value.Value is string name)
                     {
-                        name = _settings.IndexPrefix + name;
+                        name = _elasticSettingsProvider.GetIndexPrefix() + name;
 
                         if (!name.Contains('*'))
                         {
@@ -305,7 +307,5 @@ namespace QA.Search.Api.Services
                 }
             };
         }
-
-        private static readonly List<JToken> EmptyList = new List<JToken>(0);
     }
 }

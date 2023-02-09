@@ -8,7 +8,7 @@ using Newtonsoft.Json.Linq;
 using QA.Search.Api.Infrastructure;
 using QA.Search.Api.Models;
 using QA.Search.Api.Services;
-using System.Net;
+using QA.Search.Common.Interfaces;
 using System.Threading.Tasks;
 
 namespace QA.Search.Api.Controllers
@@ -22,18 +22,20 @@ namespace QA.Search.Api.Controllers
     {
         private readonly SuggestTranspiler _suggestTranspiler;
         private readonly SuggestMapper _suggestMapper;
+        private readonly IElasticSettingsProvider _elasticSettingsProvider;
 
         public SuggestController(
             IOptions<Settings> options,
             ILogger<SuggestController> logger,
             IElasticLowLevelClient elastic,
-            IndexTranspiler indexTranspiler,
             SuggestTranspiler suggestTranspiler,
-            SuggestMapper suggestsMapper)
-            : base(options, logger, elastic, indexTranspiler)
+            SuggestMapper suggestsMapper,
+            IElasticSettingsProvider elasticSettingsProvider)
+            : base(options, logger, elastic)
         {
             _suggestTranspiler = suggestTranspiler;
             _suggestMapper = suggestsMapper;
+            _elasticSettingsProvider = elasticSettingsProvider;
         }
 
         /// <summary>
@@ -76,7 +78,7 @@ namespace QA.Search.Api.Controllers
                 suggestRequest.SetFrom(from);
             }
 
-            string indexesWildcard = _indexTranspiler.IndexesWildcard(suggestRequest.From);
+            string indexesWildcard = _elasticSettingsProvider.GetIndexesWildcard(suggestRequest.From);
 
             string elasticRequest = _suggestTranspiler.Transpile(suggestRequest).ToString(Formatting.None);
 

@@ -8,6 +8,7 @@ using NJsonSchema;
 using QA.Search.Api.Infrastructure;
 using QA.Search.Api.Models;
 using QA.Search.Api.Services;
+using QA.Search.Common.Interfaces;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -25,18 +26,20 @@ namespace QA.Search.Api.Controllers
     {
         private readonly SuggestTranspiler _suggestTranspiler;
         private readonly SuggestMapper _suggestMapper;
+        private readonly IElasticSettingsProvider _elasticSettingsProvider;
 
         public MultiSuggestController(
             IOptions<Settings> options,
             ILogger<MultiSuggestController> logger,
             IElasticLowLevelClient elastic,
-            IndexTranspiler indexTranspiler,
             SuggestTranspiler suggestTranspiler,
-            SuggestMapper suggestMapper)
-            : base(options, logger, elastic, indexTranspiler)
+            SuggestMapper suggestMapper,
+            IElasticSettingsProvider elasticSettingsProvider)
+            : base(options, logger, elastic)
         {
             _suggestTranspiler = suggestTranspiler;
             _suggestMapper = suggestMapper;
+            _elasticSettingsProvider = elasticSettingsProvider;
         }
 
         /// <summary>
@@ -118,7 +121,7 @@ namespace QA.Search.Api.Controllers
 
         private string TranspileSuggestRequest(SuggestRequest suggestRequest)
         {
-            string indexesWildcard = _indexTranspiler.IndexesWildcard(suggestRequest.From);
+            string indexesWildcard = _elasticSettingsProvider.GetIndexesWildcard(suggestRequest.From);
 
             JObject elasticRequest = _suggestTranspiler.Transpile(suggestRequest);
 

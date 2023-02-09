@@ -321,10 +321,8 @@
             },
             "x-nullable": false,
             "enum": [
-              0,
               1,
-              2,
-              3
+              2
             ]
           }
         ],
@@ -358,10 +356,8 @@
             },
             "x-nullable": false,
             "enum": [
-              0,
               1,
-              2,
-              3
+              2
             ]
           }
         ],
@@ -391,10 +387,8 @@
             },
             "x-nullable": false,
             "enum": [
-              0,
               1,
-              2,
-              3
+              2
             ]
           }
         ],
@@ -1131,16 +1125,12 @@
       "type": "integer",
       "description": "",
       "x-enumNames": [
-        "IndexingMedia",
-        "IndexingMediaUpdate",
         "IndexingQP",
         "IndexingQPUpdate"
       ],
       "enum": [
-        0,
         1,
-        2,
-        3
+        2
       ]
     },
     "TemplateFile": {

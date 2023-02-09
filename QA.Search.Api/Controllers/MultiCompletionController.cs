@@ -9,6 +9,7 @@ using NJsonSchema;
 using QA.Search.Api.Infrastructure;
 using QA.Search.Api.Models;
 using QA.Search.Api.Services;
+using QA.Search.Common.Interfaces;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -27,20 +28,22 @@ namespace QA.Search.Api.Controllers
         private readonly CompletionTranspiler _completionTranspiler;
         private readonly CompletionMapper _completionMapper;
         private readonly IndexMapper _indexMapper;
+        private readonly IElasticSettingsProvider _elasticSettingsProvider;
 
         public MultiCompletionController(
             IOptions<Settings> options,
             ILogger<MultiCompletionController> logger,
             IElasticLowLevelClient elastic,
-            IndexTranspiler indexTranspiler,
             CompletionTranspiler completionTranspiler,
             CompletionMapper completionMapper,
-            IndexMapper indexMapper)
-            : base(options, logger, elastic, indexTranspiler)
+            IndexMapper indexMapper,
+            IElasticSettingsProvider elasticSettingsProvider)
+            : base(options, logger, elastic)
         {
             _completionTranspiler = completionTranspiler;
             _completionMapper = completionMapper;
             _indexMapper = indexMapper;
+            _elasticSettingsProvider = elasticSettingsProvider;
         }
 
         /// <summary>
@@ -91,13 +94,12 @@ namespace QA.Search.Api.Controllers
         {
             // для /{index}/_analyze нужен какой-то валидный индекс Elastic,
             // в котором зарегистрирован "analyzer_regex"
-            string analyzeIndexName = _indexTranspiler
-                .IndexNameForAnalyze(completionRequests.SelectMany(request => request.From));
+            string analyzeIndexName = _elasticSettingsProvider.GetIndexNameForAnalyze(completionRequests.SelectMany(request => request.From));
 
             if (analyzeIndexName == null)
             {
                 var aliasesResponse = await _elastic.Cat.AliasesAsync<StringResponse>(
-                    _settings.AliasMask, new CatAliasesRequestParameters
+                    _elasticSettingsProvider.GetAliasMask(), new CatAliasesRequestParameters
                     {
                         Headers = new[] { "alias" },
                         Format = "json",
@@ -173,7 +175,7 @@ namespace QA.Search.Api.Controllers
 
         private string TranspileCompletionRequest(CompletionRequest completionRequest)
         {
-            string indexesWildcard = _indexTranspiler.IndexesWildcard(completionRequest.From);
+            string indexesWildcard = _elasticSettingsProvider.GetIndexesWildcard(completionRequest.From);
 
             JObject elasticRequest = _completionTranspiler.TranspileCompletion(completionRequest);
 

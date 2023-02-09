@@ -1,0 +1,11 @@
+﻿{
+  "$weights": {
+    "text": 10,
+    "title": 10,
+    "description": 10,
+    "alias": 9,
+    "category": 8,
+    "file": 7,
+    "url": 7
+  }
+}

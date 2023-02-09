@@ -1,15 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using QA.Search.Admin.Errors;
-using QA.Search.Admin.Models;
 using QA.Search.Admin.Models.ElasticManagementPage;
 using QA.Search.Admin.Services.ElasticManagement;
+using System.Threading.Tasks;
 
 namespace QA.Search.Admin.Controllers
 {
@@ -17,6 +10,7 @@ namespace QA.Search.Admin.Controllers
     [Route("api/[controller]")]
     [Consumes("application/json")]
     [Produces("application/json")]
+    [IgnoreAntiforgeryToken]
     public class ElasticManagementPageController : Controller
     {
         private ElasticManagementService Service { get; }
@@ -24,7 +18,7 @@ namespace QA.Search.Admin.Controllers
         //private ILogger<ElasticManagementPageController> Logger { get; }
         private ILogger Logger { get; }
 
-        public ElasticManagementPageController(ILogger logger, 
+        public ElasticManagementPageController(ILogger logger,
             ElasticManagementService service)
         {
             Logger = logger;
@@ -36,7 +30,7 @@ namespace QA.Search.Admin.Controllers
         [ProducesResponseType(500)]
         public IActionResult LoadData()
         {
-           return Ok(Service.LoadData());
+            return Ok(Service.LoadData());
         }
 
         [HttpPost("[action]")]

@@ -1,12 +1,5 @@
-﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
-using QA.Search.Api.Models;
-using QA.Search.Api.Models.ElasticSearch;
-using QA.Search.Api.Models.ElasticSearch.RequestSections;
-using System;
+﻿using QA.Search.Api.Models.ElasticSearch.RequestSections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace QA.Search.Api.Builders
 {

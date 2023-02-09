@@ -4,7 +4,6 @@ using QA.Search.Generic.DAL.Exceptions;
 using QA.Search.Generic.DAL.Models;
 using QA.Search.Generic.DAL.Services.Configuration;
 using QA.Search.Generic.DAL.Services.Extensions;
-using System;
 using System.Linq;
 using System.Threading.Tasks;
 

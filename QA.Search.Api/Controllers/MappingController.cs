@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json.Linq;
 using QA.Search.Api.Services;
+using QA.Search.Common.Interfaces;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -19,22 +20,24 @@ namespace QA.Search.Api.Controllers
     public class MappingController : ElasticController
     {
         private readonly IndexMapper _indexMapper;
+        private readonly IElasticSettingsProvider _elasticSettingsProvider;
 
         public MappingController(
             IOptions<Settings> options,
             ILogger<MappingController> logger,
             IElasticLowLevelClient elastic,
-            IndexTranspiler indexTranspiler,
-            IndexMapper indexMapper)
-            : base(options, logger, elastic, indexTranspiler)
+            IndexMapper indexMapper,
+            IElasticSettingsProvider elasticSettingsProvider)
+            : base(options, logger, elastic)
         {
             _indexMapper = indexMapper;
+            _elasticSettingsProvider = elasticSettingsProvider;
         }
 
         [HttpGet]
         public async Task<IActionResult> Mapping()
         {
-            var mappingResponse = await _elastic.Indices.GetMappingAsync<StringResponse>(_settings.AliasMask);
+            var mappingResponse = await _elastic.Indices.GetMappingAsync<StringResponse>(_elasticSettingsProvider.GetAliasMask());
 
             if (!mappingResponse.Success)
             {
@@ -55,7 +58,7 @@ namespace QA.Search.Api.Controllers
         /// </summary>
         private JObject MapMappings(JObject mappings)
         {
-            JObject schema = MapObject(mappings.PropertyValues().FirstOrDefault() as JObject ?? new JObject());
+            JObject schema = MapObject(mappings.PropertyValues().FirstOrDefault() as JObject);
 
             // replace "Contextual Fields" object mappings by it's output field mapping
             foreach (string field in _settings.ContextualFields)
@@ -72,6 +75,9 @@ namespace QA.Search.Api.Controllers
         private JObject MapObject(JObject objectMapping)
         {
             var objectSchema = new JObject();
+
+            if (objectMapping == null)
+                return objectSchema;
 
             foreach (var (key, valueMapping) in (JObject)objectMapping["properties"])
             {

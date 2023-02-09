@@ -1,7 +1,7 @@
 import { Entity, PrimaryColumn, ManyToOne, Column } from "typeorm";
 import { DomainGroup } from "./DomainGroup";
 
-@Entity("crawler.Domains")
+@Entity("domains")
 export class Domain {
   @PrimaryColumn({ update: false })
   origin: string;
@@ -9,22 +9,10 @@ export class Domain {
   @Column({ update: false })
   domainGroupId: number;
 
-  /**
-   * For comparsion operations we should use `.toISOString()`
-   * ```js
-   * LessThan(new Date().toISOString())
-   * ```
-   */
-  @Column("datetimeoffset")
+  @Column()
   lastFastCrawlingUtc: Date;
-
-  /**
-   * For comparsion operations we should use `.toISOString()`
-   * ```js
-   * LessThan(new Date().toISOString())
-   * ```
-   */
-  @Column("datetimeoffset")
+ 
+  @Column()
   lastDeepCrawlingUtc: Date;
 
   @ManyToOne(() => DomainGroup, domainGroup => domainGroup.domains)

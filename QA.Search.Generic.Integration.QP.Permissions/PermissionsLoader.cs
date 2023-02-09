@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using QA.Search.Common.Interfaces;
 using QA.Search.Generic.Integration.Core.Models;
 using QA.Search.Generic.Integration.QP.Permissions.Configuration;
 using QA.Search.Generic.Integration.QP.Permissions.Markers;
@@ -21,6 +22,7 @@ namespace QA.Search.Generic.Integration.QP.Permissions
         private readonly PermissionsConfiguration _permConfig;
         private readonly ILogger<PermissionsLoader> _logger;
         private readonly IOptions<Settings<QpPermissionsMarker>> _settings;
+        private readonly IElasticSettingsProvider _elasticSettingsProvider;
         private readonly List<ContentInformation> _contentsInfo;
         private readonly List<PermissionCache> _permissionsCache;
 
@@ -28,14 +30,17 @@ namespace QA.Search.Generic.Integration.QP.Permissions
         private decimal _roleToContentLinkId;
 
         public PermissionsLoader(PermissionsDataContext permContext,
+            IElasticSettingsProvider elasticSettingsProvider,
             IOptions<PermissionsConfiguration> permConfig,
-            ILogger<PermissionsLoader> logger,
-            IOptions<Settings<QpPermissionsMarker>> settingsOptions)
+            IOptions<Settings<QpPermissionsMarker>> settingsOptions,
+            ILogger<PermissionsLoader> logger)
         {
             _permContext = permContext;
+            _elasticSettingsProvider = elasticSettingsProvider;
             _permConfig = permConfig.Value;
-            _logger = logger;
             _settings = settingsOptions;
+            _logger = logger;
+
             _permissionsCache = new List<PermissionCache>();
             _contentsInfo = new List<ContentInformation>();
         }
@@ -75,14 +80,14 @@ namespace QA.Search.Generic.Integration.QP.Permissions
                     contentInfo.Roles = await GetContentPermissions(contentInfo.ContentItemId, contentInfo.ParentId, stoppingToken);
                 }
 
-                _contentsInfo.ForEach(x => x.IndexName = _settings.Value.AliasPrefix + x.ContentName);
+                _contentsInfo.ForEach(x => x.IndexName = _elasticSettingsProvider.GetAliasPrefix() + x.ContentName);
 
                 List<string> roles = _contentsInfo
                     .SelectMany(x => x.Roles)
                     .Distinct()
                     .ToList();
 
-                List<IndexesByRoles> permissions = new List<IndexesByRoles>();
+                List<IndexesByRoles> permissions = new();
 
                 foreach (string role in roles)
                 {
@@ -160,7 +165,7 @@ namespace QA.Search.Generic.Integration.QP.Permissions
             //обновляем все роли в кеше для новых кешированных контентов и возвращаем список ролей по умолчанию.
             if (parentId is null)
             {
-                List<string> defaultReaderRole = new List<string> { _permConfig.DefaultRoleAlias };
+                List<string> defaultReaderRole = new() { _permConfig.DefaultRoleAlias };
                 UpdateCacheRoles(defaultReaderRole);
                 return defaultReaderRole;
             }

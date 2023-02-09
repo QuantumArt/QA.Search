@@ -36,13 +36,17 @@ function NewIndexEditor() {
         labelFor="name-input"
         labelInfo="(Префикс и дата будут подставлены автоматом)"
       >
-        <InputGroup
-          id="name-input"
-          large={true}
-          placeholder="введите название нового индекса"
-          value={state.editorModel.indexName || ""}
-          onChange={event => setNewIndexName(event.target.value)}
-        />
+        <Tooltip
+          content="Имя индекса может содержать латинские буквы, цифры, символы минуса и нижнего подчёркивания."
+          className="tooltip-inherit-size">
+          <InputGroup
+            id="name-input"
+            large={true}
+            placeholder="введите название нового индекса"
+            value={state.editorModel.indexName || ""}
+            onChange={event => setNewIndexName(event.target.value.toString().toLowerCase().replace(/[^A-Za-z0-9-_]/ig, ''))}
+          />
+        </Tooltip>
       </FormGroup>
 
       {state.editorModel.isError && (

@@ -42,7 +42,7 @@ function IndexingManagementTool({ targetQP }: Props) {
               icon="error"
               description={<p>При выполнении операции произошла ошибка</p>}
               action={
-                <Button icon="refresh" onClick={() => location.reload()}>
+                <Button icon="refresh" onClick={() => window.location.reload()}>
                   Перезагрузить страницу
                 </Button>
               }

@@ -1,9 +1,5 @@
 ﻿using Newtonsoft.Json;
 using QA.Search.Api.Models.ElasticSearch.RequestSections;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace QA.Search.Api.Models.ElasticSearch
 {

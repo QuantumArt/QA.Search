@@ -7,8 +7,8 @@ const fileName = `debug/media.domain.ru_${new Date()
   .replace(/[:T]/g, "-")}.txt`;
 
 FastCrawler.launch({
-  links: ["https://media.domain.ru"],
-  outgoingHosts: ["https://domain.ru"],
+  links: ["http://demositerus.dev.qsupport.ru"],
+  outgoingHosts: ["http://demositerus.dev.qsupport.ru"],
   concurrencyLevel: 10,
   blockedResources: ["stylesheet"],
   async handlePage(pageLink) {

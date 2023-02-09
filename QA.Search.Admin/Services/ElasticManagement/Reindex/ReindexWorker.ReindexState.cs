@@ -1,9 +1,7 @@
 ﻿using QA.Search.Admin.Services.ElasticManagement.Reindex.Interfaces;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace QA.Search.Admin.Services.ElasticManagement.Reindex
 {
@@ -15,7 +13,7 @@ namespace QA.Search.Admin.Services.ElasticManagement.Reindex
     {
         private class ReindexState : IReindexState
         {
-            
+
 
             private List<IIndexesContainer> Containers { get; set; }
 
@@ -222,7 +220,7 @@ namespace QA.Search.Admin.Services.ElasticManagement.Reindex
                 {
                     InnerLock.ExitWriteLock();
                 }
-                
+
             }
         }
 

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace QA.Search.Admin.Models.IndexingCommon
+﻿namespace QA.Search.Admin.Models.IndexingCommon
 {
     public enum IndexingState
     {

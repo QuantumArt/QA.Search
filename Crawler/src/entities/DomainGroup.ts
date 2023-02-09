@@ -2,7 +2,7 @@ import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from "typeorm";
 import { Domain } from "./Domain";
 import { Route, IndexingConfig } from "./Route";
 
-@Entity("crawler.DomainGroups")
+@Entity("domain_groups")
 export class DomainGroup {
   @PrimaryGeneratedColumn()
   id: number;

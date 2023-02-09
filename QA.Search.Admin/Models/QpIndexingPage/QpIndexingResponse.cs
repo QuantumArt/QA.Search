@@ -1,9 +1,6 @@
 ﻿using QA.Search.Admin.Models.IndexingCommon;
 using QA.Search.Generic.Integration.QP.Models;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace QA.Search.Admin.Models.QpIndexingPage
 {
@@ -19,7 +16,7 @@ namespace QA.Search.Admin.Models.QpIndexingPage
             EndDate = context.EndDate;
             ScheduledDates = context.ScheduledDates;
 
-            Reports = context.Reports?.Select(r=> new IndexingReportModel(r)).ToArray() ?? new IndexingReportModel[0];
+            Reports = context.Reports?.Select(r => new IndexingReportModel(r)).ToArray() ?? new IndexingReportModel[0];
         }
 
         public IndexingReportModel[] Reports { get; set; } = new IndexingReportModel[0];

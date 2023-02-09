@@ -1,4 +1,4 @@
-FROM node:12
+FROM node:16
 
 RUN apt-get update && apt-get install -yq libgconf-2-4
 

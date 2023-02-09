@@ -28,8 +28,8 @@ export enum IndexingButton {
 }
 
 /** Возвращает функцию, создающую контейнер */
-function createContextFactory(targetQP: TargetQP) {
-  function createContext() {
+function CreateContextFactory(targetQP: TargetQP) {
+  function CreateContext() {
     const defaultState: IndexingManagementToolModel = {
       indexingServiceState: null,
       pageState: IndexingToolState.None,
@@ -163,7 +163,7 @@ function createContextFactory(targetQP: TargetQP) {
     };
   }
 
-  return createContext;
+  return CreateContext;
 }
 
-export default createContextFactory;
+export default CreateContextFactory;

@@ -1,8 +1,7 @@
-﻿using System;
+﻿using Microsoft.Extensions.Options;
 using System.Net;
 using System.Net.Mail;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Options;
 
 namespace QA.Search.Admin.Services
 {
@@ -17,8 +16,9 @@ namespace QA.Search.Admin.Services
 
         public async Task Send(string address, string subject, string content)
         {
-            
-            using (var smtpClient = new SmtpClient {
+
+            using (var smtpClient = new SmtpClient
+            {
                 Host = Settings.Host,
                 Port = Settings.Port,
                 EnableSsl = Settings.EnableSsl,

@@ -2,17 +2,20 @@ import { ConnectionOptions } from "typeorm";
 import { CrawlingOptions } from "./crawler/CrawlingOptions";
 import { IndexingOptions } from "./indexer/IndexingOptions";
 import { ConfigOptions } from "elasticsearch";
+import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 
 export const dbConnectionOptions: ConnectionOptions = {
-  type: "mssql",
+  type: "postgres",
   host: process.env.DB_HOST || "localhost",
-  username: process.env.DB_USER || "sa",
+  username: process.env.DB_USER || "qa_search_crawler",
   password: process.env.DB_PASSWORD || "StrongPass1234",
-  database: "qa_search",
+  database: "qa_search_crawler",
   synchronize: false,
   logging: false,
   pool: { acquireTimeoutMillis: 20000 },
-  entities: ["src/entities/**/*.ts"]
+  entities: ["src/entities/**/*.ts"],
+  namingStrategy:  new SnakeNamingStrategy(),
+  schema: "crawler"
 };
 
 export const deepCrawlingOptions: CrawlingOptions = {

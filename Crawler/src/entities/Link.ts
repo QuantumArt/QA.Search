@@ -1,10 +1,10 @@
 import { URL } from "url";
 import { createHash } from "crypto";
-import { Entity, Column, PrimaryGeneratedColumn, VersionColumn } from "typeorm";
+import { Entity, Column, PrimaryColumn, VersionColumn } from "typeorm";
 
-@Entity("crawler.Links")
+@Entity("links")
 export class Link {
-  @PrimaryGeneratedColumn()
+  @PrimaryColumn()
   hash: string;
 
   private _url: string;
@@ -22,14 +22,8 @@ export class Link {
   get urlParts() {
     return this._urlParts;
   }
-
-  /**
-   * For comparsion operations we should use `.toISOString()`
-   * ```js
-   * LessThan(new Date().toISOString())
-   * ```
-   */
-  @Column("datetimeoffset")
+  
+  @Column()
   nextIndexingUtc: Date;
 
   @Column()

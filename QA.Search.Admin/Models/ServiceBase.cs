@@ -1,8 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using QA.Search.Admin.Errors;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace QA.Search.Admin.Models
