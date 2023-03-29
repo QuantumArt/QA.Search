@@ -1,0 +1,159 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: qa-search-generic-api-deployment
+  namespace: __NAMESPACE__
+  labels:
+    app: api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: api
+  template:
+    metadata:
+      labels:
+        app: api
+        logging: enabled
+    spec:
+      containers:
+        - name: api
+          image: __REGISTRY__/qa-search/generic/search-api:||version||
+          env:
+            - name: ElasticSettings__Address
+              valueFrom:
+                configMapKeyRef:
+                  name: qa-search-config
+                  key: ELASTIC_HOST
+            - name: ElasticSettings__ProjectName
+              valueFrom:
+                configMapKeyRef:
+                  name: qa-search-config
+                  key: PROJECT_NAME
+          ports:
+            - containerPort: 80
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: qa-search-generic-integration-deployment
+  namespace: __NAMESPACE__
+  labels:
+    app: integration
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: integration
+  template:
+    metadata:
+      labels:
+        app: integration
+        logging: enabled
+    spec:
+      containers:
+        - name: integration
+          image: __REGISTRY__/qa-search/generic/search-integration:||version||
+          env:
+            - name: ElasticSettings__Address
+              valueFrom:
+                configMapKeyRef:
+                  name: qa-search-config
+                  key: ELASTIC_HOST
+            - name: ElasticSettings__ProjectName
+              valueFrom:
+                configMapKeyRef:
+                  name: qa-search-config
+                  key: PROJECT_NAME
+            - name: ContextConfiguration__ConnectionString
+              valueFrom:
+                configMapKeyRef:
+                  name: qa-search-config
+                  key: DB_CONNECTION_STRING
+            - name: ContextConfiguration__SqlServerType
+              valueFrom:
+                configMapKeyRef:
+                  name: qa-search-config
+                  key: SQL_TYPE
+            - name: ContextConfiguration__DefaultSchemeName
+              valueFrom:
+                configMapKeyRef:
+                  name: qa-search-config
+                  key: DEF_SCHEME_NAME
+            - name: ContextConfiguration__ContentAccess
+              valueFrom:
+                configMapKeyRef:
+                  name: qa-search-config
+                  key: CONTENT_ACCESS
+            - name: ContextConfiguration__FormatTableName
+              valueFrom:
+                configMapKeyRef:
+                  name: qa-search-config
+                  key: FORMAT_TABLE_NAME
+          ports:
+            - containerPort: 80
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: qa-search-generic-admin-deployment
+  namespace: __NAMESPACE__
+  labels:
+    app: admin
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: admin
+  template:
+    metadata:
+      labels:
+        app: admin
+        logging: enabled
+    spec:
+      containers:
+        - name: admin
+          image: __REGISTRY__/qa-search/generic/search-admin:||version||
+          env:
+            - name: ElasticSettings__Address
+              valueFrom:
+                configMapKeyRef:
+                  name: qa-search-config
+                  key: ELASTIC_HOST
+            - name: ElasticSettings__ProjectName
+              valueFrom:
+                configMapKeyRef:
+                  name: qa-search-config
+                  key: PROJECT_NAME
+            - name: Settings__AdminAppUrl
+              valueFrom:
+                configMapKeyRef:
+                  name: qa-search-config
+                  key: ADMIN_APP_URL
+            - name: IndexingApiServiceConfiguration__Schema
+              valueFrom:
+                configMapKeyRef:
+                  name: qa-search-config
+                  key: INDEXING_SCHEMA
+            - name: IndexingApiServiceConfiguration__Host
+              valueFrom:
+                configMapKeyRef:
+                  name: qa-search-config
+                  key: INDEXING_HOST
+            - name: IndexingApiServiceConfiguration__Port
+              valueFrom:
+                configMapKeyRef:
+                  name: qa-search-config
+                  key: INDEXING_PORT
+            - name: ConnectionStrings__AdminSearchDbContextConnection
+              valueFrom:
+                configMapKeyRef:
+                  name: qa-search-config
+                  key: CONNECTION_ADMIN
+            - name: ConnectionStrings__CrawlerSearchDbContextConnection
+              valueFrom:
+                configMapKeyRef:
+                  name: qa-search-config
+                  key: CONNECTION_CRAWLER
+          ports:
+            - containerPort: 80

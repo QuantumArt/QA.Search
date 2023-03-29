@@ -1,4 +1,4 @@
-# Установка продукта QP.Search
+# Установка продукта QP8.Search
 
 ## Предварительные зависимости
 
@@ -13,13 +13,13 @@
 9. Nano;  
 10. Tar.  
 
-## Скачивание продукта QP.Search
+## Скачивание продукта QP8.Search
 
 Продукт доступен к загрузке на сайте QuantumArt по адресу DOWNLOAD_URL.  
 
 ## Создание пользователя и группы
 
-Для запуска компонентов продукта QP.Search рекомендуется создать отдельную группу и пользователя в системе.  
+Для запуска компонентов продукта QP8.Search рекомендуется создать отдельную группу и пользователя в системе.  
 В качестве примера будем использовать имя пользователя и группы `quantumart`.  
 Создадим группу следующей командой:  
 ```bash
@@ -36,7 +36,7 @@ sudo useradd quantumart -g quantumart -m
 sudo passwd quantumart
 ```
 
-## Распаковка архива с продуктом QP.Search
+## Распаковка архива с продуктом QP8.Search
 
 Разархивируем скачанный ранее архив в домашнюю директорию созданного ранее пользователя командой:  
 ```bash
@@ -55,11 +55,11 @@ sudo chown quantumart:quantumart /home/quantumart/QP.Search.Api
 sudo chown quantumart:quantumart /home/quantumart/QP.Search.Integration
 ```
 
-## Установка компонента QP.Search.Integration
+## Установка компонента QP8.Search.Integration
 
 ### Создание директории для log-файлов
 
-Создадим директорию куда будут сохраняться log-файлы компонента QP.Search.Integration командой:  
+Создадим директорию куда будут сохраняться log-файлы компонента QP8.Search.Integration командой:  
 ```bash
 sudo mkdir /var/log/search-integration
 ```
@@ -69,7 +69,7 @@ sudo mkdir /var/log/search-integration
 sudo chown quantumart:quantumart /var/log/search-integration
 ```
 
-### Настройка компонента QP.Search.Integration
+### Настройка компонента QP8.Search.Integration
 
 Откроем на редактирование файл конфигурации компонента командой:  
 ```bash
@@ -93,7 +93,7 @@ sudo nano /home/quantumart/QP.Search.Integration/appsettings.json
 2. ProjectName - короткое название проекта латиницей;  
 3. RequestTimeout - время ожидания ответа от ElasticSearch.  
 
-**Внимание:** данная секция должна совпадать с одноимённой секцией, используемой при настройке компонентов `QP.Search.Admin` и `QP.Search.Api`.
+**Внимание:** данная секция должна совпадать с одноимённой секцией, используемой при настройке компонентов `QP8.Search.Admin` и `QP8.Search.Api`.
 
 Пример корректного заполнения секции:  
 ```JSON
@@ -161,7 +161,7 @@ sudo nano /home/quantumart/QP.Search.Integration/appsettings.json
 }
 ```
 
-**Внимание:** значения параметров `DefaultRoleAlias` и `PermissionIndexName` должны совпадать с параметрами `DefaultReaderRole` и `PermissionsIndexName` соответственно, используемыми при настройке компонента `QP.Search.Api`.  
+**Внимание:** значения параметров `DefaultRoleAlias` и `PermissionIndexName` должны совпадать с параметрами `DefaultReaderRole` и `PermissionsIndexName` соответственно, используемыми при настройке компонента `QP8.Search.Api`.  
 
 Секция `ViewOptions` описывает кол-во данных, которые нужно выбирать при чтении из QP8 CMS при индексации за один проход. Настройка влияет на потребляемый объём памяти и скорость индексации. Чем больше указано значение, тем больше будет потребляться памяти компонентом во время индексации и тем дольше будет ElasticSearch выполнять сохранение данных в индекс, но общее кол-во проходов будет меньше.  
 Для примера если в контенте QP8 CMS содержится 1 000 статей, и указан размер в 10 статей, то будет выполнено 100 проходов. Если же указать размер в 100, то будет выполнено 10 проходов.  
@@ -289,11 +289,11 @@ sudo systemctl status search-integration.service
 sudo systemctl enable search-integration.service
 ```
 
-## Установка компонента QP.Search.Admin
+## Установка компонента QP8.Search.Admin
 
 ### Создание директории для log-файлов
 
-Создадим директорию куда будут сохраняться log-файлы компонента QP.Search.Admin командой:  
+Создадим директорию куда будут сохраняться log-файлы компонента QP8.Search.Admin командой:  
 ```bash
 sudo mkdir /var/log/search-admin
 ```
@@ -305,7 +305,7 @@ sudo chown quantumart:quantumart /var/log/search-admin
 
 ### Подготовка БД к использованию
 
-В директории `/home/quantumart/QP.Search.Admin/Scripts` находится `sql`-файл `create-dbs.sql` для создания БД и пользователя баз данных, необходимых для компонента `QP.Search.Admin` и `Crawler`-а.  
+В директории `/home/quantumart/QP.Search.Admin/Scripts` находится `sql`-файл `create-dbs.sql` для создания БД и пользователя баз данных, необходимых для компонента `QP8.Search.Admin` и `Crawler`-а.  
 Откроем файл на редактирование командой:  
 ```bash
 sudo nano /home/quantumart/QP.Search.Admin/Scripts/create-dbs.sql
@@ -360,7 +360,7 @@ sudo psql -h 127.0.0.1 -p 5432 -U postgres -d postgres -a -f /home/quantumart/QP
 5. `-a` - флаг отвечающий за вывод в консоль всех выполняемых команд;  
 6. `-f` - путь до SQL-файла, который требуется выполнить.  
 
-### Настройка компонента QP.Search.Admin
+### Настройка компонента QP8.Search.Admin
 
 Откроем на редактирование файл конфигурации компонента командой:  
 ```bash
@@ -376,7 +376,7 @@ sudo nano /home/quantumart/QP.Search.Admin/appsettings.json
 }
 ```
 
-Секция `Settings` описывает общие параметры компонента, тут следует актуализировать только параметр `AdminAppUrl` в котором указать DNS-имя или адрес сервера, на котором работает компонент QP.Search.Admin, этот адрес используется для формирования ссылки на восстановление пароля.  
+Секция `Settings` описывает общие параметры компонента, тут следует актуализировать только параметр `AdminAppUrl` в котором указать DNS-имя или адрес сервера, на котором работает компонент QP8.Search.Admin, этот адрес используется для формирования ссылки на восстановление пароля.  
 Пример: `"AdminAppUrl": "http://127.0.0.1:5600"`  
 
 Секция `SmtpServiceSettings` отвечает за настройки подключения к SMTP-серверу для отправки писем восстановления пароля доступа к панели администратора и содержит следующие параметры:  
@@ -403,7 +403,7 @@ sudo nano /home/quantumart/QP.Search.Admin/appsettings.json
 }
 ```
 
-Секция `IndexingApiServiceConfiguration` содержит настройки подключения к компоненту QP.Search.Integration.  
+Секция `IndexingApiServiceConfiguration` содержит настройки подключения к компоненту QP8.Search.Integration.  
 Параметры которые требуется поменять:  
 1. Scheme - http-схема которая используется для подключения к API (`http` или `https`);  
 2. Host - DNS-имя или IP-адрес сервера, на котором работает компонент индексации;  
@@ -422,7 +422,7 @@ sudo nano /home/quantumart/QP.Search.Admin/appsettings.json
 }
 ```
 
-Секция `ReindexWorkerSettings` описывает параметры внутреннего сервиса переиндексации в компоненте QP.Search.Admin и содержит следующие параметры:  
+Секция `ReindexWorkerSettings` описывает параметры внутреннего сервиса переиндексации в компоненте QP8.Search.Admin и содержит следующие параметры:  
 1. Interval - периодичность запуска внутренних задач переиндексации;  
 2. RunTasks - признак необходимости выполнять задачи переиндексации.  
 
@@ -439,7 +439,7 @@ sudo nano /home/quantumart/QP.Search.Admin/appsettings.json
 2. ProjectName - короткое название проекта латиницей;  
 3. RequestTimeout - время ожидания ответа от ElasticSearch.  
 
-**Внимание:** данная секция должна совпадать с одноимённой секцией, используемой при настройке компонентов `QP.Search.Integration` и `QP.Search.Api`.
+**Внимание:** данная секция должна совпадать с одноимённой секцией, используемой при настройке компонентов `QP8.Search.Integration` и `QP8.Search.Api`.
 
 Пример корректного заполнения секции:  
 ```JSON
@@ -535,11 +535,11 @@ sudo systemctl status search-admin.service
 sudo systemctl enable search-admin.service
 ```
 
-## Установка компонента QP.Search.Api
+## Установка компонента QP8.Search.Api
 
 ### Создание директории для log-файлов
 
-Создадим директорию куда будут сохраняться log-файлы компонента QP.Search.Api командой:  
+Создадим директорию куда будут сохраняться log-файлы компонента QP8.Search.Api командой:  
 ```bash
 sudo mkdir /var/log/search-api
 ```
@@ -549,7 +549,7 @@ sudo mkdir /var/log/search-api
 sudo chown quantumart:quantumart /var/log/search-api
 ```
 
-### Настройка компонента QP.Search.Api
+### Настройка компонента QP8.Search.Api
 
 Откроем на редактирование файл конфигурации компонента командой:  
 ```bash
@@ -558,8 +558,8 @@ sudo nano /home/quantumart/QP.Search.Api/appsettings.json
 
 Секция `Settings` описывает основные настройки компонента. Среди всех параметров изменим следующие:  
 1. UsePermissions - указывает использовать ли систему ролевой модели QP8 CMS для ограничения доступа к индексам;  
-2. PermissionsIndexName - название индекса хранящего списки доступов. Должен совпадать с параметром `PermissionIndexName` в конфигурации компонента `QP.Search.Integration`;  
-3. DefaultReaderRole - название роли доступа к данным без ограничения ролевой модели. Должен совпадать с параметром `DefaultRoleAlias` в конфигурации компонента `QP.Search.Integration`;  
+2. PermissionsIndexName - название индекса хранящего списки доступов. Должен совпадать с параметром `PermissionIndexName` в конфигурации компонента `QP8.Search.Integration`;  
+3. DefaultReaderRole - название роли доступа к данным без ограничения ролевой модели. Должен совпадать с параметром `DefaultRoleAlias` в конфигурации компонента `QP8.Search.Integration`;  
 4. SuggestionsDefaultLength - кол-во результатов выдаваемых в Api подсказок по умолчанию.  
 
 Пример корректного заполнения секции:  
@@ -579,7 +579,7 @@ sudo nano /home/quantumart/QP.Search.Api/appsettings.json
 2. ProjectName - короткое название проекта латиницей;  
 3. RequestTimeout - время ожидания ответа от ElasticSearch.  
 
-**Внимание:** данная секция должна совпадать с одноимённой секцией, используемой при настройке компонентов `QP.Search.Integration` и `QP.Search.Admin`.
+**Внимание:** данная секция должна совпадать с одноимённой секцией, используемой при настройке компонентов `QP8.Search.Integration` и `QP8.Search.Admin`.
 
 Пример корректного заполнения секции:  
 ```JSON

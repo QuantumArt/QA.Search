@@ -1,0 +1,53 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: api
+  namespace: __NAMESPACE__
+spec:
+  rules:
+  - host: api.generic-search.dev.qsupport.ru
+    http:
+      paths:
+      - pathType: Prefix
+        path: "/"
+        backend:
+          service:
+            name: qa-search-generic-api
+            port:
+              number: 80
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: integration
+  namespace: __NAMESPACE__
+spec:
+  rules:
+  - host: integ.generic-search.dev.qsupport.ru
+    http:
+      paths:
+      - pathType: Prefix
+        path: "/"
+        backend:
+          service:
+            name: qa-search-generic-integration
+            port: 
+              number: 80
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: admin
+  namespace: __NAMESPACE__
+spec:
+  rules:
+  - host: admin.generic-search.dev.qsupport.ru
+    http:
+      paths:
+      - pathType: Prefix
+        path: "/"
+        backend:
+          service:
+            name: qa-search-generic-admin
+            port: 
+              number: 80

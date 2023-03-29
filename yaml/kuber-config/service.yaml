@@ -1,0 +1,38 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: qa-search-generic-api
+  namespace: __NAMESPACE__
+spec:
+  type: ClusterIP
+  selector:
+    app: api
+  ports:
+  - port: 80
+    targetPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: qa-search-generic-integration
+  namespace: __NAMESPACE__
+spec:
+  type: ClusterIP
+  selector:
+    app: integration
+  ports:
+  - port: 80
+    targetPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: qa-search-generic-admin
+  namespace: __NAMESPACE__
+spec:
+  type: ClusterIP
+  selector:
+    app: admin
+  ports:
+  - port: 80
+    targetPort: 80
