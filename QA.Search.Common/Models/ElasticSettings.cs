@@ -19,5 +19,7 @@ namespace QA.Search.Common.Models
         /// Timeout for ElasticSearch requests
         /// </summary>
         public TimeSpan RequestTimeout { get; set; }
+
+        public BasicAuth BasicAuth { get; set; }
     }
 }

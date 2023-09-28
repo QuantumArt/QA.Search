@@ -46,27 +46,37 @@ namespace QA.Search.Generic.Integration.QP.Services
             ScheduledServiceSynchronization synchronization)
            : base(settingsOptions, context, logger, elasticClient, documentMiddleware, elasticSettingsProvider, contextConfigurationOption)
         {
-            _views = views.ToArray();
             _viewOptions = viewOptions.Value;
             _contextConfiguration = contextConfigurationOption.Value;
 
             _context.Reports.Clear();
 
-            for (int viewIndex = 0; viewIndex < _views.Length; viewIndex++)
+            List<ElasticView<GenericDataContext>> enabledViews = new();
+
+            foreach (ElasticView<GenericDataContext> view in views)
             {
                 int batchSize = _viewOptions.DefaultBatchSize;
 
                 //Maybe throw error?...
-                if (_viewOptions.ViewParameters.TryGetValue(_views[viewIndex].ViewName, out ViewParameters viewParameters))
+                if (_viewOptions.ViewParameters.TryGetValue(view.ViewName, out ViewParameters viewParameters))
+                {
                     if (viewParameters.BatchSize > 0)
                     {
                         batchSize = viewParameters.BatchSize;
                         _logger.LogWarning($"Set default BatchSize = {batchSize}");
                     }
 
-                _context.Reports.Add(new IndexingReport(_views[viewIndex].IndexName, batchSize));
+                    if (viewParameters.IsDisabled)
+                        _logger.LogInformation("View {ViewName} was disable", view.ViewName);
+                    else
+                        enabledViews.Add(view);
+                }
+
+                _context.Reports.Add(new IndexingReport(view.IndexName, batchSize));
             }
+
             _synchronization = synchronization;
+            _views = enabledViews.ToArray();
         }
 
         protected override async Task ExecuteStepAsync(CancellationToken stoppingToken)

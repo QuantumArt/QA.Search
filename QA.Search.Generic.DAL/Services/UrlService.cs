@@ -16,6 +16,7 @@ namespace QA.Search.Generic.DAL.Services
         private readonly GenericDataContext _context;
 
         private const int StartPageExtensionId = 547;
+        private const string BASE_SITE_PATH = "SEARCH_DEFAULT_HOST";
 
         public UrlService(TContext context)
         {
@@ -45,7 +46,7 @@ namespace QA.Search.Generic.DAL.Services
 
                 if (extensionId == StartPageExtensionId)
                 {
-                    string? baseUrl = await GetBaseSitePath(itemId, cancellationToken);
+                    string? baseUrl = await GetBaseSitePath(cancellationToken);
                     if (string.IsNullOrWhiteSpace(baseUrl))
                     {
                         throw new InvalidOperationException("Can't find base url.");
@@ -74,12 +75,13 @@ namespace QA.Search.Generic.DAL.Services
             return item.ToValueTuple();
         }
 
-        private async Task<string?> GetBaseSitePath(int? contentId, CancellationToken cancellationToken)
+        private async Task<string?> GetBaseSitePath(CancellationToken cancellationToken)
         {
-            return await _context.StartPage
-                .Where(x => x.ItemId == contentId && x.Visible == true && x.Archive == false)
-                .Select(x => x.DefaultHost)
-                .SingleAsync(cancellationToken);
+            return await _context.AppSettings
+                .AsNoTracking()
+                .Where(x => x.Key == BASE_SITE_PATH)
+                .Select(x => x.Value)
+                .SingleOrDefaultAsync(cancellationToken);
         }
 
         public string BuildUri(string baseUrl, string? query = null)

@@ -9,5 +9,10 @@
         /// Size of pack for take from DB and send to Elastic
         /// </summary>
         public int BatchSize { get; set; }
+
+        /// <summary>
+        /// ALlow to disable this index view
+        /// </summary>
+        public bool IsDisabled { get; set; }
     }
 }

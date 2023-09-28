@@ -1,8 +1,8 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: qa-search-generic-api-deployment
-  namespace: __NAMESPACE__
+  name: qa-search-api
+  namespace: qp-search
   labels:
     app: api
 spec:
@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
         - name: api
-          image: __REGISTRY__/__API_IMAGE__:||version||
+          image: qpcms/qp-search-api:1.0.0.4
           env:
             - name: ElasticSettings__Address
               valueFrom:
@@ -36,8 +36,8 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: qa-search-generic-integration-deployment
-  namespace: __NAMESPACE__
+  name: qa-search-integration
+  namespace: qp-search
   labels:
     app: integration
 spec:
@@ -53,7 +53,7 @@ spec:
     spec:
       containers:
         - name: integration
-          image: __REGISTRY__/__INTEGRATION_IMAGE__:||version||
+          image: qpcms/qp-search-integration:1.0.0.4
           env:
             - name: ElasticSettings__Address
               valueFrom:
@@ -96,8 +96,8 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: qa-search-generic-admin-deployment
-  namespace: __NAMESPACE__
+  name: qa-search-admin
+  namespace: qp-search
   labels:
     app: admin
 spec:
@@ -113,7 +113,7 @@ spec:
     spec:
       containers:
         - name: admin
-          image: __REGISTRY__/__ADMIN_IMAGE__:||version||
+          image: qpcms/qp-search-admin:1.0.0.4
           env:
             - name: ElasticSettings__Address
               valueFrom:

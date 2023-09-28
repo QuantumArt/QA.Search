@@ -18,6 +18,8 @@ namespace QA.Search.Generic.DAL.Services
         public DbSet<QPAbstractItem> QPAbstractItems { get; set; }
         public DbSet<StartPageExtension> StartPage { get; set; }
 
+        public DbSet<AppSetting> AppSettings { get; set; }
+
         public GenericDataContext(ServiceDataContext serviceDataContext, IOptions<ContextConfiguration> contextConfigurationOption)
             : base(DbContextTool.DefaultConnectionOptions<GenericDataContext>(contextConfigurationOption.Value))
         {
@@ -39,11 +41,11 @@ namespace QA.Search.Generic.DAL.Services
             return $"{schema}.{tableName}";
         }
 
-        public async Task<decimal> GetContentIdByDotNetName(string dotNetName)
+        public Task<decimal> GetContentIdByDotNetName(string dotNetName)
         {
             return string.IsNullOrWhiteSpace(dotNetName)
                 ? throw new ArgumentNullException(nameof(dotNetName))
-                : await _serviceDataContext.GetContentIdByDotNetName(dotNetName);
+                : _serviceDataContext.GetContentIdByDotNetName(dotNetName);
         }
 
         public string GetTableNameFromDotNetName(string dotNetName)
@@ -57,6 +59,27 @@ namespace QA.Search.Generic.DAL.Services
             return string.IsNullOrWhiteSpace(contentName)
                 ? throw new ArgumentNullException(nameof(contentName))
                 : _serviceDataContext.GetTableNameFromContentName(contentName);
+        }
+
+        public string GetM2MIntermediateTableName(string dotNetNameOrContentName, string attributeName, bool reverse)
+        {
+            if (string.IsNullOrWhiteSpace(dotNetNameOrContentName))
+                throw new ArgumentNullException(nameof(dotNetNameOrContentName));
+
+            if (string.IsNullOrWhiteSpace(attributeName))
+                throw new ArgumentNullException(nameof(attributeName));
+
+            return _serviceDataContext.GetM2MIntermediateTableName(dotNetNameOrContentName, attributeName, reverse);
+        }
+        public string GetM2MIntermediateTableNameByRelationTables(string dotNetNameOrContentNameLeft, string dotNetNameOrContentNameRight, bool reverse)
+        {
+            if (string.IsNullOrWhiteSpace(dotNetNameOrContentNameLeft))
+                throw new ArgumentNullException(nameof(dotNetNameOrContentNameLeft));
+
+            if (string.IsNullOrWhiteSpace(dotNetNameOrContentNameRight))
+                throw new ArgumentNullException(nameof(dotNetNameOrContentNameRight));
+
+            return _serviceDataContext.GetM2MIntermediateTableNameByRelationTables(dotNetNameOrContentNameLeft, dotNetNameOrContentNameRight, reverse);
         }
 
         public abstract void ModelCreating(ModelBuilder modelBuilder);
@@ -81,6 +104,9 @@ namespace QA.Search.Generic.DAL.Services
 
             modelBuilder.Entity<StartPageExtension>()
                 .ToTable(GetTableNameFromContentName(nameof(StartPageExtension)));
+
+            modelBuilder.Entity<AppSetting>()
+                .ToTable("app_settings");
 
             ModelCreating(modelBuilder);
         }

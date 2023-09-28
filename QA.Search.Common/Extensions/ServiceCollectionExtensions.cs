@@ -26,7 +26,12 @@ namespace QA.Search.Common.Extensions
                 var nodes = ParseUrls(elasticSettings.Address);
 
                 StaticConnectionPool pool = new(nodes);
-                ConnectionConfiguration config = new ConnectionConfiguration(pool).RequestTimeout(elasticSettings.RequestTimeout);
+                ConnectionConfiguration config = new ConnectionConfiguration(pool)
+                    .RequestTimeout(elasticSettings.RequestTimeout);
+
+                if (elasticSettings.BasicAuth != null && !string.IsNullOrWhiteSpace(elasticSettings.BasicAuth.User))
+                    config = config.BasicAuthentication(elasticSettings.BasicAuth.User, elasticSettings.BasicAuth.Password);
+
                 ElasticLowLevelClient client = new(config);
 
                 return client;

@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: qa-search-config
+  namespace: qp-search
+data:
+  ELASTIC_HOST: __ELASTIC_HOST__
+  PROJECT_NAME: demosite
+  DB_CONNECTION_STRING: __DB_CONNECTION_STRING__
+  SQL_TYPE: PostgreSQL
+  DEF_SCHEME_NAME: public
+  CONTENT_ACCESS: Live
+  FORMAT_TABLE_NAME: '{0}.{1}'
+  ADMIN_APP_URL: __ADMIN_APP_URL__
+  INDEXING_HOST: qa-search-integration
+  INDEXING_PORT: '80'
+  CONNECTION_ADMIN: __CONNECTION_ADMIN__
+  CONNECTION_CRAWLER: __CONNECTION_CRAWLER__
+  INDEXING_SCHEMA: http

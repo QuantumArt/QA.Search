@@ -1,0 +1,45 @@
+version: "3.7"
+services:
+  search-api:
+    container_name: search-api
+    image: "qpcms/qp-search-api:1.0.0.4"
+    restart: always
+    ports:
+      - "5600:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ElasticSettings__Address=http://ElasticIP:9200
+      - ElasticSettings__ProjectName="demosite"
+  search-indexing:
+    container_name: search-indexing
+    image: "qpcms/qp-search-integration:1.0.0.4"
+    restart: always
+    ports:
+      - "5800:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ElasticSettings__Address=http://ElasticIP:9200
+      - ElasticSettings__ProjectName="demosite"
+      - ContextConfiguration__ConnectionString=Server=PostgresIP;Database=DbName;User Id=User;Password=Password;
+      - ContextConfiguration__SqlServerType=PostgreSQL
+      - ContextConfiguration__DefaultSchemeName=public
+      - ContextConfiguration__ContentAccess=Live
+      - ContextConfiguration__FormatTableName={0}.{1}
+  search-admin:
+    container_name: search-admin
+    image: "qpcms/qp-search-admin:1.0.0.4"
+    restart: always
+    ports:
+      - "5700:80"
+    entrypoint:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ElasticSettings__Address=http://ElasticIP:9200
+      - ElasticSettings__ProjectName="demosite"
+      - Settings__AdminAppUrl=https://localhost
+      - IndexingApiServiceConfiguration__Schema=http
+      - IndexingApiServiceConfiguration__Host=search-indexing
+      - IndexingApiServiceConfiguration__Port=80
+      - ConnectionStrings__AdminSearchDbContextConnection=Server=PostgresIP;Database=DbName;User Id=User;Password=Password;
+      - ConnectionStrings__CrawlerSearchDbContextConnection=Server=PostgresIP;Database=DbName;User Id=User;Password=Password;
+    depends_on:
+      - search-indexing
