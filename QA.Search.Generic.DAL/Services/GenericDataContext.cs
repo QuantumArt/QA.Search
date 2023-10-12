@@ -25,6 +25,8 @@ namespace QA.Search.Generic.DAL.Services
         {
             _serviceDataContext = serviceDataContext;
             _contextConfiguration = contextConfigurationOption.Value;
+
+            ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
         }
 
         public string GetTableFullName(Type type)
