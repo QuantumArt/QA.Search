@@ -1,9 +1,4 @@
-FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build-env
-
-RUN apt-get install -y \
-    && curl -sL https://deb.nodesource.com/setup_16.x | bash \
-    && apt-get install -y nodejs
-
+FROM node:16-bullseye as front-builder
 WORKDIR /src
 COPY QA.Search.Admin/ClientApp/package.json QA.Search.Admin/ClientApp/package-lock.json QA.Search.Admin/ClientApp/
 WORKDIR QA.Search.Admin/ClientApp/
@@ -13,6 +8,8 @@ WORKDIR /src
 COPY QA.Search.Admin/ClientApp QA.Search.Admin/ClientApp/
 WORKDIR QA.Search.Admin/ClientApp/
 RUN npm run build
+
+FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build-env
 
 WORKDIR /src
 COPY nuget.config ./
@@ -30,7 +27,8 @@ COPY QA.Search.Data                       QA.Search.Data/
 COPY QA.Search.Generic.DAL                QA.Search.Generic.DAL/
 COPY QA.Search.Generic.Integration.Core   QA.Search.Generic.Integration.Core/
 COPY QA.Search.Generic.Integration.QP	  QA.Search.Generic.Integration.QP/
-RUN dotnet publish QA.Search.Admin/QA.Search.Admin.csproj -c Release -o QA.Search.Admin/out 
+COPY --from=front-builder /src/QA.Search.Admin/ClientApp/build ./QA.Search.Admin/ClientApp/build/
+RUN dotnet publish QA.Search.Admin/QA.Search.Admin.csproj -c Release -o QA.Search.Admin/out
 
 FROM mcr.microsoft.com/dotnet/aspnet:6.0 as base
 # Build runtime image
