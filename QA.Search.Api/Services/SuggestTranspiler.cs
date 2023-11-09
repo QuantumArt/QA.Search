@@ -27,7 +27,7 @@ namespace QA.Search.Api.Services
         {
             var query = new JObject
             {
-                ["track_total_hits"] = false,
+                ["track_total_hits"] = true,
             };
 
             if (request.Limit != null)

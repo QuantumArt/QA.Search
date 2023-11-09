@@ -53,10 +53,6 @@ function IndexingReport({ report }: Props) {
             <td>Продуктов проиндексировано</td>
             <td>{report.productsIndexed}</td>
           </tr>
-          <tr>
-            <td>Продуктов не проиндексировано</td>
-            <td>{report.productsNotIndexed}</td>
-          </tr>
         </tbody>
       </HTMLTable>
     </Card>

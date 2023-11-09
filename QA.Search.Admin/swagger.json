@@ -1026,7 +1026,6 @@
         "idsLoaded",
         "productsLoaded",
         "productsIndexed",
-        "productsNotIndexed",
         "batchSize"
       ],
       "properties": {
@@ -1051,10 +1050,6 @@
           "format": "int32"
         },
         "productsIndexed": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "productsNotIndexed": {
           "type": "integer",
           "format": "int32"
         },

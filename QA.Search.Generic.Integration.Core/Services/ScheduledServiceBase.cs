@@ -120,7 +120,7 @@ namespace QA.Search.Generic.Integration.Core.Services
                                 _context.State = IndexingState.Error;
                                 _context.EndDate = DateTime.Now;
                                 _context.Progress = 0;
-                                _context.Message = ex.Message;
+                                _context.Message = $"Ошибка индексации ({ex.Message})";
                                 _logger.LogError(ex, "IndexingService Error on iteration {Iteration}", _context.Iteration);
                             }
 
@@ -213,7 +213,6 @@ namespace QA.Search.Generic.Integration.Core.Services
                 if (bulkData.Value<bool>("errors"))
                 {
                     var statuses = bulkData.SelectTokens("items[*].index.status");
-                    report.ProductsNotIndexed += statuses.Count(i => i.Value<int>() >= 400);
                     report.ProductsIndexed += statuses.Count(i => i.Value<int>() < 400);
 
                     var errors = bulkData.SelectTokens("items[*].index")
@@ -234,6 +233,8 @@ namespace QA.Search.Generic.Integration.Core.Services
                             "Index {Index} error [{Type}] {Message} for documents {Ids}",
                             errGroup.Key.Index, errGroup.Key.Type, errGroup.Key.Message, errGroup);
                     }
+
+                    throw new Exception("BulkAsync error on storing data, see logs for details");
                 }
                 else
                 {

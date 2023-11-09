@@ -29,7 +29,10 @@ namespace QA.Search.Api.Services
         /// </summary>
         public JObject Transpile(SearchRequest request)
         {
-            var query = new JObject();
+            var query = new JObject()
+            {
+                ["track_total_hits"] = true,
+            };
 
             if (request.Offset != null)
             {
