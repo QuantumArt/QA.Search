@@ -52,7 +52,7 @@ namespace QA.Search.Api.Services
             return new JObject
             {
                 ["size"] = 0,
-                ["track_total_hits"] = false,
+                ["track_total_hits"] = true,
                 ["suggest"] = new JObject
                 {
                     ["text"] = _queryTranspiler.PrepareText(request.Query),
