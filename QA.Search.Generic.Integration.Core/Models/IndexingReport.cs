@@ -37,11 +37,6 @@ namespace QA.Search.Generic.Integration.Core.Models
         public int ProductsIndexed { get; set; }
 
         /// <summary>
-        /// Количество не проиндексированных документов 
-        /// </summary>
-        public int ProductsNotIndexed { get; set; }
-
-        /// <summary>
         /// Время, потраченное на загрузку документов (с момента старта индексации)
         /// </summary>
         public TimeSpan DocumentsLoadTime { get; set; }
@@ -71,7 +66,6 @@ namespace QA.Search.Generic.Integration.Core.Models
             IdsLoaded = 0;
             ProductsLoaded = 0;
             ProductsIndexed = 0;
-            ProductsNotIndexed = 0;
             DocumentsLoadTime = TimeSpan.Zero;
             DocumentsProcessTime = TimeSpan.Zero;
             DocumentsIndexTime = TimeSpan.Zero;

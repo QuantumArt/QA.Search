@@ -1350,7 +1350,6 @@ export interface IndexingReportModel {
   idsLoaded: number;
   productsLoaded: number;
   productsIndexed: number;
-  productsNotIndexed: number;
   batchSize: number;
   indexName?: string | null;
 }

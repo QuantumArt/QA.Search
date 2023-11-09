@@ -13,7 +13,6 @@ namespace QA.Search.Admin.Models.IndexingCommon
             IdsLoaded = report.IdsLoaded;
             ProductsLoaded = report.ProductsLoaded;
             ProductsIndexed = report.ProductsIndexed;
-            ProductsNotIndexed = report.ProductsNotIndexed;
             BatchSize = report.BatchSize;
             IndexName = report.IndexName;
         }
@@ -26,7 +25,6 @@ namespace QA.Search.Admin.Models.IndexingCommon
         public int IdsLoaded { get; set; }
         public int ProductsLoaded { get; set; }
         public int ProductsIndexed { get; set; }
-        public int ProductsNotIndexed { get; set; }
 
         public int BatchSize { get; set; }
         public string IndexName { get; set; }
