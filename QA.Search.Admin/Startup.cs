@@ -99,12 +99,8 @@ namespace QA.Search.Admin
             services.AddElasticConfiguration(Configuration);
             services.AddElasticSearch();
             services
-                .AddAuthentication(options =>
-                {
-                    options.DefaultAuthenticateScheme = AuthenticationService.Scheme;
-                    options.DefaultSignInScheme = AuthenticationService.Scheme;
-                })
-                .AddCookie(AuthenticationService.Scheme, options =>
+                .AddAuthentication(AuthenticationService.SCHEME)
+                .AddCookie(AuthenticationService.SCHEME, options =>
                 {
                     options.Events.OnRedirectToLogin = (context) =>
                     {
