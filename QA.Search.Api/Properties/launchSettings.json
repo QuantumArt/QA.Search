@@ -1,4 +1,4 @@
-{  
+{
   "profiles": {
     "QA.Search.Api": {
       "commandName": "Project",

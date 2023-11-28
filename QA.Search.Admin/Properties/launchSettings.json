@@ -1,12 +1,12 @@
 {
-  "profiles": {   
+  "profiles": {
     "QA.Search.Admin": {
       "commandName": "Project",
       "launchBrowser": true,
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
-      "applicationUrl": "http://localhost:5378"
+      "applicationUrl": "https://localhost:7378;http://localhost:5378"
     }
   }
 }
