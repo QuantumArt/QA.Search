@@ -86,7 +86,7 @@ export class AccountController extends Controller {
         } else if (status === 400) {
             return response.text().then((_responseText) => {
             let result400: any = null;
-            result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ValidationProblemDetails;
+            result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as BusinessError;
             return throwException("A server side error occurred.", status, _responseText, _headers, result400);
             });
         } else if (status !== 200 && status !== 204) {
@@ -925,21 +925,14 @@ export class UsersController extends Controller {
     }
 }
 
-export interface ProblemDetails {
-    type?: string | null;
-    title?: string | null;
-    status?: number | null;
-    detail?: string | null;
-    instance?: string | null;
-    extensions: { [key: string]: any; };
+export interface Exception {
+    Message: string;
+    InnerException?: Exception | null;
+    Source?: string | null;
+    StackTrace?: string | null;
 }
 
-export interface HttpValidationProblemDetails extends ProblemDetails {
-    errors: { [key: string]: string[]; };
-}
-
-export interface ValidationProblemDetails extends HttpValidationProblemDetails {
-    errors: { [key: string]: string[]; };
+export interface BusinessError extends Exception {
 }
 
 export interface LoginRequest {
@@ -956,6 +949,23 @@ export interface UserResponse {
 export enum UserRole {
     Admin = 1,
     User = 2,
+}
+
+export interface ProblemDetails {
+    type?: string | null;
+    title?: string | null;
+    status?: number | null;
+    detail?: string | null;
+    instance?: string | null;
+    extensions: { [key: string]: any; };
+}
+
+export interface HttpValidationProblemDetails extends ProblemDetails {
+    errors: { [key: string]: string[]; };
+}
+
+export interface ValidationProblemDetails extends HttpValidationProblemDetails {
+    errors: { [key: string]: string[]; };
 }
 
 export interface ResetPasswordRequest {

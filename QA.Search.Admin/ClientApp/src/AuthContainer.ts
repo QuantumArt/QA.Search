@@ -1,6 +1,6 @@
-import { useState, useCallback } from "react";
+import { useState } from "react";
 import constate from "constate";
-import { UserResponse, AccountController } from "./backend.generated";
+import { UserResponse } from "./backend.generated";
 
 interface AuthInfo {
   loading: boolean;

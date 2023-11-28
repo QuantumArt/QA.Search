@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using QA.Search.Admin.Errors;
 using QA.Search.Admin.Models;
 using QA.Search.Admin.Services;
 using System;
@@ -25,6 +26,7 @@ namespace QA.Search.Admin.Controllers
         [HttpPost("[action]")]
         [ProducesResponseType(200)]
         [ProducesResponseType(typeof(ValidationProblemDetails), 400)]
+        [ProducesResponseType(typeof(BusinessError), 400)]
         public async Task<IActionResult> Login([FromBody] LoginRequest data)
         {
             await _authenticationService.Login(HttpContext, data.Email, data.Password);

@@ -39,7 +39,7 @@
             "x-nullable": false,
             "description": "",
             "schema": {
-              "$ref": "#/definitions/ValidationProblemDetails"
+              "$ref": "#/definitions/BusinessError"
             }
           }
         }
@@ -644,6 +644,85 @@
     }
   },
   "definitions": {
+    "BusinessError": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/Exception"
+        },
+        {
+          "type": "object"
+        }
+      ]
+    },
+    "Exception": {
+      "type": "object",
+      "required": [
+        "Message"
+      ],
+      "properties": {
+        "Message": {
+          "type": "string"
+        },
+        "InnerException": {
+          "$ref": "#/definitions/Exception"
+        },
+        "Source": {
+          "type": "string"
+        },
+        "StackTrace": {
+          "type": "string"
+        }
+      }
+    },
+    "LoginRequest": {
+      "type": "object",
+      "required": [
+        "email",
+        "password"
+      ],
+      "properties": {
+        "email": {
+          "type": "string",
+          "format": "email",
+          "minLength": 1
+        },
+        "password": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "UserResponse": {
+      "type": "object",
+      "required": [
+        "id",
+        "role"
+      ],
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "email": {
+          "type": "string"
+        },
+        "role": {
+          "$ref": "#/definitions/UserRole"
+        }
+      }
+    },
+    "UserRole": {
+      "type": "integer",
+      "description": "",
+      "x-enumNames": [
+        "Admin",
+        "User"
+      ],
+      "enum": [
+        1,
+        2
+      ]
+    },
     "ValidationProblemDetails": {
       "allOf": [
         {
@@ -722,55 +801,6 @@
           "additionalProperties": {}
         }
       }
-    },
-    "LoginRequest": {
-      "type": "object",
-      "required": [
-        "email",
-        "password"
-      ],
-      "properties": {
-        "email": {
-          "type": "string",
-          "format": "email",
-          "minLength": 1
-        },
-        "password": {
-          "type": "string",
-          "minLength": 1
-        }
-      }
-    },
-    "UserResponse": {
-      "type": "object",
-      "required": [
-        "id",
-        "role"
-      ],
-      "properties": {
-        "id": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "email": {
-          "type": "string"
-        },
-        "role": {
-          "$ref": "#/definitions/UserRole"
-        }
-      }
-    },
-    "UserRole": {
-      "type": "integer",
-      "description": "",
-      "x-enumNames": [
-        "Admin",
-        "User"
-      ],
-      "enum": [
-        1,
-        2
-      ]
     },
     "ResetPasswordRequest": {
       "type": "object",

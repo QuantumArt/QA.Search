@@ -25,7 +25,6 @@ const IndexingScriptsPage = () => {
             options={{
               fontSize: 16,
               tabCompletion: "on",
-              quickCompletionions: { strings: true, other: true, comments: false },
               minimap: { enabled: false },
               scrollbar: { verticalScrollbarSize: 17 }
             }}
