@@ -26,7 +26,7 @@ namespace QA.Search.Admin.Controllers
         [HttpPost("[action]")]
         [ProducesResponseType(200)]
         [ProducesResponseType(typeof(ValidationProblemDetails), 400)]
-        [ProducesResponseType(typeof(BusinessError), 400)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), 401)]
         public async Task<IActionResult> Login([FromBody] LoginRequest data)
         {
             await _authenticationService.Login(HttpContext, data.Email, data.Password);
