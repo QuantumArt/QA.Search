@@ -9,7 +9,6 @@ namespace QA.Search.Admin.Controllers
     [Route("api/[controller]")]
     [Consumes("application/json")]
     [Produces("application/json")]
-    [IgnoreAntiforgeryToken]
     public class QpIndexingController : Controller
     {
         private QpIndexingApiService IndexingApiService { get; }

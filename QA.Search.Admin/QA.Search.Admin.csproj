@@ -81,7 +81,6 @@
   <Target Name="NSwag" AfterTargets="Build" Condition=" '$(Configuration)' == 'Debug' ">
     <Exec Command="$(NSwagExe_Net60) aspnetcore2swagger /project:QA.Search.Admin.csproj /noBuild:true /output:swagger.json" />
     <Exec Command="$(NSwagExe_Net60) run nswag.json /input:swagger.json" />
-    <Exec WorkingDirectory="$(SpaRoot)" Command="npx prettier --write src\backend.generated.ts" />
   </Target>
 
 </Project>

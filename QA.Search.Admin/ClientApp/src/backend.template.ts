@@ -1,22 +1,35 @@
 export abstract class Controller {
+  controller: AbortController;
+
   constructor() {
     Object.defineProperty(this, "jsonParseReviver", {
       get() {
         return parseJsonDates;
       },
-      set() {}
+      set() { }
     });
+    this.controller = new AbortController();
   }
 
-  protected transformOptions(options: RequestInit): Promise<RequestInit> {
-    const xsrfToken = getCookie("XSRF-TOKEN");
-    if (xsrfToken) {
-      options.headers = {
-        ...options.headers,
-        "X-XSRF-TOKEN": xsrfToken,
-        "Content-Type": "application/json"
-      };
+  protected async transformOptions(options: RequestInit): Promise<RequestInit> {
+    const response = await fetch("/api/antiforgery/token", {
+      method: "GET",
+      credentials: "same-origin",
+      headers: { ...options.headers },
+      signal: this.controller.signal
+    });
+
+    if (response.ok) {
+      const xsrfToken = getCookie("X-XSRF-TOKEN");
+      if (xsrfToken) {
+        options.headers = {
+          ...options.headers,
+          "X-XSRF-TOKEN": xsrfToken,
+          "Content-Type": "application/json"
+        };
+      }
     }
+
     return Promise.resolve(options);
   }
 }

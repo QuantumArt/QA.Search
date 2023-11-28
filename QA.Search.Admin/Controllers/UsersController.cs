@@ -11,7 +11,6 @@ namespace QA.Search.Admin.Controllers
     [Route("api/[controller]")]
     [Consumes("application/json")]
     [Produces("application/json")]
-    [IgnoreAntiforgeryToken]
     public class UsersController : Controller
     {
         private readonly UsersService _usersService;
