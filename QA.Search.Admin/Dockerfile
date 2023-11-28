@@ -5,7 +5,7 @@ WORKDIR QA.Search.Admin/ClientApp/
 RUN npm ci
 
 WORKDIR /src
-COPY QA.Search.Admin/ClientApp QA.Search.Admin/ClientApp/
+COPY QA.Search.Admin/ClientApp			QA.Search.Admin/ClientApp/
 WORKDIR QA.Search.Admin/ClientApp/
 RUN npm run build
 

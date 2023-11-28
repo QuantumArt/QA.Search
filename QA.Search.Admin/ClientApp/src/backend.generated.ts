@@ -16,7 +16,7 @@ export abstract class Controller {
       get() {
         return parseJsonDates;
       },
-      set() {}
+      set() { }
     });
     this.controller = new AbortController();
   }
@@ -45,1413 +45,1090 @@ export abstract class Controller {
 }
 
 export class AccountController extends Controller {
-  private http: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> };
-  private baseUrl: string;
-  protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+    private http: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> };
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
 
-  constructor(
-    baseUrl?: string,
-    http?: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> }
-  ) {
-    super();
-    this.http = http ? http : (window as any);
-    this.baseUrl = baseUrl !== undefined && baseUrl !== null ? baseUrl : "";
-  }
-
-  login(data: LoginRequest): Promise<void> {
-    let url_ = this.baseUrl + "/api/Account/Login";
-    url_ = url_.replace(/[?&]$/, "");
-
-    const content_ = JSON.stringify(data);
-
-    let options_: RequestInit = {
-      body: content_,
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      }
-    };
-
-    return this.transformOptions(options_)
-      .then(transformedOptions_ => {
-        return this.http.fetch(url_, transformedOptions_);
-      })
-      .then((_response: Response) => {
-        return this.processLogin(_response);
-      });
-  }
-
-  protected processLogin(response: Response): Promise<void> {
-    const status = response.status;
-    let _headers: any = {};
-    if (response.headers && response.headers.forEach) {
-      response.headers.forEach((v: any, k: any) => (_headers[k] = v));
+    constructor(baseUrl?: string, http?: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> }) {
+        super();
+        this.http = http ? http : window as any;
+        this.baseUrl = baseUrl !== undefined && baseUrl !== null ? baseUrl : "";
     }
-    if (status === 200) {
-      return response.text().then(_responseText => {
-        return;
-      });
-    } else if (status === 400) {
-      return response.text().then(_responseText => {
-        let result400: any = null;
-        result400 =
-          _responseText === ""
-            ? null
-            : (JSON.parse(_responseText, this.jsonParseReviver) as ValidationProblemDetails);
-        return throwException(
-          "A server side error occurred.",
-          status,
-          _responseText,
-          _headers,
-          result400
-        );
-      });
-    } else if (status !== 200 && status !== 204) {
-      return response.text().then(_responseText => {
-        return throwException(
-          "An unexpected server error occurred.",
-          status,
-          _responseText,
-          _headers
-        );
-      });
+
+    login(data: LoginRequest): Promise<void> {
+        let url_ = this.baseUrl + "/api/Account/Login";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(data);
+
+        let options_: RequestInit = {
+            body: content_,
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            }
+        };
+
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.http.fetch(url_, transformedOptions_);
+        }).then((_response: Response) => {
+            return this.processLogin(_response);
+        });
     }
-    return Promise.resolve<void>(null as any);
-  }
 
-  logout(): Promise<void> {
-    let url_ = this.baseUrl + "/api/Account/Logout";
-    url_ = url_.replace(/[?&]$/, "");
-
-    let options_: RequestInit = {
-      method: "POST",
-      headers: {}
-    };
-
-    return this.transformOptions(options_)
-      .then(transformedOptions_ => {
-        return this.http.fetch(url_, transformedOptions_);
-      })
-      .then((_response: Response) => {
-        return this.processLogout(_response);
-      });
-  }
-
-  protected processLogout(response: Response): Promise<void> {
-    const status = response.status;
-    let _headers: any = {};
-    if (response.headers && response.headers.forEach) {
-      response.headers.forEach((v: any, k: any) => (_headers[k] = v));
+    protected processLogin(response: Response): Promise<void> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            return;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ValidationProblemDetails;
+            return throwException("A server side error occurred.", status, _responseText, _headers, result400);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<void>(null as any);
     }
-    if (status === 200) {
-      return response.text().then(_responseText => {
-        return;
-      });
-    } else if (status !== 200 && status !== 204) {
-      return response.text().then(_responseText => {
-        return throwException(
-          "An unexpected server error occurred.",
-          status,
-          _responseText,
-          _headers
-        );
-      });
+
+    logout(): Promise<void> {
+        let url_ = this.baseUrl + "/api/Account/Logout";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "POST",
+            headers: {
+            }
+        };
+
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.http.fetch(url_, transformedOptions_);
+        }).then((_response: Response) => {
+            return this.processLogout(_response);
+        });
     }
-    return Promise.resolve<void>(null as any);
-  }
 
-  info(): Promise<UserResponse> {
-    let url_ = this.baseUrl + "/api/Account/Info";
-    url_ = url_.replace(/[?&]$/, "");
-
-    let options_: RequestInit = {
-      method: "GET",
-      headers: {
-        Accept: "application/json"
-      }
-    };
-
-    return this.transformOptions(options_)
-      .then(transformedOptions_ => {
-        return this.http.fetch(url_, transformedOptions_);
-      })
-      .then((_response: Response) => {
-        return this.processInfo(_response);
-      });
-  }
-
-  protected processInfo(response: Response): Promise<UserResponse> {
-    const status = response.status;
-    let _headers: any = {};
-    if (response.headers && response.headers.forEach) {
-      response.headers.forEach((v: any, k: any) => (_headers[k] = v));
+    protected processLogout(response: Response): Promise<void> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            return;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<void>(null as any);
     }
-    if (status === 200) {
-      return response.text().then(_responseText => {
-        let result200: any = null;
-        result200 =
-          _responseText === ""
-            ? null
-            : (JSON.parse(_responseText, this.jsonParseReviver) as UserResponse);
-        return result200;
-      });
-    } else if (status !== 200 && status !== 204) {
-      return response.text().then(_responseText => {
-        return throwException(
-          "An unexpected server error occurred.",
-          status,
-          _responseText,
-          _headers
-        );
-      });
+
+    info(): Promise<UserResponse> {
+        let url_ = this.baseUrl + "/api/Account/Info";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.http.fetch(url_, transformedOptions_);
+        }).then((_response: Response) => {
+            return this.processInfo(_response);
+        });
     }
-    return Promise.resolve<UserResponse>(null as any);
-  }
 
-  sendResetPasswordLink(data: ResetPasswordRequest): Promise<void> {
-    let url_ = this.baseUrl + "/api/Account/SendResetPasswordLink";
-    url_ = url_.replace(/[?&]$/, "");
-
-    const content_ = JSON.stringify(data);
-
-    let options_: RequestInit = {
-      body: content_,
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      }
-    };
-
-    return this.transformOptions(options_)
-      .then(transformedOptions_ => {
-        return this.http.fetch(url_, transformedOptions_);
-      })
-      .then((_response: Response) => {
-        return this.processSendResetPasswordLink(_response);
-      });
-  }
-
-  protected processSendResetPasswordLink(response: Response): Promise<void> {
-    const status = response.status;
-    let _headers: any = {};
-    if (response.headers && response.headers.forEach) {
-      response.headers.forEach((v: any, k: any) => (_headers[k] = v));
+    protected processInfo(response: Response): Promise<UserResponse> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as UserResponse;
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<UserResponse>(null as any);
     }
-    if (status === 200) {
-      return response.text().then(_responseText => {
-        return;
-      });
-    } else if (status === 400) {
-      return response.text().then(_responseText => {
-        let result400: any = null;
-        result400 =
-          _responseText === ""
-            ? null
-            : (JSON.parse(_responseText, this.jsonParseReviver) as ValidationProblemDetails);
-        return throwException(
-          "A server side error occurred.",
-          status,
-          _responseText,
-          _headers,
-          result400
-        );
-      });
-    } else if (status !== 200 && status !== 204) {
-      return response.text().then(_responseText => {
-        return throwException(
-          "An unexpected server error occurred.",
-          status,
-          _responseText,
-          _headers
-        );
-      });
+
+    sendResetPasswordLink(data: ResetPasswordRequest): Promise<void> {
+        let url_ = this.baseUrl + "/api/Account/SendResetPasswordLink";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(data);
+
+        let options_: RequestInit = {
+            body: content_,
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            }
+        };
+
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.http.fetch(url_, transformedOptions_);
+        }).then((_response: Response) => {
+            return this.processSendResetPasswordLink(_response);
+        });
     }
-    return Promise.resolve<void>(null as any);
-  }
 
-  checkResetPasswordLink(id: string): Promise<UserResponse> {
-    let url_ = this.baseUrl + "/api/Account/CheckResetPasswordLink/{id}";
-    if (id === undefined || id === null) throw new Error("The parameter 'id' must be defined.");
-    url_ = url_.replace("{id}", encodeURIComponent("" + id));
-    url_ = url_.replace(/[?&]$/, "");
-
-    let options_: RequestInit = {
-      method: "GET",
-      headers: {
-        Accept: "application/json"
-      }
-    };
-
-    return this.transformOptions(options_)
-      .then(transformedOptions_ => {
-        return this.http.fetch(url_, transformedOptions_);
-      })
-      .then((_response: Response) => {
-        return this.processCheckResetPasswordLink(_response);
-      });
-  }
-
-  protected processCheckResetPasswordLink(response: Response): Promise<UserResponse> {
-    const status = response.status;
-    let _headers: any = {};
-    if (response.headers && response.headers.forEach) {
-      response.headers.forEach((v: any, k: any) => (_headers[k] = v));
+    protected processSendResetPasswordLink(response: Response): Promise<void> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            return;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ValidationProblemDetails;
+            return throwException("A server side error occurred.", status, _responseText, _headers, result400);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<void>(null as any);
     }
-    if (status === 200) {
-      return response.text().then(_responseText => {
-        let result200: any = null;
-        result200 =
-          _responseText === ""
-            ? null
-            : (JSON.parse(_responseText, this.jsonParseReviver) as UserResponse);
-        return result200;
-      });
-    } else if (status === 400) {
-      return response.text().then(_responseText => {
-        let result400: any = null;
-        result400 =
-          _responseText === ""
-            ? null
-            : (JSON.parse(_responseText, this.jsonParseReviver) as ValidationProblemDetails);
-        return throwException(
-          "A server side error occurred.",
-          status,
-          _responseText,
-          _headers,
-          result400
-        );
-      });
-    } else if (status !== 200 && status !== 204) {
-      return response.text().then(_responseText => {
-        return throwException(
-          "An unexpected server error occurred.",
-          status,
-          _responseText,
-          _headers
-        );
-      });
+
+    checkResetPasswordLink(id: string): Promise<UserResponse> {
+        let url_ = this.baseUrl + "/api/Account/CheckResetPasswordLink/{id}";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.http.fetch(url_, transformedOptions_);
+        }).then((_response: Response) => {
+            return this.processCheckResetPasswordLink(_response);
+        });
     }
-    return Promise.resolve<UserResponse>(null as any);
-  }
 
-  changePassword(data: ChangePasswordRequest): Promise<void> {
-    let url_ = this.baseUrl + "/api/Account/ChangePassword";
-    url_ = url_.replace(/[?&]$/, "");
-
-    const content_ = JSON.stringify(data);
-
-    let options_: RequestInit = {
-      body: content_,
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      }
-    };
-
-    return this.transformOptions(options_)
-      .then(transformedOptions_ => {
-        return this.http.fetch(url_, transformedOptions_);
-      })
-      .then((_response: Response) => {
-        return this.processChangePassword(_response);
-      });
-  }
-
-  protected processChangePassword(response: Response): Promise<void> {
-    const status = response.status;
-    let _headers: any = {};
-    if (response.headers && response.headers.forEach) {
-      response.headers.forEach((v: any, k: any) => (_headers[k] = v));
+    protected processCheckResetPasswordLink(response: Response): Promise<UserResponse> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as UserResponse;
+            return result200;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ValidationProblemDetails;
+            return throwException("A server side error occurred.", status, _responseText, _headers, result400);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<UserResponse>(null as any);
     }
-    if (status === 200) {
-      return response.text().then(_responseText => {
-        return;
-      });
-    } else if (status === 400) {
-      return response.text().then(_responseText => {
-        let result400: any = null;
-        result400 =
-          _responseText === ""
-            ? null
-            : (JSON.parse(_responseText, this.jsonParseReviver) as ValidationProblemDetails);
-        return throwException(
-          "A server side error occurred.",
-          status,
-          _responseText,
-          _headers,
-          result400
-        );
-      });
-    } else if (status !== 200 && status !== 204) {
-      return response.text().then(_responseText => {
-        return throwException(
-          "An unexpected server error occurred.",
-          status,
-          _responseText,
-          _headers
-        );
-      });
+
+    changePassword(data: ChangePasswordRequest): Promise<void> {
+        let url_ = this.baseUrl + "/api/Account/ChangePassword";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(data);
+
+        let options_: RequestInit = {
+            body: content_,
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            }
+        };
+
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.http.fetch(url_, transformedOptions_);
+        }).then((_response: Response) => {
+            return this.processChangePassword(_response);
+        });
     }
-    return Promise.resolve<void>(null as any);
-  }
+
+    protected processChangePassword(response: Response): Promise<void> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            return;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ValidationProblemDetails;
+            return throwException("A server side error occurred.", status, _responseText, _headers, result400);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<void>(null as any);
+    }
 }
 
 export class ElasticManagementPageController extends Controller {
-  private http: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> };
-  private baseUrl: string;
-  protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+    private http: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> };
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
 
-  constructor(
-    baseUrl?: string,
-    http?: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> }
-  ) {
-    super();
-    this.http = http ? http : (window as any);
-    this.baseUrl = baseUrl !== undefined && baseUrl !== null ? baseUrl : "";
-  }
-
-  loadData(): Promise<ElasticManagementPageResponse> {
-    let url_ = this.baseUrl + "/api/ElasticManagementPage/LoadData";
-    url_ = url_.replace(/[?&]$/, "");
-
-    let options_: RequestInit = {
-      method: "GET",
-      headers: {
-        Accept: "application/json"
-      }
-    };
-
-    return this.transformOptions(options_)
-      .then(transformedOptions_ => {
-        return this.http.fetch(url_, transformedOptions_);
-      })
-      .then((_response: Response) => {
-        return this.processLoadData(_response);
-      });
-  }
-
-  protected processLoadData(response: Response): Promise<ElasticManagementPageResponse> {
-    const status = response.status;
-    let _headers: any = {};
-    if (response.headers && response.headers.forEach) {
-      response.headers.forEach((v: any, k: any) => (_headers[k] = v));
+    constructor(baseUrl?: string, http?: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> }) {
+        super();
+        this.http = http ? http : window as any;
+        this.baseUrl = baseUrl !== undefined && baseUrl !== null ? baseUrl : "";
     }
-    if (status === 200) {
-      return response.text().then(_responseText => {
-        let result200: any = null;
-        result200 =
-          _responseText === ""
-            ? null
-            : (JSON.parse(_responseText, this.jsonParseReviver) as ElasticManagementPageResponse);
-        return result200;
-      });
-    } else if (status === 500) {
-      return response.text().then(_responseText => {
-        return throwException("A server side error occurred.", status, _responseText, _headers);
-      });
-    } else if (status !== 200 && status !== 204) {
-      return response.text().then(_responseText => {
-        return throwException(
-          "An unexpected server error occurred.",
-          status,
-          _responseText,
-          _headers
-        );
-      });
+
+    loadData(): Promise<ElasticManagementPageResponse> {
+        let url_ = this.baseUrl + "/api/ElasticManagementPage/LoadData";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.http.fetch(url_, transformedOptions_);
+        }).then((_response: Response) => {
+            return this.processLoadData(_response);
+        });
     }
-    return Promise.resolve<ElasticManagementPageResponse>(null as any);
-  }
 
-  createReindexTask(
-    sourceIndexFullName?: string | null | undefined
-  ): Promise<CreateReindexTaskResponse> {
-    let url_ = this.baseUrl + "/api/ElasticManagementPage/CreateReindexTask?";
-    if (sourceIndexFullName !== undefined && sourceIndexFullName !== null)
-      url_ += "sourceIndexFullName=" + encodeURIComponent("" + sourceIndexFullName) + "&";
-    url_ = url_.replace(/[?&]$/, "");
-
-    let options_: RequestInit = {
-      method: "POST",
-      headers: {
-        Accept: "application/json"
-      }
-    };
-
-    return this.transformOptions(options_)
-      .then(transformedOptions_ => {
-        return this.http.fetch(url_, transformedOptions_);
-      })
-      .then((_response: Response) => {
-        return this.processCreateReindexTask(_response);
-      });
-  }
-
-  protected processCreateReindexTask(response: Response): Promise<CreateReindexTaskResponse> {
-    const status = response.status;
-    let _headers: any = {};
-    if (response.headers && response.headers.forEach) {
-      response.headers.forEach((v: any, k: any) => (_headers[k] = v));
+    protected processLoadData(response: Response): Promise<ElasticManagementPageResponse> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ElasticManagementPageResponse;
+            return result200;
+            });
+        } else if (status === 500) {
+            return response.text().then((_responseText) => {
+            return throwException("A server side error occurred.", status, _responseText, _headers);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<ElasticManagementPageResponse>(null as any);
     }
-    if (status === 200) {
-      return response.text().then(_responseText => {
-        let result200: any = null;
-        result200 =
-          _responseText === ""
-            ? null
-            : (JSON.parse(_responseText, this.jsonParseReviver) as CreateReindexTaskResponse);
-        return result200;
-      });
-    } else if (status === 500) {
-      return response.text().then(_responseText => {
-        return throwException("A server side error occurred.", status, _responseText, _headers);
-      });
-    } else if (status !== 200 && status !== 204) {
-      return response.text().then(_responseText => {
-        return throwException(
-          "An unexpected server error occurred.",
-          status,
-          _responseText,
-          _headers
-        );
-      });
+
+    createReindexTask(sourceIndexFullName?: string | null | undefined): Promise<CreateReindexTaskResponse> {
+        let url_ = this.baseUrl + "/api/ElasticManagementPage/CreateReindexTask?";
+        if (sourceIndexFullName !== undefined && sourceIndexFullName !== null)
+            url_ += "sourceIndexFullName=" + encodeURIComponent("" + sourceIndexFullName) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "POST",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.http.fetch(url_, transformedOptions_);
+        }).then((_response: Response) => {
+            return this.processCreateReindexTask(_response);
+        });
     }
-    return Promise.resolve<CreateReindexTaskResponse>(null as any);
-  }
 
-  createNewIndex(indexName?: string | null | undefined): Promise<void> {
-    let url_ = this.baseUrl + "/api/ElasticManagementPage/CreateNewIndex?";
-    if (indexName !== undefined && indexName !== null)
-      url_ += "indexName=" + encodeURIComponent("" + indexName) + "&";
-    url_ = url_.replace(/[?&]$/, "");
-
-    let options_: RequestInit = {
-      method: "POST",
-      headers: {}
-    };
-
-    return this.transformOptions(options_)
-      .then(transformedOptions_ => {
-        return this.http.fetch(url_, transformedOptions_);
-      })
-      .then((_response: Response) => {
-        return this.processCreateNewIndex(_response);
-      });
-  }
-
-  protected processCreateNewIndex(response: Response): Promise<void> {
-    const status = response.status;
-    let _headers: any = {};
-    if (response.headers && response.headers.forEach) {
-      response.headers.forEach((v: any, k: any) => (_headers[k] = v));
+    protected processCreateReindexTask(response: Response): Promise<CreateReindexTaskResponse> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as CreateReindexTaskResponse;
+            return result200;
+            });
+        } else if (status === 500) {
+            return response.text().then((_responseText) => {
+            return throwException("A server side error occurred.", status, _responseText, _headers);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<CreateReindexTaskResponse>(null as any);
     }
-    if (status === 200) {
-      return response.text().then(_responseText => {
-        return;
-      });
-    } else if (status === 500) {
-      return response.text().then(_responseText => {
-        return throwException("A server side error occurred.", status, _responseText, _headers);
-      });
-    } else if (status !== 200 && status !== 204) {
-      return response.text().then(_responseText => {
-        return throwException(
-          "An unexpected server error occurred.",
-          status,
-          _responseText,
-          _headers
-        );
-      });
+
+    createNewIndex(indexName?: string | null | undefined): Promise<void> {
+        let url_ = this.baseUrl + "/api/ElasticManagementPage/CreateNewIndex?";
+        if (indexName !== undefined && indexName !== null)
+            url_ += "indexName=" + encodeURIComponent("" + indexName) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "POST",
+            headers: {
+            }
+        };
+
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.http.fetch(url_, transformedOptions_);
+        }).then((_response: Response) => {
+            return this.processCreateNewIndex(_response);
+        });
     }
-    return Promise.resolve<void>(null as any);
-  }
 
-  deleteIndex(indexFullName?: string | null | undefined): Promise<boolean> {
-    let url_ = this.baseUrl + "/api/ElasticManagementPage/DeleteIndex?";
-    if (indexFullName !== undefined && indexFullName !== null)
-      url_ += "indexFullName=" + encodeURIComponent("" + indexFullName) + "&";
-    url_ = url_.replace(/[?&]$/, "");
-
-    let options_: RequestInit = {
-      method: "GET",
-      headers: {
-        Accept: "application/json"
-      }
-    };
-
-    return this.transformOptions(options_)
-      .then(transformedOptions_ => {
-        return this.http.fetch(url_, transformedOptions_);
-      })
-      .then((_response: Response) => {
-        return this.processDeleteIndex(_response);
-      });
-  }
-
-  protected processDeleteIndex(response: Response): Promise<boolean> {
-    const status = response.status;
-    let _headers: any = {};
-    if (response.headers && response.headers.forEach) {
-      response.headers.forEach((v: any, k: any) => (_headers[k] = v));
+    protected processCreateNewIndex(response: Response): Promise<void> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            return;
+            });
+        } else if (status === 500) {
+            return response.text().then((_responseText) => {
+            return throwException("A server side error occurred.", status, _responseText, _headers);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<void>(null as any);
     }
-    if (status === 200) {
-      return response.text().then(_responseText => {
-        let result200: any = null;
-        result200 =
-          _responseText === ""
-            ? null
-            : (JSON.parse(_responseText, this.jsonParseReviver) as boolean);
-        return result200;
-      });
-    } else if (status === 500) {
-      return response.text().then(_responseText => {
-        return throwException("A server side error occurred.", status, _responseText, _headers);
-      });
-    } else if (status !== 200 && status !== 204) {
-      return response.text().then(_responseText => {
-        return throwException(
-          "An unexpected server error occurred.",
-          status,
-          _responseText,
-          _headers
-        );
-      });
+
+    deleteIndex(indexFullName?: string | null | undefined): Promise<boolean> {
+        let url_ = this.baseUrl + "/api/ElasticManagementPage/DeleteIndex?";
+        if (indexFullName !== undefined && indexFullName !== null)
+            url_ += "indexFullName=" + encodeURIComponent("" + indexFullName) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.http.fetch(url_, transformedOptions_);
+        }).then((_response: Response) => {
+            return this.processDeleteIndex(_response);
+        });
     }
-    return Promise.resolve<boolean>(null as any);
-  }
+
+    protected processDeleteIndex(response: Response): Promise<boolean> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as boolean;
+            return result200;
+            });
+        } else if (status === 500) {
+            return response.text().then((_responseText) => {
+            return throwException("A server side error occurred.", status, _responseText, _headers);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<boolean>(null as any);
+    }
 }
 
 export class QpIndexingController extends Controller {
-  private http: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> };
-  private baseUrl: string;
-  protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+    private http: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> };
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
 
-  constructor(
-    baseUrl?: string,
-    http?: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> }
-  ) {
-    super();
-    this.http = http ? http : (window as any);
-    this.baseUrl = baseUrl !== undefined && baseUrl !== null ? baseUrl : "";
-  }
-
-  getIndexingStatus(targetQP?: TargetQP | undefined): Promise<QpIndexingResponse> {
-    let url_ = this.baseUrl + "/api/QpIndexing/GetIndexingStatus?";
-    if (targetQP === null) throw new Error("The parameter 'targetQP' cannot be null.");
-    else if (targetQP !== undefined) url_ += "targetQP=" + encodeURIComponent("" + targetQP) + "&";
-    url_ = url_.replace(/[?&]$/, "");
-
-    let options_: RequestInit = {
-      method: "GET",
-      headers: {
-        Accept: "application/json"
-      }
-    };
-
-    return this.transformOptions(options_)
-      .then(transformedOptions_ => {
-        return this.http.fetch(url_, transformedOptions_);
-      })
-      .then((_response: Response) => {
-        return this.processGetIndexingStatus(_response);
-      });
-  }
-
-  protected processGetIndexingStatus(response: Response): Promise<QpIndexingResponse> {
-    const status = response.status;
-    let _headers: any = {};
-    if (response.headers && response.headers.forEach) {
-      response.headers.forEach((v: any, k: any) => (_headers[k] = v));
+    constructor(baseUrl?: string, http?: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> }) {
+        super();
+        this.http = http ? http : window as any;
+        this.baseUrl = baseUrl !== undefined && baseUrl !== null ? baseUrl : "";
     }
-    if (status === 200) {
-      return response.text().then(_responseText => {
-        let result200: any = null;
-        result200 =
-          _responseText === ""
-            ? null
-            : (JSON.parse(_responseText, this.jsonParseReviver) as QpIndexingResponse);
-        return result200;
-      });
-    } else if (status === 500) {
-      return response.text().then(_responseText => {
-        return throwException("A server side error occurred.", status, _responseText, _headers);
-      });
-    } else if (status !== 200 && status !== 204) {
-      return response.text().then(_responseText => {
-        return throwException(
-          "An unexpected server error occurred.",
-          status,
-          _responseText,
-          _headers
-        );
-      });
+
+    getIndexingStatus(targetQP?: TargetQP | undefined): Promise<QpIndexingResponse> {
+        let url_ = this.baseUrl + "/api/QpIndexing/GetIndexingStatus?";
+        if (targetQP === null)
+            throw new Error("The parameter 'targetQP' cannot be null.");
+        else if (targetQP !== undefined)
+            url_ += "targetQP=" + encodeURIComponent("" + targetQP) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.http.fetch(url_, transformedOptions_);
+        }).then((_response: Response) => {
+            return this.processGetIndexingStatus(_response);
+        });
     }
-    return Promise.resolve<QpIndexingResponse>(null as any);
-  }
 
-  startIndexing(targetQP?: TargetQP | undefined): Promise<void> {
-    let url_ = this.baseUrl + "/api/QpIndexing/StartIndexing?";
-    if (targetQP === null) throw new Error("The parameter 'targetQP' cannot be null.");
-    else if (targetQP !== undefined) url_ += "targetQP=" + encodeURIComponent("" + targetQP) + "&";
-    url_ = url_.replace(/[?&]$/, "");
-
-    let options_: RequestInit = {
-      method: "POST",
-      headers: {}
-    };
-
-    return this.transformOptions(options_)
-      .then(transformedOptions_ => {
-        return this.http.fetch(url_, transformedOptions_);
-      })
-      .then((_response: Response) => {
-        return this.processStartIndexing(_response);
-      });
-  }
-
-  protected processStartIndexing(response: Response): Promise<void> {
-    const status = response.status;
-    let _headers: any = {};
-    if (response.headers && response.headers.forEach) {
-      response.headers.forEach((v: any, k: any) => (_headers[k] = v));
+    protected processGetIndexingStatus(response: Response): Promise<QpIndexingResponse> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as QpIndexingResponse;
+            return result200;
+            });
+        } else if (status === 500) {
+            return response.text().then((_responseText) => {
+            return throwException("A server side error occurred.", status, _responseText, _headers);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<QpIndexingResponse>(null as any);
     }
-    if (status === 200) {
-      return response.text().then(_responseText => {
-        return;
-      });
-    } else if (status === 500) {
-      return response.text().then(_responseText => {
-        return throwException("A server side error occurred.", status, _responseText, _headers);
-      });
-    } else if (status !== 200 && status !== 204) {
-      return response.text().then(_responseText => {
-        return throwException(
-          "An unexpected server error occurred.",
-          status,
-          _responseText,
-          _headers
-        );
-      });
+
+    startIndexing(targetQP?: TargetQP | undefined): Promise<void> {
+        let url_ = this.baseUrl + "/api/QpIndexing/StartIndexing?";
+        if (targetQP === null)
+            throw new Error("The parameter 'targetQP' cannot be null.");
+        else if (targetQP !== undefined)
+            url_ += "targetQP=" + encodeURIComponent("" + targetQP) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "POST",
+            headers: {
+            }
+        };
+
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.http.fetch(url_, transformedOptions_);
+        }).then((_response: Response) => {
+            return this.processStartIndexing(_response);
+        });
     }
-    return Promise.resolve<void>(null as any);
-  }
 
-  stopIndexing(targetQP?: TargetQP | undefined): Promise<void> {
-    let url_ = this.baseUrl + "/api/QpIndexing/StopIndexing?";
-    if (targetQP === null) throw new Error("The parameter 'targetQP' cannot be null.");
-    else if (targetQP !== undefined) url_ += "targetQP=" + encodeURIComponent("" + targetQP) + "&";
-    url_ = url_.replace(/[?&]$/, "");
-
-    let options_: RequestInit = {
-      method: "POST",
-      headers: {}
-    };
-
-    return this.transformOptions(options_)
-      .then(transformedOptions_ => {
-        return this.http.fetch(url_, transformedOptions_);
-      })
-      .then((_response: Response) => {
-        return this.processStopIndexing(_response);
-      });
-  }
-
-  protected processStopIndexing(response: Response): Promise<void> {
-    const status = response.status;
-    let _headers: any = {};
-    if (response.headers && response.headers.forEach) {
-      response.headers.forEach((v: any, k: any) => (_headers[k] = v));
+    protected processStartIndexing(response: Response): Promise<void> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            return;
+            });
+        } else if (status === 500) {
+            return response.text().then((_responseText) => {
+            return throwException("A server side error occurred.", status, _responseText, _headers);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<void>(null as any);
     }
-    if (status === 200) {
-      return response.text().then(_responseText => {
-        return;
-      });
-    } else if (status === 500) {
-      return response.text().then(_responseText => {
-        return throwException("A server side error occurred.", status, _responseText, _headers);
-      });
-    } else if (status !== 200 && status !== 204) {
-      return response.text().then(_responseText => {
-        return throwException(
-          "An unexpected server error occurred.",
-          status,
-          _responseText,
-          _headers
-        );
-      });
+
+    stopIndexing(targetQP?: TargetQP | undefined): Promise<void> {
+        let url_ = this.baseUrl + "/api/QpIndexing/StopIndexing?";
+        if (targetQP === null)
+            throw new Error("The parameter 'targetQP' cannot be null.");
+        else if (targetQP !== undefined)
+            url_ += "targetQP=" + encodeURIComponent("" + targetQP) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "POST",
+            headers: {
+            }
+        };
+
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.http.fetch(url_, transformedOptions_);
+        }).then((_response: Response) => {
+            return this.processStopIndexing(_response);
+        });
     }
-    return Promise.resolve<void>(null as any);
-  }
+
+    protected processStopIndexing(response: Response): Promise<void> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            return;
+            });
+        } else if (status === 500) {
+            return response.text().then((_responseText) => {
+            return throwException("A server side error occurred.", status, _responseText, _headers);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<void>(null as any);
+    }
 }
 
 export class TemplateController extends Controller {
-  private http: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> };
-  private baseUrl: string;
-  protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+    private http: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> };
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
 
-  constructor(
-    baseUrl?: string,
-    http?: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> }
-  ) {
-    super();
-    this.http = http ? http : (window as any);
-    this.baseUrl = baseUrl !== undefined && baseUrl !== null ? baseUrl : "";
-  }
-
-  getTemplates(): Promise<TemplateFile[]> {
-    let url_ = this.baseUrl + "/api/Template/GetTemplates";
-    url_ = url_.replace(/[?&]$/, "");
-
-    let options_: RequestInit = {
-      method: "GET",
-      headers: {
-        Accept: "application/json"
-      }
-    };
-
-    return this.transformOptions(options_)
-      .then(transformedOptions_ => {
-        return this.http.fetch(url_, transformedOptions_);
-      })
-      .then((_response: Response) => {
-        return this.processGetTemplates(_response);
-      });
-  }
-
-  protected processGetTemplates(response: Response): Promise<TemplateFile[]> {
-    const status = response.status;
-    let _headers: any = {};
-    if (response.headers && response.headers.forEach) {
-      response.headers.forEach((v: any, k: any) => (_headers[k] = v));
+    constructor(baseUrl?: string, http?: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> }) {
+        super();
+        this.http = http ? http : window as any;
+        this.baseUrl = baseUrl !== undefined && baseUrl !== null ? baseUrl : "";
     }
-    if (status === 200) {
-      return response.text().then(_responseText => {
-        let result200: any = null;
-        result200 =
-          _responseText === ""
-            ? null
-            : (JSON.parse(_responseText, this.jsonParseReviver) as TemplateFile[]);
-        return result200;
-      });
-    } else if (status === 500) {
-      return response.text().then(_responseText => {
-        let result500: any = null;
-        result500 =
-          _responseText === ""
-            ? null
-            : (JSON.parse(_responseText, this.jsonParseReviver) as string);
-        return throwException(
-          "A server side error occurred.",
-          status,
-          _responseText,
-          _headers,
-          result500
-        );
-      });
-    } else if (status !== 200 && status !== 204) {
-      return response.text().then(_responseText => {
-        return throwException(
-          "An unexpected server error occurred.",
-          status,
-          _responseText,
-          _headers
-        );
-      });
+
+    getTemplates(): Promise<TemplateFile[]> {
+        let url_ = this.baseUrl + "/api/Template/GetTemplates";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.http.fetch(url_, transformedOptions_);
+        }).then((_response: Response) => {
+            return this.processGetTemplates(_response);
+        });
     }
-    return Promise.resolve<TemplateFile[]>(null as any);
-  }
 
-  applyTemplate(templateName?: string | null | undefined): Promise<void> {
-    let url_ = this.baseUrl + "/api/Template/ApplyTemplate?";
-    if (templateName !== undefined && templateName !== null)
-      url_ += "templateName=" + encodeURIComponent("" + templateName) + "&";
-    url_ = url_.replace(/[?&]$/, "");
-
-    let options_: RequestInit = {
-      method: "PUT",
-      headers: {}
-    };
-
-    return this.transformOptions(options_)
-      .then(transformedOptions_ => {
-        return this.http.fetch(url_, transformedOptions_);
-      })
-      .then((_response: Response) => {
-        return this.processApplyTemplate(_response);
-      });
-  }
-
-  protected processApplyTemplate(response: Response): Promise<void> {
-    const status = response.status;
-    let _headers: any = {};
-    if (response.headers && response.headers.forEach) {
-      response.headers.forEach((v: any, k: any) => (_headers[k] = v));
+    protected processGetTemplates(response: Response): Promise<TemplateFile[]> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as TemplateFile[];
+            return result200;
+            });
+        } else if (status === 500) {
+            return response.text().then((_responseText) => {
+            let result500: any = null;
+            result500 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as string;
+            return throwException("A server side error occurred.", status, _responseText, _headers, result500);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<TemplateFile[]>(null as any);
     }
-    if (status === 200) {
-      return response.text().then(_responseText => {
-        return;
-      });
-    } else if (status === 404) {
-      return response.text().then(_responseText => {
-        let result404: any = null;
-        result404 =
-          _responseText === ""
-            ? null
-            : (JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails);
-        return throwException(
-          "A server side error occurred.",
-          status,
-          _responseText,
-          _headers,
-          result404
-        );
-      });
-    } else if (status === 500) {
-      return response.text().then(_responseText => {
-        let result500: any = null;
-        result500 =
-          _responseText === ""
-            ? null
-            : (JSON.parse(_responseText, this.jsonParseReviver) as string);
-        return throwException(
-          "A server side error occurred.",
-          status,
-          _responseText,
-          _headers,
-          result500
-        );
-      });
-    } else if (status !== 200 && status !== 204) {
-      return response.text().then(_responseText => {
-        return throwException(
-          "An unexpected server error occurred.",
-          status,
-          _responseText,
-          _headers
-        );
-      });
+
+    applyTemplate(templateName?: string | null | undefined): Promise<void> {
+        let url_ = this.baseUrl + "/api/Template/ApplyTemplate?";
+        if (templateName !== undefined && templateName !== null)
+            url_ += "templateName=" + encodeURIComponent("" + templateName) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "PUT",
+            headers: {
+            }
+        };
+
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.http.fetch(url_, transformedOptions_);
+        }).then((_response: Response) => {
+            return this.processApplyTemplate(_response);
+        });
     }
-    return Promise.resolve<void>(null as any);
-  }
 
-  deleteTemplate(templateName?: string | null | undefined): Promise<void> {
-    let url_ = this.baseUrl + "/api/Template/DeleteTemplate?";
-    if (templateName !== undefined && templateName !== null)
-      url_ += "templateName=" + encodeURIComponent("" + templateName) + "&";
-    url_ = url_.replace(/[?&]$/, "");
-
-    let options_: RequestInit = {
-      method: "DELETE",
-      headers: {}
-    };
-
-    return this.transformOptions(options_)
-      .then(transformedOptions_ => {
-        return this.http.fetch(url_, transformedOptions_);
-      })
-      .then((_response: Response) => {
-        return this.processDeleteTemplate(_response);
-      });
-  }
-
-  protected processDeleteTemplate(response: Response): Promise<void> {
-    const status = response.status;
-    let _headers: any = {};
-    if (response.headers && response.headers.forEach) {
-      response.headers.forEach((v: any, k: any) => (_headers[k] = v));
+    protected processApplyTemplate(response: Response): Promise<void> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            return;
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            let result404: any = null;
+            result404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+            return throwException("A server side error occurred.", status, _responseText, _headers, result404);
+            });
+        } else if (status === 500) {
+            return response.text().then((_responseText) => {
+            let result500: any = null;
+            result500 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as string;
+            return throwException("A server side error occurred.", status, _responseText, _headers, result500);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<void>(null as any);
     }
-    if (status === 200) {
-      return response.text().then(_responseText => {
-        return;
-      });
-    } else if (status === 500) {
-      return response.text().then(_responseText => {
-        let result500: any = null;
-        result500 =
-          _responseText === ""
-            ? null
-            : (JSON.parse(_responseText, this.jsonParseReviver) as string);
-        return throwException(
-          "A server side error occurred.",
-          status,
-          _responseText,
-          _headers,
-          result500
-        );
-      });
-    } else if (status !== 200 && status !== 204) {
-      return response.text().then(_responseText => {
-        return throwException(
-          "An unexpected server error occurred.",
-          status,
-          _responseText,
-          _headers
-        );
-      });
+
+    deleteTemplate(templateName?: string | null | undefined): Promise<void> {
+        let url_ = this.baseUrl + "/api/Template/DeleteTemplate?";
+        if (templateName !== undefined && templateName !== null)
+            url_ += "templateName=" + encodeURIComponent("" + templateName) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "DELETE",
+            headers: {
+            }
+        };
+
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.http.fetch(url_, transformedOptions_);
+        }).then((_response: Response) => {
+            return this.processDeleteTemplate(_response);
+        });
     }
-    return Promise.resolve<void>(null as any);
-  }
+
+    protected processDeleteTemplate(response: Response): Promise<void> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            return;
+            });
+        } else if (status === 500) {
+            return response.text().then((_responseText) => {
+            let result500: any = null;
+            result500 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as string;
+            return throwException("A server side error occurred.", status, _responseText, _headers, result500);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<void>(null as any);
+    }
 }
 
 export class TestController extends Controller {
-  private http: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> };
-  private baseUrl: string;
-  protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+    private http: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> };
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
 
-  constructor(
-    baseUrl?: string,
-    http?: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> }
-  ) {
-    super();
-    this.http = http ? http : (window as any);
-    this.baseUrl = baseUrl !== undefined && baseUrl !== null ? baseUrl : "";
-  }
-
-  getFinishedTasks(): Promise<IReindexTask[]> {
-    let url_ = this.baseUrl + "/api/Test/GetFinishedTasks";
-    url_ = url_.replace(/[?&]$/, "");
-
-    let options_: RequestInit = {
-      method: "GET",
-      headers: {
-        Accept: "application/json"
-      }
-    };
-
-    return this.transformOptions(options_)
-      .then(transformedOptions_ => {
-        return this.http.fetch(url_, transformedOptions_);
-      })
-      .then((_response: Response) => {
-        return this.processGetFinishedTasks(_response);
-      });
-  }
-
-  protected processGetFinishedTasks(response: Response): Promise<IReindexTask[]> {
-    const status = response.status;
-    let _headers: any = {};
-    if (response.headers && response.headers.forEach) {
-      response.headers.forEach((v: any, k: any) => (_headers[k] = v));
+    constructor(baseUrl?: string, http?: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> }) {
+        super();
+        this.http = http ? http : window as any;
+        this.baseUrl = baseUrl !== undefined && baseUrl !== null ? baseUrl : "";
     }
-    if (status === 200) {
-      return response.text().then(_responseText => {
-        let result200: any = null;
-        result200 =
-          _responseText === ""
-            ? null
-            : (JSON.parse(_responseText, this.jsonParseReviver) as IReindexTask[]);
-        return result200;
-      });
-    } else if (status === 500) {
-      return response.text().then(_responseText => {
-        return throwException("A server side error occurred.", status, _responseText, _headers);
-      });
-    } else if (status !== 200 && status !== 204) {
-      return response.text().then(_responseText => {
-        return throwException(
-          "An unexpected server error occurred.",
-          status,
-          _responseText,
-          _headers
-        );
-      });
+
+    getFinishedTasks(): Promise<IReindexTask[]> {
+        let url_ = this.baseUrl + "/api/Test/GetFinishedTasks";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.http.fetch(url_, transformedOptions_);
+        }).then((_response: Response) => {
+            return this.processGetFinishedTasks(_response);
+        });
     }
-    return Promise.resolve<IReindexTask[]>(null as any);
-  }
+
+    protected processGetFinishedTasks(response: Response): Promise<IReindexTask[]> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as IReindexTask[];
+            return result200;
+            });
+        } else if (status === 500) {
+            return response.text().then((_responseText) => {
+            return throwException("A server side error occurred.", status, _responseText, _headers);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<IReindexTask[]>(null as any);
+    }
 }
 
 export class UsersController extends Controller {
-  private http: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> };
-  private baseUrl: string;
-  protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+    private http: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> };
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
 
-  constructor(
-    baseUrl?: string,
-    http?: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> }
-  ) {
-    super();
-    this.http = http ? http : (window as any);
-    this.baseUrl = baseUrl !== undefined && baseUrl !== null ? baseUrl : "";
-  }
-
-  listUsers(
-    limit?: number | undefined,
-    offset?: number | undefined,
-    email?: string | null | undefined,
-    role?: UserRole | null | undefined
-  ): Promise<UsersListResponse> {
-    let url_ = this.baseUrl + "/api/Users?";
-    if (limit === null) throw new Error("The parameter 'limit' cannot be null.");
-    else if (limit !== undefined) url_ += "Limit=" + encodeURIComponent("" + limit) + "&";
-    if (offset === null) throw new Error("The parameter 'offset' cannot be null.");
-    else if (offset !== undefined) url_ += "Offset=" + encodeURIComponent("" + offset) + "&";
-    if (email !== undefined && email !== null)
-      url_ += "Email=" + encodeURIComponent("" + email) + "&";
-    if (role !== undefined && role !== null) url_ += "Role=" + encodeURIComponent("" + role) + "&";
-    url_ = url_.replace(/[?&]$/, "");
-
-    let options_: RequestInit = {
-      method: "GET",
-      headers: {
-        Accept: "application/json"
-      }
-    };
-
-    return this.transformOptions(options_)
-      .then(transformedOptions_ => {
-        return this.http.fetch(url_, transformedOptions_);
-      })
-      .then((_response: Response) => {
-        return this.processListUsers(_response);
-      });
-  }
-
-  protected processListUsers(response: Response): Promise<UsersListResponse> {
-    const status = response.status;
-    let _headers: any = {};
-    if (response.headers && response.headers.forEach) {
-      response.headers.forEach((v: any, k: any) => (_headers[k] = v));
+    constructor(baseUrl?: string, http?: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> }) {
+        super();
+        this.http = http ? http : window as any;
+        this.baseUrl = baseUrl !== undefined && baseUrl !== null ? baseUrl : "";
     }
-    if (status === 200) {
-      return response.text().then(_responseText => {
-        let result200: any = null;
-        result200 =
-          _responseText === ""
-            ? null
-            : (JSON.parse(_responseText, this.jsonParseReviver) as UsersListResponse);
-        return result200;
-      });
-    } else if (status !== 200 && status !== 204) {
-      return response.text().then(_responseText => {
-        return throwException(
-          "An unexpected server error occurred.",
-          status,
-          _responseText,
-          _headers
-        );
-      });
+
+    listUsers(limit?: number | undefined, offset?: number | undefined, email?: string | null | undefined, role?: UserRole | null | undefined): Promise<UsersListResponse> {
+        let url_ = this.baseUrl + "/api/Users?";
+        if (limit === null)
+            throw new Error("The parameter 'limit' cannot be null.");
+        else if (limit !== undefined)
+            url_ += "Limit=" + encodeURIComponent("" + limit) + "&";
+        if (offset === null)
+            throw new Error("The parameter 'offset' cannot be null.");
+        else if (offset !== undefined)
+            url_ += "Offset=" + encodeURIComponent("" + offset) + "&";
+        if (email !== undefined && email !== null)
+            url_ += "Email=" + encodeURIComponent("" + email) + "&";
+        if (role !== undefined && role !== null)
+            url_ += "Role=" + encodeURIComponent("" + role) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.http.fetch(url_, transformedOptions_);
+        }).then((_response: Response) => {
+            return this.processListUsers(_response);
+        });
     }
-    return Promise.resolve<UsersListResponse>(null as any);
-  }
 
-  createUser(data: CreateUserRequest): Promise<void> {
-    let url_ = this.baseUrl + "/api/Users";
-    url_ = url_.replace(/[?&]$/, "");
-
-    const content_ = JSON.stringify(data);
-
-    let options_: RequestInit = {
-      body: content_,
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      }
-    };
-
-    return this.transformOptions(options_)
-      .then(transformedOptions_ => {
-        return this.http.fetch(url_, transformedOptions_);
-      })
-      .then((_response: Response) => {
-        return this.processCreateUser(_response);
-      });
-  }
-
-  protected processCreateUser(response: Response): Promise<void> {
-    const status = response.status;
-    let _headers: any = {};
-    if (response.headers && response.headers.forEach) {
-      response.headers.forEach((v: any, k: any) => (_headers[k] = v));
+    protected processListUsers(response: Response): Promise<UsersListResponse> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as UsersListResponse;
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<UsersListResponse>(null as any);
     }
-    if (status === 200) {
-      return response.text().then(_responseText => {
-        return;
-      });
-    } else if (status === 400) {
-      return response.text().then(_responseText => {
-        let result400: any = null;
-        result400 =
-          _responseText === ""
-            ? null
-            : (JSON.parse(_responseText, this.jsonParseReviver) as ValidationProblemDetails);
-        return throwException(
-          "A server side error occurred.",
-          status,
-          _responseText,
-          _headers,
-          result400
-        );
-      });
-    } else if (status !== 200 && status !== 204) {
-      return response.text().then(_responseText => {
-        return throwException(
-          "An unexpected server error occurred.",
-          status,
-          _responseText,
-          _headers
-        );
-      });
+
+    createUser(data: CreateUserRequest): Promise<void> {
+        let url_ = this.baseUrl + "/api/Users";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(data);
+
+        let options_: RequestInit = {
+            body: content_,
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            }
+        };
+
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.http.fetch(url_, transformedOptions_);
+        }).then((_response: Response) => {
+            return this.processCreateUser(_response);
+        });
     }
-    return Promise.resolve<void>(null as any);
-  }
 
-  deleteUser(id: number): Promise<void> {
-    let url_ = this.baseUrl + "/api/Users/{id}";
-    if (id === undefined || id === null) throw new Error("The parameter 'id' must be defined.");
-    url_ = url_.replace("{id}", encodeURIComponent("" + id));
-    url_ = url_.replace(/[?&]$/, "");
-
-    let options_: RequestInit = {
-      method: "DELETE",
-      headers: {}
-    };
-
-    return this.transformOptions(options_)
-      .then(transformedOptions_ => {
-        return this.http.fetch(url_, transformedOptions_);
-      })
-      .then((_response: Response) => {
-        return this.processDeleteUser(_response);
-      });
-  }
-
-  protected processDeleteUser(response: Response): Promise<void> {
-    const status = response.status;
-    let _headers: any = {};
-    if (response.headers && response.headers.forEach) {
-      response.headers.forEach((v: any, k: any) => (_headers[k] = v));
+    protected processCreateUser(response: Response): Promise<void> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            return;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ValidationProblemDetails;
+            return throwException("A server side error occurred.", status, _responseText, _headers, result400);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<void>(null as any);
     }
-    if (status === 200) {
-      return response.text().then(_responseText => {
-        return;
-      });
-    } else if (status !== 200 && status !== 204) {
-      return response.text().then(_responseText => {
-        return throwException(
-          "An unexpected server error occurred.",
-          status,
-          _responseText,
-          _headers
-        );
-      });
+
+    deleteUser(id: number): Promise<void> {
+        let url_ = this.baseUrl + "/api/Users/{id}";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "DELETE",
+            headers: {
+            }
+        };
+
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.http.fetch(url_, transformedOptions_);
+        }).then((_response: Response) => {
+            return this.processDeleteUser(_response);
+        });
     }
-    return Promise.resolve<void>(null as any);
-  }
+
+    protected processDeleteUser(response: Response): Promise<void> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            return;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<void>(null as any);
+    }
 }
 
 export interface ProblemDetails {
-  type?: string | null;
-  title?: string | null;
-  status?: number | null;
-  detail?: string | null;
-  instance?: string | null;
-  extensions: { [key: string]: any };
+    type?: string | null;
+    title?: string | null;
+    status?: number | null;
+    detail?: string | null;
+    instance?: string | null;
+    extensions: { [key: string]: any; };
 }
 
 export interface HttpValidationProblemDetails extends ProblemDetails {
-  errors: { [key: string]: string[] };
+    errors: { [key: string]: string[]; };
 }
 
 export interface ValidationProblemDetails extends HttpValidationProblemDetails {
-  errors: { [key: string]: string[] };
+    errors: { [key: string]: string[]; };
 }
 
 export interface LoginRequest {
-  email: string;
-  password: string;
+    email: string;
+    password: string;
 }
 
 export interface UserResponse {
-  id: number;
-  email?: string | null;
-  role: UserRole;
+    id: number;
+    email?: string | null;
+    role: UserRole;
 }
 
 export enum UserRole {
-  Admin = 1,
-  User = 2
+    Admin = 1,
+    User = 2,
 }
 
 export interface ResetPasswordRequest {
-  email: string;
+    email: string;
 }
 
 export interface ChangePasswordRequest {
-  emailId: string;
-  password: string;
+    emailId: string;
+    password: string;
 }
 
 export interface ElasticManagementPageResponse {
-  loading: boolean;
-  commonError: boolean;
-  cards?: IndexesCardViewModel[] | null;
+    loading: boolean;
+    commonError: boolean;
+    cards?: IndexesCardViewModel[] | null;
 }
 
 export interface IndexesCardViewModel {
-  /** Исходный (или единственный индекс) */
-  sourceIndex?: ElasticIndexViewModel | null;
-  /** Целевой индекс для переиндексации */
-  destinationIndex?: ElasticIndexViewModel | null;
-  /** Все индексы, кроме самого раннего, если индексов больше двух */
-  wrongIndexes?: ElasticIndexViewModel[] | null;
-  /** Сведения об активной задаче переиндексации */
-  reindexTask?: ReindexTaskViewModel | null;
-  /** Сведения о последней завершенной задаче переиндексации */
-  lastFinishedReindexTask?: ReindexTaskViewModel | null;
-  /** Может ли быть запущена новая задача переиндексации */
-  canRunNewTask: boolean;
-  hasTaskWithActiveStatus: boolean;
-  isReadonly: boolean;
+    /** Исходный (или единственный индекс) */
+    sourceIndex?: ElasticIndexViewModel | null;
+    /** Целевой индекс для переиндексации */
+    destinationIndex?: ElasticIndexViewModel | null;
+    /** Все индексы, кроме самого раннего, если индексов больше двух */
+    wrongIndexes?: ElasticIndexViewModel[] | null;
+    /** Сведения об активной задаче переиндексации */
+    reindexTask?: ReindexTaskViewModel | null;
+    /** Сведения о последней завершенной задаче переиндексации */
+    lastFinishedReindexTask?: ReindexTaskViewModel | null;
+    /** Может ли быть запущена новая задача переиндексации */
+    canRunNewTask: boolean;
+    hasTaskWithActiveStatus: boolean;
+    isReadonly: boolean;
 }
 
 export interface ElasticIndexViewModel {
-  alias?: string | null;
-  hasAlias: boolean;
-  fullName?: string | null;
-  uiName?: string | null;
-  creationDate?: string | null;
-  readonly: boolean;
+    alias?: string | null;
+    hasAlias: boolean;
+    fullName?: string | null;
+    uiName?: string | null;
+    creationDate?: string | null;
+    readonly: boolean;
 }
 
 /** Модель процесса бесшовной переиндексации одного индекса Elastic */
 export interface ReindexTaskViewModel {
-  sourceIndex?: string | null;
-  destinationIndex?: string | null;
-  created?: string | null;
-  finished?: string | null;
-  status: ReindexTaskStatus;
-  lastUpdated?: string | null;
-  totalTime?: string | null;
-  totalDocuments: number;
-  createdDocuments: number;
-  updatedDocuments: number;
-  deletedDocuments: number;
-  percentage: number;
+    sourceIndex?: string | null;
+    destinationIndex?: string | null;
+    created?: string | null;
+    finished?: string | null;
+    status: ReindexTaskStatus;
+    lastUpdated?: string | null;
+    totalTime?: string | null;
+    totalDocuments: number;
+    createdDocuments: number;
+    updatedDocuments: number;
+    deletedDocuments: number;
+    percentage: number;
 }
 
 export enum ReindexTaskStatus {
-  AwaitStart = 0,
-  ReindexOneAndAliasesSwap = 1,
-  ReindexTwo = 2,
-  Completed = 3,
-  Failed = 4,
-  CancelledByWorker = 5
+    AwaitStart = 0,
+    ReindexOneAndAliasesSwap = 1,
+    ReindexTwo = 2,
+    Completed = 3,
+    Failed = 4,
+    CancelledByWorker = 5,
 }
 
 export interface CreateReindexTaskResponse {
-  taskCreated: boolean;
-  errorMessage?: string | null;
+    taskCreated: boolean;
+    errorMessage?: string | null;
 }
 
 export interface IndexingResponseBase {
-  state: IndexingState;
-  progress: number;
-  message?: string | null;
-  iteration: number;
-  startDate?: string | null;
-  endDate?: string | null;
-  scheduledDates?: string[] | null;
+    state: IndexingState;
+    progress: number;
+    message?: string | null;
+    iteration: number;
+    startDate?: string | null;
+    endDate?: string | null;
+    scheduledDates?: string[] | null;
 }
 
 export interface QpIndexingResponse extends IndexingResponseBase {
-  reports?: IndexingReportModel[] | null;
+    reports?: IndexingReportModel[] | null;
 }
 
 export interface IndexingReportModel {
-  documentsLoadTime: string;
-  documentsProcessTime: string;
-  documentsIndexTime: string;
-  idsLoaded: number;
-  productsLoaded: number;
-  productsIndexed: number;
-  batchSize: number;
-  indexName?: string | null;
+    documentsLoadTime: string;
+    documentsProcessTime: string;
+    documentsIndexTime: string;
+    idsLoaded: number;
+    productsLoaded: number;
+    productsIndexed: number;
+    batchSize: number;
+    indexName?: string | null;
 }
 
 export enum IndexingState {
-  Running = 0,
-  Stopped = 1,
-  AwaitingRun = 2,
-  AwaitingStop = 3,
-  Error = 4
+    Running = 0,
+    Stopped = 1,
+    AwaitingRun = 2,
+    AwaitingStop = 3,
+    Error = 4,
 }
 
 export enum TargetQP {
-  IndexingQP = 1,
-  IndexingQPUpdate = 2
+    IndexingQP = 1,
+    IndexingQPUpdate = 2,
 }
 
 export interface TemplateFile {
-  name?: string | null;
-  oldContent?: any | null;
-  newContent?: any | null;
+    name?: string | null;
+    oldContent?: any | null;
+    newContent?: any | null;
 }
 
 export interface IReindexTask {
-  sourceIndex?: string | null;
-  destinationIndex?: string | null;
-  elasticTaskId?: string | null;
-  status: ReindexTaskStatus;
-  created: Date;
-  /** Дата и время последнего обновления */
-  lastUpdated: Date;
-  finished?: Date | null;
-  totalTime: string;
-  totalDocuments: number;
-  createdDocuments: number;
-  updatedDocuments: number;
-  deletedDocuments: number;
-  percentage: number;
+    sourceIndex?: string | null;
+    destinationIndex?: string | null;
+    elasticTaskId?: string | null;
+    status: ReindexTaskStatus;
+    created: Date;
+    /** Дата и время последнего обновления */
+    lastUpdated: Date;
+    finished?: Date | null;
+    totalTime: string;
+    totalDocuments: number;
+    createdDocuments: number;
+    updatedDocuments: number;
+    deletedDocuments: number;
+    percentage: number;
 }
 
 export interface UsersListResponse {
-  totalCount: number;
-  data?: UserResponse[] | null;
+    totalCount: number;
+    data?: UserResponse[] | null;
 }
 
 export interface CreateUserRequest {
-  email?: string | null;
-  role: UserRole;
+    email?: string | null;
+    role: UserRole;
 }
 
 export class SwaggerException extends Error {
-  message: string;
-  status: number;
-  response: string;
-  headers: { [key: string]: any };
-  result: any;
+    message: string;
+    status: number;
+    response: string;
+    headers: { [key: string]: any; };
+    result: any;
 
-  constructor(
-    message: string,
-    status: number,
-    response: string,
-    headers: { [key: string]: any },
-    result: any
-  ) {
-    super();
+    constructor(message: string, status: number, response: string, headers: { [key: string]: any; }, result: any) {
+        super();
 
-    this.message = message;
-    this.status = status;
-    this.response = response;
-    this.headers = headers;
-    this.result = result;
-  }
+        this.message = message;
+        this.status = status;
+        this.response = response;
+        this.headers = headers;
+        this.result = result;
+    }
 
-  protected isSwaggerException = true;
+    protected isSwaggerException = true;
 
-  static isSwaggerException(obj: any): obj is SwaggerException {
-    return obj.isSwaggerException === true;
-  }
+    static isSwaggerException(obj: any): obj is SwaggerException {
+        return obj.isSwaggerException === true;
+    }
 }
 
-function throwException(
-  message: string,
-  status: number,
-  response: string,
-  headers: { [key: string]: any },
-  result?: any
-): any {
-  if (result !== null && result !== undefined) throw result;
-  else throw new SwaggerException(message, status, response, headers, null);
+function throwException(message: string, status: number, response: string, headers: { [key: string]: any; }, result?: any): any {
+    if (result !== null && result !== undefined)
+        throw result;
+    else
+        throw new SwaggerException(message, status, response, headers, null);
 }
 
 const dataRateRegexForUnspecifiedKind = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(.\d+)*$/;
