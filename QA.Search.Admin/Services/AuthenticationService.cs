@@ -27,11 +27,12 @@ namespace QA.Search.Admin.Services
         public async Task Login(HttpContext httpContext, string email, string password)
         {
             var user = await _dbContext.Users
+                .AsNoTracking()
                 .FirstOrDefaultAsync(u => u.Email.Equals(email.ToLower()));
 
             if (user == null || !user.ValidatePassword(password))
             {
-                throw new BusinessError("Неверный логин или пароль");
+                throw new AuthError("Неверный логин или пароль");
             }
 
             var claims = new List<Claim>

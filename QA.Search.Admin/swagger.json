@@ -41,6 +41,13 @@
             "schema": {
               "$ref": "#/definitions/ValidationProblemDetails"
             }
+          },
+          "401": {
+            "x-nullable": false,
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/ValidationProblemDetails"
+            }
           }
         }
       }
