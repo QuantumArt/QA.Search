@@ -10,7 +10,6 @@ namespace QA.Search.Admin.Controllers
     [Route("api/[controller]")]
     [Consumes("application/json")]
     [Produces("application/json")]
-    [IgnoreAntiforgeryToken]
     public class ElasticManagementPageController : Controller
     {
         private ElasticManagementService Service { get; }
