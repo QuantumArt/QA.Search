@@ -1,5 +1,4 @@
 import React, { useEffect, useContext } from "react";
-import { Grid, Row, Col } from "react-flexbox-grid";
 
 import UsersContainer from "./UsersContainer";
 import UsersList from "./UsersList";
@@ -12,16 +11,10 @@ const UsersPage = () => {
   }, []);
 
   return (
-    <Grid fluid>
-      <Row around="xs" style={{ paddingTop: "20px" }}>
-        <Col xs>
-          <UsersList />
-        </Col>
-        <Col xs={3}>
-          <UsersListFilter />
-        </Col>
-      </Row>
-    </Grid>
+ <div style={{ padding: "20px 16px" }}>
+  <UsersListFilter />
+  <UsersList />
+ </div>
   );
 };
 
