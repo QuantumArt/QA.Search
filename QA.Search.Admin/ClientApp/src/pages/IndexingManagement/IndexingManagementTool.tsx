@@ -2,14 +2,9 @@ import React, { useEffect, useContext } from "react";
 import { Grid, Row, Col } from "react-flexbox-grid";
 
 import {
-  Card,
-  Spinner,
   Button,
-  ProgressBar,
   NonIdealState,
-  HTMLTable,
-  ButtonGroup,
-  NumericInput
+
 } from "@blueprintjs/core";
 import Loading from "../../components/Loading";
 
@@ -70,7 +65,7 @@ function IndexingManagementTool({ targetQP }: Props) {
           state.indexingServiceState.reports && (
             <>
               {state.indexingServiceState.reports.map((rep, i) => (
-                <Col key={i} xs={4}>
+                <Col key={i} xs={4} style={{padding:"8px"}}>
                   <IndexingReport report={rep} />
                 </Col>
               ))}
