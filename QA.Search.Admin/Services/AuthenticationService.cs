@@ -15,8 +15,9 @@ namespace QA.Search.Admin.Services
     {
         private readonly AdminSearchDbContext _dbContext;
 
-        public const string Scheme = "SearchAdminAuthenticationScheme";
-        public const int CookieLifetimeDays = 1;
+        public const string SCHEME = "SearchAdminAuthenticationScheme";
+        public const int COOKIE_LIFETIME_DAYS = 1; 
+        public const string XSRF_TOKEN_HEADER_NAME = "X-XSRF-TOKEN";
 
         public AuthenticationService(AdminSearchDbContext dbContext)
         {
@@ -26,11 +27,12 @@ namespace QA.Search.Admin.Services
         public async Task Login(HttpContext httpContext, string email, string password)
         {
             var user = await _dbContext.Users
+                .AsNoTracking()
                 .FirstOrDefaultAsync(u => u.Email.Equals(email.ToLower()));
 
             if (user == null || !user.ValidatePassword(password))
             {
-                throw new BusinessError("Неверный логин или пароль");
+                throw new AuthError("Неверный логин или пароль");
             }
 
             var claims = new List<Claim>
@@ -39,14 +41,14 @@ namespace QA.Search.Admin.Services
                 new Claim(ClaimTypes.Role, Enum.GetName(typeof(UserRole), user.Role))
             };
 
-            var claimsPrincipal = new ClaimsPrincipal(new ClaimsIdentity(claims, Scheme));
+            var claimsPrincipal = new ClaimsPrincipal(new ClaimsIdentity(claims, SCHEME));
             var authProps = new AuthenticationProperties
             {
                 IsPersistent = true,
-                ExpiresUtc = DateTimeOffset.UtcNow.AddDays(CookieLifetimeDays)
+                ExpiresUtc = DateTimeOffset.UtcNow.AddDays(COOKIE_LIFETIME_DAYS)
             };
 
-            await httpContext.SignInAsync(Scheme,
+            await httpContext.SignInAsync(SCHEME,
                 claimsPrincipal,
                 authProps);
 
@@ -55,7 +57,7 @@ namespace QA.Search.Admin.Services
 
         public async Task Logout(HttpContext httpContext)
         {
-            await httpContext.SignOutAsync(Scheme);
+            await httpContext.SignOutAsync(SCHEME);
 
             // SignOutAsync не удаляет информацию о пользователе из контекста
             // Делаем это руками для последующего корректного обновления XSRF-токена в middleware

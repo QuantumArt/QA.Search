@@ -30,12 +30,12 @@ const LoginPage = ({ history, getUserInfo }: Props) => {
   const onSubmit = async values => {
     try {
       await new AccountController().login(values);
-      await getUserInfo();
+      getUserInfo();
       history.push("/");
-    } catch (error) {
+    } catch (err) {
       Toaster.show({
-        message: error.title || "При выполнении запроса произошла ошибка",
-        intent: Intent.DANGER
+        intent: Intent.DANGER,
+        message: err.Title || "При выполнении запроса произошла ошибка",
       });
     }
   };

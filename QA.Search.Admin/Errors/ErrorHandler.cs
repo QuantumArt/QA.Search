@@ -14,15 +14,22 @@ namespace QA.Search.Admin.Errors
             {
                 var exceptionHandlerPathFeature = context.Features.Get<IExceptionHandlerPathFeature>();
 
-                if (exceptionHandlerPathFeature?.Error is BusinessError)
+                if (exceptionHandlerPathFeature?.Error is BusinessError || exceptionHandlerPathFeature?.Error is AuthError)
                 {
-                    context.Response.StatusCode = 400;
+                    int statusCode = exceptionHandlerPathFeature?.Error switch
+                    {
+                        BusinessError => 400,
+                        AuthError => 401,
+                        _ => 500
+                    };
+
+                    context.Response.StatusCode = statusCode;
                     context.Response.ContentType = "application/json";
 
                     var response = new ValidationProblemDetails
                     {
                         Title = exceptionHandlerPathFeature.Error.Message,
-                        Status = 400
+                        Status = statusCode
                     };
 
                     await context.Response.WriteAsync(JsonConvert.SerializeObject(response));

@@ -82,7 +82,7 @@ namespace QA.Search.Admin
 
             services.AddAntiforgery(options =>
             {
-                options.HeaderName = "X-XSRF-TOKEN";
+                options.HeaderName = AuthenticationService.XSRF_TOKEN_HEADER_NAME;
                 options.SuppressXFrameOptionsHeader = true;
             });
 
@@ -99,12 +99,8 @@ namespace QA.Search.Admin
             services.AddElasticConfiguration(Configuration);
             services.AddElasticSearch();
             services
-                .AddAuthentication(options =>
-                {
-                    options.DefaultAuthenticateScheme = AuthenticationService.Scheme;
-                    options.DefaultSignInScheme = AuthenticationService.Scheme;
-                })
-                .AddCookie(AuthenticationService.Scheme, options =>
+                .AddAuthentication(AuthenticationService.SCHEME)
+                .AddCookie(AuthenticationService.SCHEME, options =>
                 {
                     options.Events.OnRedirectToLogin = (context) =>
                     {
@@ -158,7 +154,6 @@ namespace QA.Search.Admin
         public void Configure(
             IApplicationBuilder app,
             IWebHostEnvironment env,
-            IAntiforgery antiForgery,
             IHostApplicationLifetime lifetime,
             IServer server,
             ILogger<Startup> logger)
@@ -182,25 +177,11 @@ namespace QA.Search.Admin
 
             app.Use(async (context, next) =>
             {
-                string path = context.Request.Path.Value;
-
-                if (path == null || !path.Contains("/api/", StringComparison.OrdinalIgnoreCase))
-                {
-                    SetAntiForgeryCookie(context, antiForgery);
-                }
-
                 context.Response.Headers.Add("X-Frame-Options", "DENY");
                 context.Response.Headers.Add("X-Xss-Protection", "1");
                 context.Response.Headers.Add("X-Content-Type-Options", "nosniff");
 
                 await next.Invoke();
-
-                if (context.Response.StatusCode == 200 && (
-                    path.Contains("/api/Account/Login", StringComparison.OrdinalIgnoreCase) ||
-                    path.Contains("/api/Account/Logout", StringComparison.OrdinalIgnoreCase)))
-                {
-                    SetAntiForgeryCookie(context, antiForgery);
-                }
             });
 
             app.UseRouting();
@@ -211,6 +192,8 @@ namespace QA.Search.Admin
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+
+                endpoints.MapGet("api/antiforgery/token", (HttpContext context, IAntiforgery antiforgery) => SetAntiForgeryCookie(context, antiforgery));
             });
 
             app.UseSpa(spa =>
@@ -235,10 +218,9 @@ namespace QA.Search.Admin
 
         static void SetAntiForgeryCookie(HttpContext context, IAntiforgery antiForgery)
         {
-            var tokens = antiForgery.GetAndStoreTokens(context);
+            AntiforgeryTokenSet tokens = antiForgery.GetAndStoreTokens(context);
 
-            context.Response.Cookies.Append(
-                "XSRF-TOKEN", tokens.RequestToken, new CookieOptions { HttpOnly = false });
+            context.Response.Cookies.Append(AuthenticationService.XSRF_TOKEN_HEADER_NAME, tokens.RequestToken!, new CookieOptions { HttpOnly = false });
         }
     }
 }

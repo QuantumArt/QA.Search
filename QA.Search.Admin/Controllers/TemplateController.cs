@@ -15,7 +15,6 @@ namespace QA.Search.Admin.Controllers
     [Route("api/[controller]")]
     [Consumes("application/json")]
     [Produces("application/json")]
-    [IgnoreAntiforgeryToken]
     public class TemplateController : Controller
     {
         private readonly IElasticLowLevelClient _elastic;
