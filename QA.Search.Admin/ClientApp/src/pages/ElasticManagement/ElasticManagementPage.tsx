@@ -54,7 +54,7 @@ function ElasticManagementPage() {
           ))}
       </div>
       {visibleCards && visibleCards.length === 0 && (
-        <div style={{ paddingTop: "20px" }} center="xs">
+        <div style={{ paddingTop: "20px" }}>
           <div>
             <img src="https://pngicon.ru/file/uploads/cat_hungry.png" />
           </div>
