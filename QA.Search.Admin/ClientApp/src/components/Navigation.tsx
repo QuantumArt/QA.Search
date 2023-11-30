@@ -32,7 +32,7 @@ const NavigationPanel = withRouter(({ user, logout }: Props) => {
   Object.assign(usePanels(), { setLeftPanel, setRightPanel });
 
   return (
-    <Navbar>
+    <Navbar  style={{position:"sticky", top: "0"}}>
       <Navbar.Group align="left">
         <Navbar.Heading>Search Admin App</Navbar.Heading>
       </Navbar.Group>

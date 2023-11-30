@@ -112,7 +112,8 @@ function IndexesCardDetails({ indexesCard }: Props) {
   };
 
   const indexesTable = (
-    <HTMLTable bordered condensed>
+    <HTMLTable bordered condensed
+    style={{width:"100%"}}>
       <thead>
         <tr>
           <th>Название</th>
@@ -275,7 +276,7 @@ function IndexesCardDetails({ indexesCard }: Props) {
   ) : null;
 
   return (
-    <Card elevation={2} style={{ paddingTop: "20px" }}>
+    <Card elevation={2} style={{ paddingTop: "20px", overflow: "auto", minWidth: "400px"  }}>
       <Grid fluid>
         <Row between="xs" style={{ paddingTop: "20px" }}>
           <Col xs={6}>
