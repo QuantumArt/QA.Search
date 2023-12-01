@@ -1,12 +1,11 @@
 import React, { useContext } from "react";
 import { Grid, Row, Col } from "react-flexbox-grid";
 
-import { Button, NonIdealState, Card, InputGroup, Tooltip, Intent } from "@blueprintjs/core";
+import { Button, NonIdealState } from "@blueprintjs/core";
 
 import Loading from "../../components/Loading";
 import { PageState } from "./ElasticManagementPageModel";
 import ElasticManagementPageContainer from "./ElasticManagementPageContainer";
-import { IndexesCardViewModel } from "../../backend.generated";
 import IndexesFilter from "./IndexesFilter";
 import IndexesCardDetails from "./IndexesCardDetails";
 import NewIndexEditor from "./NewIndexEditor";
@@ -43,37 +42,23 @@ function ElasticManagementPage() {
 
   const normalPageState = (
     <>
-      <Row around="xs" style={{ paddingTop: "20px" }}>
-        <Col xs={11}>
-          <IndexesFilter />
-        </Col>
-        <Col xs={1}>
-          <Card style={{ height: "100%", textAlign: "center" }}>
-            <Tooltip content="Перейти к созданию нового индекса">
-              <Button
-                icon="plus"
-                intent={Intent.NONE}
-                large={true}
-                onClick={() => switchCreateIndexMode(true)}
-              />
-            </Tooltip>
-          </Card>
-        </Col>
-      </Row>
-      <Row around="xs" style={{ paddingTop: "20px" }}>
+      <div style={{ paddingTop: "20px" }}>
+          <IndexesFilter switchCreateIndexMode={() => switchCreateIndexMode(true)} />
+      </div>
+      <div style={{ paddingTop: "20px", maxWidth: "650px", margin: "auto" }}>
         {visibleCards &&
           visibleCards.map((cm, i) => (
-            <Col key={String(i)} xs={6} style={{ paddingTop: "20px" }}>
+            <div key={String(i)} style={{ paddingTop: "20px" }}>
               <IndexesCardDetails indexesCard={cm} />
-            </Col>
+            </div>
           ))}
-      </Row>
+      </div>
       {visibleCards && visibleCards.length === 0 && (
-        <Row around="xs" style={{ paddingTop: "20px" }} center="xs">
-          <Col xs={4}>
+        <div style={{ paddingTop: "20px" }}>
+          <div>
             <img src="https://pngicon.ru/file/uploads/cat_hungry.png" />
-          </Col>
-        </Row>
+          </div>
+        </div>
       )}
     </>
   );

@@ -1,6 +1,5 @@
 import React, { useEffect, useContext } from "react";
-import { Row, Col } from "react-flexbox-grid";
-import { Card, InputGroup, FormGroup, HTMLSelect } from "@blueprintjs/core";
+import { Card, InputGroup, HTMLSelect } from "@blueprintjs/core";
 import { useForm, useField } from "react-final-form-hooks";
 
 import { UserRole } from "../../backend.generated";
@@ -33,14 +32,11 @@ const UsersListFilter = () => {
   }, []);
 
   return (
-    <Card elevation={2}>
-      <h4 className="bp3-heading">Настройки отображения</h4>
-      <Row>
-        <Col xs>
-          <FormGroup label="Фильтр по Email:" labelFor="text-input">
-            <InputGroup {...email.input} large={true} placeholder="Поиск по Email" type="text" />
-          </FormGroup>
-          <FormGroup label="Фильтр по Роли:" labelFor="text-input">
+    <Card elevation={0} style={{display:"flex", marginBottom:"15px"}}>
+      <div style={{width: "79%", marginRight: "1%"}}>
+         <InputGroup {...email.input}  large={true} placeholder="Поиск по Email" type="text" />
+      </div>
+      <div style={{width:"20%"}}>
             <HTMLSelect
               {...role.input}
               fill={true}
@@ -59,9 +55,7 @@ const UsersListFilter = () => {
                 })
               ]}
             />
-          </FormGroup>
-        </Col>
-      </Row>
+      </div>
     </Card>
   );
 };
