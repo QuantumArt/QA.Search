@@ -22,5 +22,51 @@ body {
 }
 
 .tooltip-inherit-size > span {
-    display: inherit;
+  display: inherit;
+}
+
+.flet-justify-content-flex-end {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.flex-justify-content-space-between {
+  display: flex;
+  justify-content: space-between;
+}
+
+.main-container-padding {
+  padding-right: 16px;
+  padding-left: 16px;
+  padding-top: 20px;
+}
+
+.elastic-card-top-elemetn {
+  padding-top: 20px;
+  display: flex;
+  /* align-content: center; */
+  justify-content: space-between;
+}
+
+.elastic-card-bottom-element {
+  padding-top: 20px;
+}
+
+.qp-cards-space-around {
+  padding-top: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+}
+
+.flex-basis-three-block{
+  flex-basis: 33.33333333%;
+}
+
+.card-Layout-flex{
+  display: flex;
+  padding-top: 100px;
+  justify-content: center;
 }

@@ -1,5 +1,4 @@
 import React, { useContext } from "react";
-import { Grid, Row, Col } from "react-flexbox-grid";
 
 import { Button, NonIdealState } from "@blueprintjs/core";
 
@@ -17,22 +16,18 @@ function ElasticManagementPage() {
 
   if (state.pageState === PageState.Error) {
     return (
-      <Grid fluid>
-        <Row around="xs" style={{ paddingTop: "20px" }}>
-          <Col xs={12}>
-            <NonIdealState
-              title="Ошибка"
-              icon="error"
-              description={<p>При выполнении операции произошла ошибка</p>}
-              action={
-                <Button icon="refresh" onClick={() => window.location.reload()}>
-                  Перезагрузить страницу
-                </Button>
-              }
-            />
-          </Col>
-        </Row>
-      </Grid>
+      <div className="main-container-padding">
+        <NonIdealState
+          title="Ошибка"
+          icon="error"
+          description={<p>При выполнении операции произошла ошибка</p>}
+          action={
+            <Button icon="refresh" onClick={() => window.location.reload()}>
+              Перезагрузить страницу
+            </Button>
+          }
+        />
+      </div>
     );
   }
 
@@ -42,8 +37,8 @@ function ElasticManagementPage() {
 
   const normalPageState = (
     <>
-      <div style={{ paddingTop: "20px" }}>
-          <IndexesFilter switchCreateIndexMode={() => switchCreateIndexMode(true)} />
+      <div>
+        <IndexesFilter switchCreateIndexMode={() => switchCreateIndexMode(true)} />
       </div>
       <div style={{ paddingTop: "20px", maxWidth: "650px", margin: "auto" }}>
         {visibleCards &&
@@ -54,7 +49,7 @@ function ElasticManagementPage() {
           ))}
       </div>
       {visibleCards && visibleCards.length === 0 && (
-        <div style={{ paddingTop: "20px" }}>
+        <div className="main-container-padding">
           <div>
             <img src="https://pngicon.ru/file/uploads/cat_hungry.png" />
           </div>
@@ -64,16 +59,14 @@ function ElasticManagementPage() {
   );
 
   return (
-    <Grid fluid>
+    <div className="main-container-padding">
       {state.pageState == PageState.Normal && normalPageState}
       {state.pageState == PageState.NewIndexCreation && (
-        <Row around="xs" style={{ paddingTop: "20px" }}>
-          <Col xs={12}>
-            <NewIndexEditor />
-          </Col>
-        </Row>
+        <div className="main-container-padding">
+          <NewIndexEditor />
+        </div>
       )}
-    </Grid>
+    </div>
   );
 }
 

@@ -1,11 +1,6 @@
 import React, { useEffect, useContext } from "react";
-import { Grid, Row, Col } from "react-flexbox-grid";
 
-import {
-  Button,
-  NonIdealState,
-
-} from "@blueprintjs/core";
+import { Button, NonIdealState } from "@blueprintjs/core";
 import Loading from "../../components/Loading";
 
 import IndexingReport from "../IndexingManagement/IndexingReport";
@@ -29,22 +24,18 @@ function IndexingManagementTool({ targetQP }: Props) {
 
   if (state.pageState === IndexingToolState.Error) {
     return (
-      <Grid fluid>
-        <Row around="xs" style={{ paddingTop: "20px" }}>
-          <Col xs={12}>
-            <NonIdealState
-              title="Ошибка"
-              icon="error"
-              description={<p>При выполнении операции произошла ошибка</p>}
-              action={
-                <Button icon="refresh" onClick={() => window.location.reload()}>
-                  Перезагрузить страницу
-                </Button>
-              }
-            />
-          </Col>
-        </Row>
-      </Grid>
+      <div className="elastic-card-bottom-element">
+        <NonIdealState
+          title="Ошибка"
+          icon="error"
+          description={<p>При выполнении операции произошла ошибка</p>}
+          action={
+            <Button icon="refresh" onClick={() => window.location.reload()}>
+              Перезагрузить страницу
+            </Button>
+          }
+        />
+      </div>
     );
   }
 
@@ -53,26 +44,24 @@ function IndexingManagementTool({ targetQP }: Props) {
   }
 
   return (
-    <Grid fluid>
-      <Row around="xs" style={{ paddingTop: "20px" }}>
-        <Col xs={12}>
-          <IndexingActions targetQP={targetQP} />
-        </Col>
-      </Row>
-      <Row around="xs" style={{ paddingTop: "20px" }}>
+    <div>
+      <div className="elastic-card-bottom-element">
+        <IndexingActions targetQP={targetQP} />
+      </div>
+      <div className="qp-cards-space-around">
         {state.pageState == IndexingToolState.Normal &&
           state.indexingServiceState &&
           state.indexingServiceState.reports && (
             <>
               {state.indexingServiceState.reports.map((rep, i) => (
-                <Col key={i} xs={4} style={{padding:"8px"}}>
+                <div key={i} className="flex-basis-three-block" style={{ padding: "8px" }}>
                   <IndexingReport report={rep} />
-                </Col>
+                </div>
               ))}
             </>
           )}
-      </Row>
-    </Grid>
+      </div>
+    </div>
   );
 }
 export default IndexingManagementTool;

@@ -11,10 +11,10 @@ const UsersPage = () => {
   }, []);
 
   return (
- <div style={{ padding: "20px 16px" }}>
-  <UsersListFilter />
-  <UsersList />
- </div>
+    <div style={{ padding: "20px 16px" }}>
+      <UsersListFilter />
+      <UsersList />
+    </div>
   );
 };
 

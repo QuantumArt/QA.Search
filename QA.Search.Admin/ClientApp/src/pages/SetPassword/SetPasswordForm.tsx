@@ -3,7 +3,7 @@ import { useForm, useField } from "react-final-form-hooks";
 import { AccountController, UserResponse } from "../../backend.generated";
 import Toaster from "../../utils/toaster";
 import { Intent, FormGroup, InputGroup, Button, Tooltip } from "@blueprintjs/core";
-import { Row, Col } from "react-flexbox-grid";
+
 import { getFieldError } from "../../utils/forms";
 import { Link } from "react-router-dom";
 
@@ -67,65 +67,55 @@ const SetPasswordForm = ({ uid, user, onSuccess }: Props) => {
   return (
     <form onSubmit={handleSubmit}>
       <h2 className="bp3-heading">Изменение пароля</h2>
-      <Row start="xs">
-        <Col xs={12}>
-          <FormGroup>
-            <InputGroup value={user.email || ""} disabled={true} large={true} type="text" />
-          </FormGroup>
-        </Col>
-      </Row>
-      <Row start="xs">
-        <Col xs={12}>
-          <FormGroup
-            helperText={getFieldError(password) || PASSWORD_REQUIREMENTS}
+      <div>
+        <FormGroup>
+          <InputGroup value={user.email || ""} disabled={true} large={true} type="text" />
+        </FormGroup>
+      </div>
+      <div>
+        <FormGroup
+          helperText={getFieldError(password) || PASSWORD_REQUIREMENTS}
+          intent={getFieldError(password) ? Intent.DANGER : Intent.NONE}
+        >
+          <InputGroup
+            {...password.input}
             intent={getFieldError(password) ? Intent.DANGER : Intent.NONE}
-          >
-            <InputGroup
-              {...password.input}
-              intent={getFieldError(password) ? Intent.DANGER : Intent.NONE}
-              large={true}
-              placeholder="Новый пароль"
-              type={showPassword ? "text" : "password"}
-              rightElement={lockButton}
-            />
-          </FormGroup>
-        </Col>
-      </Row>
-      <Row start="xs">
-        <Col xs={12}>
-          <FormGroup
-            helperText={getFieldError(confirmation)}
-            intent={getFieldError(confirmation) ? Intent.DANGER : Intent.NONE}
-          >
-            <InputGroup
-              {...confirmation.input}
-              intent={getFieldError(confirmation) ? Intent.DANGER : Intent.NONE}
-              large={true}
-              placeholder="Подтверждение"
-              type={showPassword ? "text" : "password"}
-              rightElement={lockButton}
-            />
-          </FormGroup>
-        </Col>
-      </Row>
-      <Row>
-        <Col xs={12}>
-          <Button
-            text="Сохранить"
-            loading={submitting}
-            type="submit"
             large={true}
-            intent={Intent.PRIMARY}
-            fill={true}
+            placeholder="Новый пароль"
+            type={showPassword ? "text" : "password"}
+            rightElement={lockButton}
           />
-        </Col>
-      </Row>
+        </FormGroup>
+      </div>
+      <div>
+        <FormGroup
+          helperText={getFieldError(confirmation)}
+          intent={getFieldError(confirmation) ? Intent.DANGER : Intent.NONE}
+        >
+          <InputGroup
+            {...confirmation.input}
+            intent={getFieldError(confirmation) ? Intent.DANGER : Intent.NONE}
+            large={true}
+            placeholder="Подтверждение"
+            type={showPassword ? "text" : "password"}
+            rightElement={lockButton}
+          />
+        </FormGroup>
+      </div>
+      <div>
+        <Button
+          text="Сохранить"
+          loading={submitting}
+          type="submit"
+          large={true}
+          intent={Intent.PRIMARY}
+          fill={true}
+        />
+      </div>
       <br />
-      <Row end="xs">
-        <Col xs>
-          <Link to="/login">Отмена</Link>
-        </Col>
-      </Row>
+      <div>
+        <Link to="/login">Отмена</Link>
+      </div>
     </form>
   );
 };

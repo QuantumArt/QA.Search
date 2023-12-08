@@ -5,7 +5,6 @@ import "./IndexingActions.css";
 import { IndexingToolState, IndexingButton } from "./IndexingManagementToolContainerFactory";
 import { TargetQP } from "../../backend.generated";
 import useManagementToolContext from "../IndexingManagement/useManagementToolContext";
-import { Grid, Row, Col } from "react-flexbox-grid";
 
 type Props = {
   targetQP: TargetQP;
@@ -21,9 +20,9 @@ function IndexingActions({ targetQP }: Props) {
   return (
     <Card elevation={2}>
       <h5 className="bp3-heading">Действия</h5>
-      <Grid fluid>
-        <Row between="xs" style={{ paddingTop: "20px" }}>
-          <Col xs={4}>
+      <div>
+        <div className="elastic-card-top-elemetn">
+          <div style={{ flexGrow: 4 }}>
             {state.indexingServiceState && (
               <HTMLTable bordered condensed>
                 <tbody>
@@ -46,8 +45,8 @@ function IndexingActions({ targetQP }: Props) {
                 </tbody>
               </HTMLTable>
             )}
-          </Col>
-          <Col xs={8}>
+          </div>
+          <div style={{ flexGrow: 8 }}>
             {state.indexingServiceState &&
               state.indexingServiceState.scheduledDates &&
               state.indexingServiceState.scheduledDates.length > 0 && (
@@ -66,44 +65,42 @@ function IndexingActions({ targetQP }: Props) {
                   </tbody>
                 </HTMLTable>
               )}
-          </Col>
-        </Row>
-        <Row between="xs" style={{ paddingTop: "20px" }}>
-          <Col xs={12}>
-            <div className="indexing-actions__indexing-button-area">
-              {state.currentIndexingButton == IndexingButton.Start && (
+          </div>
+        </div>
+        <div style={{ paddingTop: "20px" }}>
+          <div className="indexing-actions__indexing-button-area">
+            {state.currentIndexingButton == IndexingButton.Start && (
+              <Button
+                intent="primary"
+                icon="search-text"
+                large={true}
+                disabled={!state.indexingOperationsAreEnabled}
+                onClick={indexingStart}
+              >
+                Индексировать
+              </Button>
+            )}
+
+            {state.currentIndexingButton == IndexingButton.Stop && (
+              <>
+                <ProgressBar intent="primary" value={state.indexingServiceState.progress / 100} />
+
+                <p className="indexing-actions__progressbar-label">
+                  <strong>Завершено:</strong>&nbsp;{state.indexingServiceState.progress}%
+                </p>
                 <Button
-                  intent="primary"
-                  icon="search-text"
+                  icon="small-cross"
                   large={true}
+                  onClick={indexingStop}
                   disabled={!state.indexingOperationsAreEnabled}
-                  onClick={indexingStart}
                 >
-                  Индексировать
+                  Остановить индексацию
                 </Button>
-              )}
-
-              {state.currentIndexingButton == IndexingButton.Stop && (
-                <>
-                  <ProgressBar intent="primary" value={state.indexingServiceState.progress / 100} />
-
-                  <p className="indexing-actions__progressbar-label">
-                    <strong>Завершено:</strong>&nbsp;{state.indexingServiceState.progress}%
-                  </p>
-                  <Button
-                    icon="small-cross"
-                    large={true}
-                    onClick={indexingStop}
-                    disabled={!state.indexingOperationsAreEnabled}
-                  >
-                    Остановить индексацию
-                  </Button>
-                </>
-              )}
-            </div>
-          </Col>
-        </Row>
-      </Grid>
+              </>
+            )}
+          </div>
+        </div>
+      </div>
     </Card>
   );
 }
