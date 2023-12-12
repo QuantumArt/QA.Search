@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { Row, Col } from "react-flexbox-grid";
 import { Button, InputGroup, Intent, Tooltip, FormGroup } from "@blueprintjs/core";
 import { Link, withRouter, RouteComponentProps } from "react-router-dom";
 import { useForm, useField } from "react-final-form-hooks";
@@ -35,7 +34,7 @@ const LoginPage = ({ history, getUserInfo }: Props) => {
     } catch (err) {
       Toaster.show({
         intent: Intent.DANGER,
-        message: err.Title || "При выполнении запроса произошла ошибка",
+        message: err.Title || "При выполнении запроса произошла ошибка"
       });
     }
   };
@@ -60,59 +59,51 @@ const LoginPage = ({ history, getUserInfo }: Props) => {
     <CardLayout>
       <h2 className="bp3-heading">Search Admin App</h2>
       <form onSubmit={handleSubmit}>
-        <Row start="xs">
-          <Col xs={12}>
-            <FormGroup
-              helperText={getFieldError(email)}
+        <div>
+          <FormGroup
+            helperText={getFieldError(email)}
+            intent={getFieldError(email) ? Intent.DANGER : Intent.NONE}
+          >
+            <InputGroup
+              {...email.input}
               intent={getFieldError(email) ? Intent.DANGER : Intent.NONE}
-            >
-              <InputGroup
-                {...email.input}
-                intent={getFieldError(email) ? Intent.DANGER : Intent.NONE}
-                large={true}
-                placeholder="Введите адрес Email"
-                type="text"
-              />
-            </FormGroup>
-          </Col>
-        </Row>
-        <Row start="xs">
-          <Col xs={12}>
-            <FormGroup
-              helperText={getFieldError(password)}
-              intent={getFieldError(password) ? Intent.DANGER : Intent.NONE}
-            >
-              <InputGroup
-                {...password.input}
-                intent={getFieldError(password) ? Intent.DANGER : Intent.NONE}
-                large={true}
-                placeholder="Введите пароль"
-                type={showPassword ? "text" : "password"}
-                rightElement={lockButton}
-              />
-            </FormGroup>
-          </Col>
-        </Row>
-        <Row>
-          <Col xs={12}>
-            <Button
-              loading={submitting}
-              type="submit"
-              icon="log-in"
               large={true}
-              intent={Intent.PRIMARY}
-              fill={true}
-            >
-              Войти
-            </Button>
-          </Col>
-        </Row>
+              placeholder="Введите адрес Email"
+              type="text"
+            />
+          </FormGroup>
+        </div>
+        <div>
+          <FormGroup
+            helperText={getFieldError(password)}
+            intent={getFieldError(password) ? Intent.DANGER : Intent.NONE}
+          >
+            <InputGroup
+              {...password.input}
+              intent={getFieldError(password) ? Intent.DANGER : Intent.NONE}
+              large={true}
+              placeholder="Введите пароль"
+              type={showPassword ? "text" : "password"}
+              rightElement={lockButton}
+            />
+          </FormGroup>
+        </div>
+        <div>
+          <Button
+            loading={submitting}
+            type="submit"
+            icon="log-in"
+            large={true}
+            intent={Intent.PRIMARY}
+            fill={true}
+          >
+            Войти
+          </Button>
+        </div>
         <br />
-        <Row end="xs">
-          <Col xs>
-            <Link to="/resetPassword">Восстановить пароль</Link>
-          </Col>
-        </Row>
+        <div className="flex-justify-content-flex-end">
+          <Link to="/resetPassword">Восстановить пароль</Link>
+        </div>
       </form>
     </CardLayout>
   );

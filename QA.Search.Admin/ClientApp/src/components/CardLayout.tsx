@@ -1,17 +1,14 @@
 import React from 'react';
-import { Row, Col, Grid } from 'react-flexbox-grid';
 import { Card, Elevation } from '@blueprintjs/core';
 
 export default ({ children }) => {
   return (
-    <Grid fluid>
-      <Row center="xs" around="xs" style={{ paddingTop: "100px" }}>
-        <Col xs={11} sm={5} md={4} lg={4}>
+      <div className='card-layout-flex'>
+        <div className='flex-basis-three-block'>
           <Card elevation={Elevation.TWO}>
             {children}
           </Card>
-        </Col>
-      </Row>
-    </Grid>
+        </div>
+      </div>
   );
 }

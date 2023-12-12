@@ -1,9 +1,7 @@
 import React, { useContext } from "react";
-import { Grid, Row, Col } from "react-flexbox-grid";
 
 import {
   Button,
-  NonIdealState,
   InputGroup,
   Card,
   Intent,

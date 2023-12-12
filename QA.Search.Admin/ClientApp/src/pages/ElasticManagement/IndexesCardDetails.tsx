@@ -1,10 +1,7 @@
 import React, { useContext, useState } from "react";
-import { Grid, Row, Col } from "react-flexbox-grid";
 
 import {
   Button,
-  NonIdealState,
-  InputGroup,
   Card,
   Intent,
   Tooltip,
@@ -112,8 +109,7 @@ function IndexesCardDetails({ indexesCard }: Props) {
   };
 
   const indexesTable = (
-    <HTMLTable bordered condensed
-    style={{width:"100%"}}>
+    <HTMLTable bordered condensed className="indexes-card-details-html-table">
       <thead>
         <tr>
           <th>Название</th>
@@ -183,7 +179,7 @@ function IndexesCardDetails({ indexesCard }: Props) {
         <HTMLTable bordered condensed>
           <tbody>
             <tr>
-              <td colSpan={2} style={{ boxShadow: "none" }}>
+              <td colSpan={2} className="box-shadow-none" >
                 <h5>Связанная задача</h5>
               </td>
             </tr>
@@ -276,36 +272,30 @@ function IndexesCardDetails({ indexesCard }: Props) {
   ) : null;
 
   return (
-    <Card elevation={2} style={{ paddingTop: "20px", overflow: "auto", minWidth: "400px"  }}>
-      <Grid fluid>
-        <Row between="xs" style={{ paddingTop: "20px" }}>
-          <Col xs={6}>
-            <h5 className="bp3-heading">
-              {readonlyMessage}
-              {wrongStateMessage}
-              {canRunReindexStateMessage}
-              &nbsp;
-              {getCardDisplayName(indexesCard)}
-            </h5>
-          </Col>
-          <Col xs={6} style={{ textAlign: "right" }}>
-            {indexesCard.canRunNewTask && reindexButton(indexesCard)}
-          </Col>
-        </Row>
-        <Row between="xs" style={{ paddingTop: "20px" }}>
-          <Col xs={12}>{indexesTable}</Col>
-        </Row>
-        {indexesCard.reindexTask && (
-          <Row between="xs" style={{ paddingTop: "20px" }}>
-            <Col xs={12}>{createTaskDetails(indexesCard.reindexTask)}</Col>
-          </Row>
-        )}
-        {!indexesCard.reindexTask && indexesCard.lastFinishedReindexTask && (
-          <Row between="xs" style={{ paddingTop: "20px" }}>
-            <Col xs={12}>{createTaskDetails(indexesCard.lastFinishedReindexTask)}</Col>
-          </Row>
-        )}
-      </Grid>
+    <Card elevation={2} className="elastic-card-details">
+      <div className="elastic-card-top-element">
+        <h5 className="bp3-heading">
+          {readonlyMessage}
+          {wrongStateMessage}
+          {canRunReindexStateMessage}
+          &nbsp;
+          {getCardDisplayName(indexesCard)}
+        </h5>
+        <div className="text-align-right">
+          {indexesCard.canRunNewTask && reindexButton(indexesCard)}
+        </div>
+      </div>
+      <div className="elastic-card-bottom-element">{indexesTable}</div>
+      {indexesCard.reindexTask && (
+        <div className="elastic-card-bottom-element">
+          {createTaskDetails(indexesCard.reindexTask)}
+        </div>
+      )}
+      {!indexesCard.reindexTask && indexesCard.lastFinishedReindexTask && (
+        <div className="elastic-card-bottom-element">
+          {createTaskDetails(indexesCard.lastFinishedReindexTask)}
+        </div>
+      )}
     </Card>
   );
 }

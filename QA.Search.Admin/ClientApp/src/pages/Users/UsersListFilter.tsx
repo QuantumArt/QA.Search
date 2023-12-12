@@ -32,29 +32,29 @@ const UsersListFilter = () => {
   }, []);
 
   return (
-    <Card elevation={0} style={{display:"flex", marginBottom:"15px"}}>
-      <div style={{width: "79%", marginRight: "1%"}}>
-         <InputGroup {...email.input}  large={true} placeholder="Поиск по Email" type="text" />
+    <Card elevation={0} className="users-list-filter-card">
+      <div className="users-list-filter-input-group">
+        <InputGroup {...email.input} large={true} placeholder="Поиск по Email" type="text" />
       </div>
-      <div style={{width:"20%"}}>
-            <HTMLSelect
-              {...role.input}
-              fill={true}
-              large={true}
-              placeholder="Выберите роль"
-              options={[
-                { label: "Любая роль", value: "" },
-                ...Object.keys(UserRole)
-                .filter(key => isNaN(Number(key)))
-                .filter(key => typeof UserRole[key] === "number" || typeof UserRole[key] === "string")
-                .map(key => {
-                  return {
-                    label: key,
-                    value: UserRole[key]
-                  };
-                })
-              ]}
-            />
+      <div className="users-list-filter-select">
+        <HTMLSelect
+          {...role.input}
+          fill={true}
+          large={true}
+          placeholder="Выберите роль"
+          options={[
+            { label: "Любая роль", value: "" },
+            ...Object.keys(UserRole)
+              .filter(key => isNaN(Number(key)))
+              .filter(key => typeof UserRole[key] === "number" || typeof UserRole[key] === "string")
+              .map(key => {
+                return {
+                  label: key,
+                  value: UserRole[key]
+                };
+              })
+          ]}
+        />
       </div>
     </Card>
   );

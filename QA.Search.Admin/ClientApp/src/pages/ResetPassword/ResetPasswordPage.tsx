@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { Row, Col } from "react-flexbox-grid";
 import { Button, InputGroup, Intent, FormGroup } from "@blueprintjs/core";
 import { useForm, useField } from "react-final-form-hooks";
 import Toaster from "../../utils/toaster";
@@ -51,8 +50,8 @@ const ResetPasswordPage = () => {
     <CardLayout>
       <h2 className="bp3-heading">Восстановление пароля</h2>
       <form onSubmit={handleSubmit}>
-        <Row start="xs">
-          <Col xs={12}>
+        <div>
+          <div>
             <FormGroup
               helperText={getFieldError(email)}
               intent={getFieldError(email) ? Intent.DANGER : Intent.NONE}
@@ -65,10 +64,10 @@ const ResetPasswordPage = () => {
                 type="text"
               />
             </FormGroup>
-          </Col>
-        </Row>
-        <Row>
-          <Col xs={12}>
+          </div>
+        </div>
+        <div>
+          <div>
             <Button
               loading={submitting}
               type="submit"
@@ -79,14 +78,10 @@ const ResetPasswordPage = () => {
             >
               Восстановить пароль
             </Button>
-          </Col>
-        </Row>
+          </div>
+        </div>
         <br />
-        <Row end="xs">
-          <Col xs>
-            <Link to="/login">Отмена</Link>
-          </Col>
-        </Row>
+        <Link to="/login">Отмена</Link>
       </form>
     </CardLayout>
   );

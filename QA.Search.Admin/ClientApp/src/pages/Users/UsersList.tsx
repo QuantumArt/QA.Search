@@ -1,6 +1,5 @@
 import React, { useState, useContext } from "react";
 import { Card, Button, Intent, ButtonGroup, Tooltip, Tag, Position } from "@blueprintjs/core";
-import { Row, Col } from "react-flexbox-grid";
 import { UserResponse, UserRole } from "../../backend.generated";
 
 import "./UsersList.css";
@@ -53,11 +52,11 @@ const UsersList = () => {
           setState({ ...state, showResetPasswordDialog: false });
         }}
       />
-      <Row between="xs">
-        <Col>
+      <div className="flex-justify-content-space-between">
+        <div>
           <h4 className="bp3-heading">Список пользователей</h4>
-        </Col>
-        <Col>
+        </div>
+        <div>
           <Button
             onClick={() => {
               setState({ ...state, showInviteUserDialog: true });
@@ -66,9 +65,9 @@ const UsersList = () => {
             intent={Intent.PRIMARY}
             text="Добавить"
           />
-        </Col>
-      </Row>
-      <Row>
+        </div>
+      </div>
+      <div>
         <table className="bp3-html-table bp3-html-table-striped bp3-html-table-bordered users-table">
           <thead>
             <tr>
@@ -121,11 +120,10 @@ const UsersList = () => {
             })}
           </tbody>
         </table>
-      </Row>
+      </div>
       <br />
-      <Row between="xs">
-        <Col />
-        <Col>
+      <div className="flex-justify-content-space-between">
+        <div>
           {usersList.data.length < Number(usersList.totalCount) && (
             <Button
               loading={usersList.loading}
@@ -134,15 +132,15 @@ const UsersList = () => {
               onClick={loadMoreUsers}
             />
           )}
-        </Col>
-        <Col>
+        </div>
+        <div>
           {usersList.totalCount && (
             <div>
               <b>Всего записей:</b> {usersList.totalCount}
             </div>
           )}
-        </Col>
-      </Row>
+        </div>
+      </div>
     </Card>
   );
 };
