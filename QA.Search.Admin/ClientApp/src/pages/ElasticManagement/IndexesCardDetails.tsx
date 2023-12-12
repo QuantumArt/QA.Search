@@ -272,7 +272,7 @@ function IndexesCardDetails({ indexesCard }: Props) {
   ) : null;
 
   return (
-    <Card elevation={2} className="elastic-card-detal">
+    <Card elevation={2} className="elastic-card-details">
       <div className="elastic-card-top-element">
         <h5 className="bp3-heading">
           {readonlyMessage}
