@@ -32,11 +32,11 @@ const UsersListFilter = () => {
   }, []);
 
   return (
-    <Card elevation={0} style={{ display: "flex", marginBottom: "15px" }}>
-      <div style={{ width: "79%", marginRight: "1%" }}>
+    <Card elevation={0} className="users-list-filter-card">
+      <div className="users-list-filter-input-group">
         <InputGroup {...email.input} large={true} placeholder="Поиск по Email" type="text" />
       </div>
-      <div style={{ width: "20%" }}>
+      <div className="users-list-filter-select">
         <HTMLSelect
           {...role.input}
           fill={true}

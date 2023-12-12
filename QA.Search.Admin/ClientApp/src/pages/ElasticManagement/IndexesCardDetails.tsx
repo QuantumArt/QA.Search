@@ -109,7 +109,7 @@ function IndexesCardDetails({ indexesCard }: Props) {
   };
 
   const indexesTable = (
-    <HTMLTable bordered condensed style={{ width: "100%" }}>
+    <HTMLTable bordered condensed className="indexes-card-details-html-table">
       <thead>
         <tr>
           <th>Название</th>
@@ -179,7 +179,7 @@ function IndexesCardDetails({ indexesCard }: Props) {
         <HTMLTable bordered condensed>
           <tbody>
             <tr>
-              <td colSpan={2} style={{ boxShadow: "none" }}>
+              <td colSpan={2} className="box-shadow-none" >
                 <h5>Связанная задача</h5>
               </td>
             </tr>
@@ -272,8 +272,8 @@ function IndexesCardDetails({ indexesCard }: Props) {
   ) : null;
 
   return (
-    <Card elevation={2} style={{ paddingTop: "20px", overflow: "auto", minWidth: "400px" }}>
-      <div className="elastic-card-top-elemetn">
+    <Card elevation={2} className="elastic-card-detal">
+      <div className="elastic-card-top-element">
         <h5 className="bp3-heading">
           {readonlyMessage}
           {wrongStateMessage}
@@ -281,7 +281,7 @@ function IndexesCardDetails({ indexesCard }: Props) {
           &nbsp;
           {getCardDisplayName(indexesCard)}
         </h5>
-        <div style={{ textAlign: "right" }}>
+        <div className="text-align-right">
           {indexesCard.canRunNewTask && reindexButton(indexesCard)}
         </div>
       </div>

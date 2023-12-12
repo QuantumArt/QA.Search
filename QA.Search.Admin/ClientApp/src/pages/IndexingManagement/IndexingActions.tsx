@@ -21,7 +21,7 @@ function IndexingActions({ targetQP }: Props) {
     <Card elevation={2}>
       <h5 className="bp3-heading">Действия</h5>
       <div>
-        <div className="elastic-card-top-elemetn">
+        <div className="elastic-card-top-element">
           <div style={{ flexGrow: 4 }}>
             {state.indexingServiceState && (
               <HTMLTable bordered condensed>

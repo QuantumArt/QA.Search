@@ -11,7 +11,7 @@ const UsersPage = () => {
   }, []);
 
   return (
-    <div style={{ padding: "20px 16px" }}>
+    <div className="main-container-padding">
       <UsersListFilter />
       <UsersList />
     </div>

@@ -101,7 +101,7 @@ const LoginPage = ({ history, getUserInfo }: Props) => {
           </Button>
         </div>
         <br />
-        <div className="flet-justify-content-flex-end">
+        <div className="flex-justify-content-flex-end">
           <Link to="/resetPassword">Восстановить пароль</Link>
         </div>
       </form>

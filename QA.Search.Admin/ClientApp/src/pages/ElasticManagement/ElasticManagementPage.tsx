@@ -40,10 +40,10 @@ function ElasticManagementPage() {
       <div>
         <IndexesFilter switchCreateIndexMode={() => switchCreateIndexMode(true)} />
       </div>
-      <div style={{ paddingTop: "20px", maxWidth: "650px", margin: "auto" }}>
+      <div className="elastic-space-with-indexes-card">
         {visibleCards &&
           visibleCards.map((cm, i) => (
-            <div key={String(i)} style={{ paddingTop: "20px" }}>
+            <div key={String(i)} className="elastic-card-bottom-element">
               <IndexesCardDetails indexesCard={cm} />
             </div>
           ))}

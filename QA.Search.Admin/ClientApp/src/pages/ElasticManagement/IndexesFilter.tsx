@@ -21,8 +21,8 @@ function IndexesFilter({ switchCreateIndexMode }) {
   //const handleFilterChange = handleStringChange
 
   return (
-    <Card style={{ display: "flex", justifyContent: "space-between" }}>
-      <div style={{ width: "99%", marginRight: "1%" }}>
+    <Card className="elastic-filter-card">
+      <div className="elastic-filter-input-group">
         <Tooltip
           content="Имя индекса может содержать латинские буквы, цифры, символы минуса и нижнего подчёркивания."
           className="tooltip-inherit-size"
