@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { Grid, Row, Col } from "react-flexbox-grid";
 import QpManagementToolContainer from "./QpManagementToolContainer";
 import IndexingManagementTool from "../IndexingManagement/IndexingManagementTool";
 import { Tabs, Tab, Navbar } from "@blueprintjs/core";
@@ -11,7 +10,7 @@ function QpIndexingPage() {
   const [selectedTab, setState] = useState("tab1");
 
   return (
-    <Grid fluid>
+    <div className="main-container-padding">
       <Navigation.LeftPanel>
         <Navbar.Divider />
         <Tabs
@@ -25,21 +24,19 @@ function QpIndexingPage() {
           <Tab id="tab2" title="QP Update" />
         </Tabs>
       </Navigation.LeftPanel>
-      <Row around="xs" style={{ paddingTop: "20px" }}>
-        <Col xs={12}>
-          {selectedTab === "tab1" && (
-            <QpManagementToolContainer.Provider>
-              <IndexingManagementTool targetQP={TargetQP.IndexingQP} />
-            </QpManagementToolContainer.Provider>
-          )}
-          {selectedTab === "tab2" && (
-            <QpUpdateManagementToolContainer.Provider>
-              <IndexingManagementTool targetQP={TargetQP.IndexingQPUpdate} />
-            </QpUpdateManagementToolContainer.Provider>
-          )}
-        </Col>
-      </Row>
-    </Grid>
+      <div>
+        {selectedTab === "tab1" && (
+          <QpManagementToolContainer.Provider>
+            <IndexingManagementTool targetQP={TargetQP.IndexingQP} />
+          </QpManagementToolContainer.Provider>
+        )}
+        {selectedTab === "tab2" && (
+          <QpUpdateManagementToolContainer.Provider>
+            <IndexingManagementTool targetQP={TargetQP.IndexingQPUpdate} />
+          </QpUpdateManagementToolContainer.Provider>
+        )}
+      </div>
+    </div>
   );
 }
 export default QpIndexingPage;

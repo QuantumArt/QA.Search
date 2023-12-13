@@ -20,7 +20,9 @@ const Sidebar = withRouter(({ location, user }: Props) => {
   }, [collapsed]);
 
   return (
-    <aside style={{ position:"sticky", top: "50px" }} className={cn("sidebar", { "sidebar--collapsed": collapsed })}>
+    <aside
+      className={cn("sidebar", { "sidebar--collapsed": collapsed })}
+    >
       <main className="sidebar__content">
         {user.role === UserRole.Admin && (
           <Link

@@ -22,5 +22,104 @@ body {
 }
 
 .tooltip-inherit-size > span {
-    display: inherit;
+  display: inherit;
+}
+
+.flex-justify-content-flex-end {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.flex-justify-content-space-between {
+  display: flex;
+  justify-content: space-between;
+}
+
+.main-container-padding {
+  padding-right: 16px;
+  padding-left: 16px;
+  padding-top: 20px;
+}
+
+.elastic-card-top-element {
+  padding-top: 20px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.elastic-card-bottom-element {
+  padding-top: 20px;
+}
+
+.qp-cards-space-around {
+  padding-top: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+}
+
+.flex-basis-three-block {
+  flex-basis: 33.33333333%;
+  padding: 8px;
+}
+
+.card-layout-flex {
+  display: flex;
+  padding-top: 100px;
+  justify-content: center;
+}
+
+.elastic-space-with-indexes-card {
+  padding-top: 20px;
+  max-width: 650px;
+  margin: auto;
+}
+
+.box-shadow-none {
+  box-shadow: none;
+}
+
+.elastic-card-details {
+  padding-top: 20px;
+  overflow: auto;
+  min-width: 400px;
+}
+
+.text-align-right {
+  text-align: right;
+}
+
+.elastic-filter-card {
+  display: flex;
+  justify-content: space-between;
+}
+
+.elastic-filter-input-group {
+  width: 99%;
+  margin-right: 1%;
+}
+
+.users-list-filter-card {
+  display: flex;
+  margin-bottom: 15px;
+}
+
+.users-list-filter-input-group {
+  width: 79%;
+  margin-right: 1%;
+}
+
+.users-list-filter-select {
+  width: 20%;
+}
+
+.navbar-position {
+  position: sticky;
+  top: 0;
+}
+
+.indexes-card-details-html-table {
+  width: 100%;
 }
