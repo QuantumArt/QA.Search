@@ -17,13 +17,11 @@ namespace QA.Search.Api.Models
         /// <summary>
         /// Исправленная поисковая строка в текстовом виде
         /// </summary>
-        [Required]
         public string Text { get; set; }
 
         /// <summary>
         /// Исправленная поисковая строка с HTML-выделением исправленных фраз
         /// </summary>
-        [Required]
         public string Snippet { get; set; }
 
         /// <summary>

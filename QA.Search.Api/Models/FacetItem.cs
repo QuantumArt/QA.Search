@@ -38,14 +38,12 @@ namespace QA.Search.Api.Models
     {
         /// <summary>
         /// Минимальное значение
-        /// </summary>
-        [Required]
+        /// </summary>        
         public JValue From { get; set; }
 
         /// <summary>
         /// Максимальное значение
-        /// </summary>
-        [Required]
+        /// </summary>        
         public JValue To { get; set; }
     }
 
@@ -56,8 +54,7 @@ namespace QA.Search.Api.Models
     {
         /// <summary>
         /// Значение поля
-        /// </summary>
-        [Required]
+        /// </summary>        
         public JValue Value { get; set; }
 
         /// <summary>
@@ -79,7 +76,6 @@ namespace QA.Search.Api.Models
         /// <summary>
         /// Значение поля
         /// </summary>
-        [Required]
         public JValue Value { get; set; }
     }
 
@@ -92,7 +88,6 @@ namespace QA.Search.Api.Models
         /// <summary>
         /// Название группы документов
         /// </summary>
-        [Required]
         public JValue Name { get; set; }
 
         /// <summary>
