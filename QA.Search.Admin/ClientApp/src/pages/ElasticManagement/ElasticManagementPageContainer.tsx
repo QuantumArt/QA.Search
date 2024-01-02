@@ -213,13 +213,13 @@ function CreateContext() {
 
   function dateConvertToLocalInData(data) {
     for (let i = 0; i < data.cards.length; i++) {
-      if (data.cards[i].destinationIndex != null) {
+      if (data.cards[i].destinationIndex) {
         data.cards[i].destinationIndex.creationDate = dateConvertToLocal(
           data.cards[i].destinationIndex.creationDate
         );
       }
 
-      if (data.cards[i].reindexTask != null) {
+      if (data.cards[i].reindexTask) {
         data.cards[i].reindexTask.created = dateConvertToLocal(data.cards[i].reindexTask.created);
         data.cards[i].reindexTask.finished = dateConvertToLocal(data.cards[i].reindexTask.finished);
         data.cards[i].reindexTask.lastUpdated = dateConvertToLocal(
@@ -227,7 +227,7 @@ function CreateContext() {
         );
       }
 
-      if (data.cards[i].sourceIndex != null) {
+      if (data.cards[i].sourceIndex) {
         data.cards[i].sourceIndex.creationDate = dateConvertToLocal(
           data.cards[i].sourceIndex.creationDate
         );
