@@ -5,7 +5,6 @@ import "./IndexingActions.css";
 import { IndexingToolState, IndexingButton } from "./IndexingManagementToolContainerFactory";
 import { TargetQP } from "../../backend.generated";
 import useManagementToolContext from "../IndexingManagement/useManagementToolContext";
-import convertDateToLocal from "../../utils/time";
 
 type Props = {
   targetQP: TargetQP;
@@ -37,11 +36,11 @@ function IndexingActions({ targetQP }: Props) {
                   </tr>
                   <tr>
                     <td>Дата начала:</td>
-                    <td>{convertDateToLocal(state.indexingServiceState.startDate)}</td>
+                    <td>{state.indexingServiceState.startDate}</td>
                   </tr>
                   <tr>
                     <td>Дата окончания:</td>
-                    <td>{convertDateToLocal(state.indexingServiceState.endDate)}</td>
+                    <td>{state.indexingServiceState.endDate}</td>
                   </tr>
                 </tbody>
               </HTMLTable>
@@ -58,7 +57,7 @@ function IndexingActions({ targetQP }: Props) {
                       <td>
                         <ul>
                           {state.indexingServiceState.scheduledDates.map((v, i) => (
-                            <li key={i}>{convertDateToLocal(v)}</li>
+                            <li key={i}>{v}</li>
                           ))}
                         </ul>
                       </td>

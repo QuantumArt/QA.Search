@@ -5,6 +5,7 @@ import {
   TargetQP
 } from "../../backend.generated";
 import React, { useEffect, useContext, useState, useRef } from "react";
+import dateConvertToLocal from "../../utils/time";
 
 export type IndexingManagementToolModel = {
   pageState: IndexingToolState;
@@ -67,16 +68,19 @@ function CreateContextFactory(targetQP: TargetQP) {
 
     async function updateServiceState() {
       try {
-        const serviceState = await new QpIndexingController().getIndexingStatus(targetQP);
+        let serviceState = await new QpIndexingController().getIndexingStatus(targetQP);
+        console.log(serviceState);
         if (!serviceState) {
           throw new Error();
         }
+
         setState(currentState => {
           const iOpsAreEnabled =
             currentState.pageState === IndexingToolState.Loading // После окончания первой загрузки
               ? true
               : getIndexingOperationEnabled(serviceState);
 
+          serviceState = dateConvertToLocalInState(serviceState);
           var newState = {
             ...currentState,
             indexingServiceState: { ...serviceState },
@@ -154,6 +158,17 @@ function CreateContextFactory(targetQP: TargetQP) {
         default:
           return true;
       }
+    }
+
+    function dateConvertToLocalInState(serviceState) {
+      serviceState.endDate = dateConvertToLocal(serviceState.endDate);
+      serviceState.startDate = dateConvertToLocal(serviceState.startDate);
+
+      for (let i = 0; i < serviceState.scheduledDates.length; i++) {
+        serviceState.scheduledDates[i] = dateConvertToLocal(serviceState.scheduledDates[i]);
+      }
+
+      return serviceState;
     }
 
     return {

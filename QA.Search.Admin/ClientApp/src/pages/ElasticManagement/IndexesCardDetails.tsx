@@ -26,8 +26,6 @@ import {
   ReindexTaskViewModel
 } from "../../backend.generated";
 
-import convertDateToLocal from "../../utils/time";
-
 type Props = {
   indexesCard: IndexesCardViewModel;
 };
@@ -69,7 +67,7 @@ function IndexesCardDetails({ indexesCard }: Props) {
       <tr key={String(key)} style={{ wordBreak: "break-word" }}>
         <td>{index.fullName}</td>
         <td>{index.alias}</td>
-        <td>{convertDateToLocal(index.creationDate)}</td>
+        <td>{index.creationDate}</td>
         <td>
           {index.readonly || hasTaskWithActiveStatus ? (
             ""
@@ -204,15 +202,15 @@ function IndexesCardDetails({ indexesCard }: Props) {
             </tr>
             <tr>
               <td>Создана</td>
-              <td>{convertDateToLocal(reindexTask.created)}</td>
+              <td>{reindexTask.created}</td>
             </tr>
             <tr>
               <td>Обновлена</td>
-              <td>{convertDateToLocal(reindexTask.lastUpdated)}</td>
+              <td>{reindexTask.lastUpdated}</td>
             </tr>
             <tr>
               <td>Завершена</td>
-              <td>{convertDateToLocal(reindexTask.finished)}</td>
+              <td>{reindexTask.finished}</td>
             </tr>
             {isInProgress && (
               <tr>
