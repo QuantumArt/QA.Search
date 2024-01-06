@@ -69,7 +69,6 @@ function CreateContextFactory(targetQP: TargetQP) {
     async function updateServiceState() {
       try {
         let serviceState = await new QpIndexingController().getIndexingStatus(targetQP);
-        console.log(serviceState);
         if (!serviceState) {
           throw new Error();
         }
