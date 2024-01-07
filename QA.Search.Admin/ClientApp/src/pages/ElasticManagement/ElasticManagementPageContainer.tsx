@@ -3,6 +3,7 @@ import createContainer from "constate";
 import { asc } from "../../utils/array";
 import { ElasticManagementPageController, IndexesCardViewModel } from "../../backend.generated";
 import { ElasticManagementPageModel, PageState } from "./ElasticManagementPageModel";
+import dateConvertToLocal from "../../utils/time";
 
 function CreateContext() {
   const defaultState: ElasticManagementPageModel = {
@@ -49,10 +50,12 @@ function CreateContext() {
   async function updateData() {
     try {
       setState(currentState => ({ ...currentState, State: PageState.Loading }));
-      const data = await new ElasticManagementPageController().loadData();
+      let data = await new ElasticManagementPageController().loadData();
+
       if (!data || data.commonError) {
         throw new Error();
       }
+      data = dateConvertToLocalInData(data);
 
       setState(currentState => {
         const opsAreEnabled = currentState.pageState !== PageState.Loading;
@@ -208,6 +211,31 @@ function CreateContext() {
     }
   }
 
+  function dateConvertToLocalInData(data) {
+    for (let i = 0; i < data.cards.length; i++) {
+      if (data.cards[i].destinationIndex) {
+        data.cards[i].destinationIndex.creationDate = dateConvertToLocal(
+          data.cards[i].destinationIndex.creationDate
+        );
+      }
+
+      if (data.cards[i].reindexTask) {
+        data.cards[i].reindexTask.created = dateConvertToLocal(data.cards[i].reindexTask.created);
+        data.cards[i].reindexTask.finished = dateConvertToLocal(data.cards[i].reindexTask.finished);
+        data.cards[i].reindexTask.lastUpdated = dateConvertToLocal(
+          data.cards[i].reindexTask.lastUpdated
+        );
+      }
+
+      if (data.cards[i].sourceIndex) {
+        data.cards[i].sourceIndex.creationDate = dateConvertToLocal(
+          data.cards[i].sourceIndex.creationDate
+        );
+      }
+    }
+
+    return data;
+  }
   //const delay = msec => new Promise(resolve => setTimeout(resolve, msec));
 
   return {
