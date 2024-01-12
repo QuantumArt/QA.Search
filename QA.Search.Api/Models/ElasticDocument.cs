@@ -13,19 +13,19 @@ namespace QA.Search.Api.Models
         /// <summary>
         /// Строковый идентификатор документа в Elastic
         /// </summary>
-        [JsonProperty("_id"), Required]
+        [JsonProperty("_id")]
         public string Id { get; set; }
 
         /// <summary>
         /// Сокращенное имя индекса, которому принадлежит документ
         /// </summary>
-        [JsonProperty("_index"), Required]
+        [JsonProperty("_index")]
         public string Index { get; set; }
 
         /// <summary>
         /// Мера релевантности документа в рамках запроса
         /// </summary>
-        [JsonProperty("_score"), Required]
+        [JsonProperty("_score")]
         public float Score { get; set; }
 
         /// <summary>

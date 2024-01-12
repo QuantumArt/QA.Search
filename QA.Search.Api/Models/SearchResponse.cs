@@ -30,7 +30,6 @@ namespace QA.Search.Api.Models
         /// <summary>
         /// Найденные документы
         /// </summary>
-        [Required]
         public ElasticDocument[] Documents { get; set; }
 
         /// <summary>
