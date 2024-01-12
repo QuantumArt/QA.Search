@@ -130,7 +130,7 @@ spec:
                 configMapKeyRef:
                   name: qa-search-config
                   key: ADMIN_APP_URL
-            - name: IndexingApiServiceConfiguration__Schema
+            - name: IndexingApiServiceConfiguration__Scheme
               valueFrom:
                 configMapKeyRef:
                   name: qa-search-config
