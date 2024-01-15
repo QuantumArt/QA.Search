@@ -62,6 +62,7 @@ function IndexesCardDetails({ indexesCard }: Props) {
     if (!index) {
       return null;
     }
+
     return (
       <tr key={String(key)} style={{ wordBreak: "break-word" }}>
         <td>{index.fullName}</td>
@@ -179,7 +180,7 @@ function IndexesCardDetails({ indexesCard }: Props) {
         <HTMLTable bordered condensed>
           <tbody>
             <tr>
-              <td colSpan={2} className="box-shadow-none" >
+              <td colSpan={2} className="box-shadow-none">
                 <h5>Связанная задача</h5>
               </td>
             </tr>
