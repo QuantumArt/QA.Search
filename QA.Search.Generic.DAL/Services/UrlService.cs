@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using QA.Search.Generic.DAL.Models;
 
 #nullable enable
 
@@ -15,7 +16,7 @@ namespace QA.Search.Generic.DAL.Services
     {
         private readonly GenericDataContext _context;
 
-        private const int StartPageExtensionId = 547;
+        private const int START_PAGE_EXTENSION_ID = 547;
         private const string BASE_SITE_PATH = "SEARCH_DEFAULT_HOST";
 
         public UrlService(TContext context)
@@ -23,28 +24,38 @@ namespace QA.Search.Generic.DAL.Services
             _context = context;
         }
 
-        public async Task<string> GetUrlToPageByNameAsync(string abstractItemName, CancellationToken cancellationToken)
+        public async Task<string?> GetUrlToPageByNameAsync(string abstractItemName, CancellationToken cancellationToken)
         {
-            int? itemId = await _context.QPAbstractItems
+            int itemId = await _context.QPAbstractItems
                 .Where(x => x.Name == abstractItemName)
                 .Select(x => x.ContentItemID)
-                .SingleAsync(cancellationToken);
+                .SingleOrDefaultAsync(cancellationToken);
+
+            if (itemId.Equals(default))
+            {
+                return null;
+            }
 
             return await GetUrlPageAsync(itemId, cancellationToken);
         }
 
-        public async Task<string> GetUrlToPageByIdAsync(int? itemId, CancellationToken cancellationToken) => await GetUrlPageAsync(itemId, cancellationToken);
+        public async Task<string?> GetUrlToPageByIdAsync(int? itemId, CancellationToken cancellationToken) => await GetUrlPageAsync(itemId, cancellationToken);
 
-        private async Task<string> GetUrlPageAsync(int? itemId, CancellationToken cancellationToken)
+        private async Task<string?> GetUrlPageAsync(int? itemId, CancellationToken cancellationToken)
         {
             Stack<string> urls = new();
             bool isBaseFound = false;
 
             do
             {
-                (int? parentId, string urlPart, int? extensionId) = await GetUrlPartAsync(itemId, cancellationToken);
+                PageInfo? pageInfo = await GetUrlPartAsync(itemId, cancellationToken);
 
-                if (extensionId == StartPageExtensionId)
+                if (pageInfo is null)
+                {
+                    return null;
+                }
+
+                if (pageInfo.ExtensionId == START_PAGE_EXTENSION_ID)
                 {
                     string? baseUrl = await GetBaseSitePath(cancellationToken);
                     if (string.IsNullOrWhiteSpace(baseUrl))
@@ -57,22 +68,20 @@ namespace QA.Search.Generic.DAL.Services
                     continue;
                 }
 
-                urls.Push(urlPart);
-                itemId = parentId;
+                urls.Push(pageInfo.UrlPart);
+                itemId = pageInfo.ParentId;
             }
             while (!isBaseFound);
 
             return string.Join("/", urls);
         }
 
-        private async Task<(int? parentId, string urlPart, int? extensionId)> GetUrlPartAsync(int? contentItemId, CancellationToken cancellationToken)
+        private async Task<PageInfo?> GetUrlPartAsync(int? contentItemId, CancellationToken cancellationToken)
         {
-            Tuple<int?, string, int?> item = await _context.QPAbstractItems
+            return await _context.QPAbstractItems
                 .Where(x => x.ContentItemID == contentItemId)
-                .Select(x => new Tuple<int?, string, int?>(x.ParentID, x.Name, x.ExtensionID))
-                .SingleAsync(cancellationToken);
-
-            return item.ToValueTuple();
+                .Select(x => new PageInfo(x.ParentID, x.Name, x.ExtensionID))
+                .SingleOrDefaultAsync(cancellationToken);
         }
 
         private async Task<string?> GetBaseSitePath(CancellationToken cancellationToken)

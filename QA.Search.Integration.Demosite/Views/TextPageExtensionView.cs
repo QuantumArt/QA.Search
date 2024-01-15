@@ -60,8 +60,14 @@ namespace QA.Search.Integration.Demosite.Views
 
             for (int post = 0; post < posts.Count; post++)
             {
+                string? url = await _urlService.GetUrlToPageByIdAsync(posts[post].ItemID, token);
+
+                if (string.IsNullOrWhiteSpace(url))
+                {
+                    continue;
+                }
+
                 documents[post] = JObject.Parse(JsonConvert.SerializeObject(posts[post]));
-                string url = await _urlService.GetUrlToPageByIdAsync(posts[post].ItemID, token);
                 documents[post][genericIndexSettings.SearchUrlField] = _urlService.UrlToJArray(genericIndexSettings.SearchUrlField, url);
                 documents[post]["title"] = await ((DemositeDataContext)Db).QPAbstractItems
                     .Where(a => a.ContentItemID == posts[post].ItemID)
@@ -69,7 +75,7 @@ namespace QA.Search.Integration.Demosite.Views
                     .FirstOrDefaultAsync(token);
             }
 
-            return documents;
+            return documents.Where(x => x != null).ToArray();
         }
 
         public override async Task<int> CountAsync(DateTime fromDate, CancellationToken token)

@@ -629,20 +629,16 @@
       "description": "Документ Elastic, найденный с помощью полнотекстового поиска",
       "additionalProperties": {},
       "required": [
-        "_id",
-        "_index",
         "_score"
       ],
       "properties": {
         "_id": {
           "type": "string",
-          "description": "Строковый идентификатор документа в Elastic",
-          "minLength": 1
+          "description": "Строковый идентификатор документа в Elastic"
         },
         "_index": {
           "type": "string",
-          "description": "Сокращенное имя индекса, которому принадлежит документ",
-          "minLength": 1
+          "description": "Сокращенное имя индекса, которому принадлежит документ"
         },
         "_score": {
           "type": "number",
@@ -693,8 +689,7 @@
       "description": "Результат полнотекстового поиска документов\nс синонимами и морфологией, а также фасетного поиска",
       "required": [
         "status",
-        "totalCount",
-        "documents"
+        "totalCount"
       ],
       "properties": {
         "status": {
@@ -735,20 +730,16 @@
       "type": "object",
       "description": "Результат исправления поисковой строки пользователя",
       "required": [
-        "text",
-        "snippet",
         "resultsAreCorrected"
       ],
       "properties": {
         "text": {
           "type": "string",
-          "description": "Исправленная поисковая строка в текстовом виде",
-          "minLength": 1
+          "description": "Исправленная поисковая строка в текстовом виде"
         },
         "snippet": {
           "type": "string",
-          "description": "Исправленная поисковая строка с HTML-выделением исправленных фраз",
-          "minLength": 1
+          "description": "Исправленная поисковая строка с HTML-выделением исправленных фраз"
         },
         "resultsAreCorrected": {
           "type": "boolean",
@@ -794,10 +785,6 @@
     "IntervalFacet": {
       "type": "object",
       "description": "Границы значения поля в выборке",
-      "required": [
-        "from",
-        "to"
-      ],
       "properties": {
         "from": {
           "description": "Минимальное значение"
@@ -811,7 +798,6 @@
       "type": "object",
       "description": "Часто встречающееся значение поля в выборке",
       "required": [
-        "value",
         "count"
       ],
       "properties": {
@@ -829,8 +815,7 @@
       "type": "object",
       "description": "Значение указанной квантили",
       "required": [
-        "percent",
-        "value"
+        "percent"
       ],
       "properties": {
         "percent": {
@@ -847,7 +832,6 @@
       "type": "object",
       "description": "Количество документов в указаной группе",
       "required": [
-        "name",
         "count"
       ],
       "properties": {
