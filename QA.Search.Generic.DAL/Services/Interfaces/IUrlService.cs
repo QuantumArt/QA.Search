@@ -8,9 +8,9 @@ namespace QA.Search.Generic.DAL.Services.Interfaces
 {
     public interface IUrlService<TContext> where TContext : GenericDataContext
     {
-        Task<string> GetUrlToPageByNameAsync(string abstractItemName, CancellationToken cancellationToken);
+        Task<string?> GetUrlToPageByNameAsync(string abstractItemName, CancellationToken cancellationToken);
 
-        Task<string> GetUrlToPageByIdAsync(int? itemId, CancellationToken cancellationToken);
+        Task<string?> GetUrlToPageByIdAsync(int? itemId, CancellationToken cancellationToken);
 
         string BuildUri(string baseUrl, string? query = null);
 

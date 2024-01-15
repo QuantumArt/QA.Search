@@ -34,29 +34,37 @@ namespace QA.Search.Integration.Demosite.Views
         public override async Task<JObject[]> LoadAsync(LoadParameters loadParameters, CancellationToken token)
         {
             JObject[] documents = await base.LoadAsync(loadParameters, token);
+            List<JObject> result = new(documents.Length);
 
             foreach (JObject document in documents)
             {
-                int? catrgoryId = document["category"]?.Value<int>();
+                int? categoryId = document["category"]?.Value<int>();
 
-                if (catrgoryId == null)
+                if (categoryId == null)
                 {
-                    throw new ArgumentNullException(nameof(catrgoryId), "News with empty category. Fix that in QP and restart indexing.");
+                    throw new ArgumentNullException(nameof(categoryId), "News with empty category. Fix that in QP and restart indexing.");
                 }
 
                 int abstractItemId = await ((DemositeDataContext)Db).NewsCategories
-                    .Where(x => x.ContentItemID == catrgoryId)
+                    .Where(x => x.ContentItemID == categoryId)
                     .Select(x => x.ItemId)
                     .SingleAsync(token);
 
-                string url = await _urlService.GetUrlToPageByIdAsync(abstractItemId, token);
+                string? url = await _urlService.GetUrlToPageByIdAsync(abstractItemId, token);
+
+                if (string.IsNullOrWhiteSpace(url))
+                {
+                    continue;
+                }
 
                 document[genericIndexSettings.SearchUrlField] = _urlService.UrlToJArray(
                         genericIndexSettings.SearchUrlField,
                         $"{url}/details/{document["contentitemid"]?.Value<int>()}");
+
+                result.Add(document);
             }
 
-            return documents;
+            return result.ToArray();
         }
     }
 }
